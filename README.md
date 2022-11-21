@@ -1,3 +1,31 @@
 # DTCC IO
 
-python library for data IO for the DTCC project
+# DTCC IO
+
+DTCC IO provides input/output (IO) to/from the Protobuf data model
+defined by DTCC Model.
+
+This project is part the
+[Digital Twin Platform (DTCC Platform)](https://gitlab.com/dtcc-platform)
+developed at the
+[Digital Twin Cities Centre](https://dtcc.chalmers.se/)
+supported by Sweden’s Innovation Agency Vinnova under Grant No. 2019-421 00041.
+
+## Documentation
+
+* [Introduction](./doc/introduction.md)
+* [Installation](./doc/installation.md)
+* [Usage](./doc/usage.md)
+* [Development](./doc/development.md)
+
+## Authors (in order of appearance)
+
+* [Dag Wästerberg](https://chalmersindustriteknik.se/sv/medarbetare/dag-wastberg/)
+
+## License
+
+DTCC Modules is licensed under the
+[MIT license](https://opensource.org/licenses/MIT).
+
+Copyright is held by the individual authors as listed at the top of
+each source file.
