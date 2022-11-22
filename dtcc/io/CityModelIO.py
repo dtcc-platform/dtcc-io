@@ -5,13 +5,13 @@
 import json
 import fiona
 import shapely.geometry
-from dtcc.dtcc_pb2 import Polygon, Building, LinearRing, Vector2D, CityModel
+from dtcc_model.protobuf.dtcc_pb2 import Polygon, Building, LinearRing, Vector2D, CityModel
 
 #%%
 def cleanLinearRing(coords, tol=0.1):
-    #s = shapely.geometry.Polygon(coords)
-    #s = shapely.geometry.Polygon.orient(s, 1)  # make ccw
-    #s = s.simplify(tol)
+    # s = shapely.geometry.Polygon(coords)
+    # s = shapely.geometry.Polygon.orient(s, 1)  # make ccw
+    # s = s.simplify(tol)
     #return list(s.exterior.coords)[:-1]
     return coords
 
@@ -60,7 +60,7 @@ def pbFootprint2Shapely(pb_footprint):
     return poly
 
 
-def loadBuildings(
+def read(
     filename,
     uuid_field="id",
     height_field="",
@@ -150,7 +150,9 @@ def loadCityModelJson(citymodel_path,return_serialized=False,):
     else:
         return cityModel
 
-def writeCityModel(city_model, out_file, output_format=".shp"):
+def write(city_model, out_file, output_format=""):
+    if output_format == "":
+        output_format = out_file.split(".")[-1].lower()
     if not output_format.startswith("."):
         output_format = "." + output_format
     if not output_format in [".shp", ".json", ".geojson", ".gpkg"]:
