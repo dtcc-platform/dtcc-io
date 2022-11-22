@@ -122,7 +122,7 @@ py::bytes PBPointCloud(py::array_t<double> pts,
   return py::bytes(pbString);
 }
 
-PYBIND11_MODULE(generate_protobuf, m)
+PYBIND11_MODULE(create_pb_pointcloud, m)
 {
   m.doc() = "generate protobufs of various models"; // optional module docstring
   m.def("PBPointCloud", &PBPointCloud, "Generate PB Pointcloud object");

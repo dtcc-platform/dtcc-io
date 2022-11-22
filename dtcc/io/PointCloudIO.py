@@ -1,7 +1,7 @@
 from pathlib import Path
 import numpy as np
 import laspy
-from datamodel_io.pblib.generate_protobuf import PBPointCloud
+from pblib.create_pb_pointcloud import PBPointCloud
 from dtcc_model.protobuf.dtcc_pb2 import PointCloud
 from time import time
 

@@ -30,6 +30,23 @@ find_package(Threads REQUIRED)
 
 # Build protobuf
 ADD_SUBDIRECTORY(dtcc-model/protobuf)
+#INCLUDE(FindProtobuf)
+#set(CMAKE_CXX_FLAGS "-fPIC")
+
+set(DTCC_PROTOBUF_DIR ${CMAKE_SOURCE_DIR}/dtcc-model/protobuf)
+#PROTOBUF_GENERATE_CPP(PROTO_SRC PROTO_HEADER ${DTCC_PROTOBUF_DIR}/dtcc.proto)
+#include_directories(${PROTOBUF_INCLUDE_DIRS})
+
+PROTOBUF_GENERATE_PYTHON(PROTO_PY ${DTCC_PROTOBUF_DIR}/dtcc.proto)
+add_custom_target(python_protobuf ALL DEPENDS ${PROTO_PY})
+SET(PROTO_PY ${PROTO_PY} CACHE INTERNAL "PROTO_PY")
+
+
+#ADD_LIBRARY(dtccproto ${PROTO_HEADER} ${PROTO_SRC})
+#message(STATUS "Cmake root: ${CMAKE_SOURCE_DIR}")
+INSTALL(FILES ${PROTO_PY} DESTINATION ${CMAKE_SOURCE_DIR}/dtcc/io/dtcc_model/protobuf)
+
+message(STATUS "protobuf header and src: ${PROTO_PY} ${PROTO_HEADER} ${PROTO_SRC}")
 include_directories(${PROTOBUF_INCLUDE_DIRS})
 message(STATUS "Protobuf include dirs: ${PROTOBUF_INCLUDE_DIRS}")
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/dtcc-model)
