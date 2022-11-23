@@ -1,8 +1,8 @@
 from pathlib import Path
 import numpy as np
 import laspy
-from pblib.create_pb_pointcloud import PBPointCloud
-from dtcc_model.protobuf.dtcc_pb2 import PointCloud
+from dtcc.io.dtcc_model.pblib.create_pb_pointcloud import PBPointCloud
+from dtcc.io.dtcc_model.protobuf.dtcc_pb2 import PointCloud
 from time import time
 
 
@@ -32,6 +32,7 @@ def read(
         print(f"Cannot read file with suffix {suffix}")
     return None
 
+
 def read_csv(path, delimiter=",", return_serialized=True):
     pass
     pts = np.loadtxt(path, delimiter=delimiter)
@@ -43,6 +44,7 @@ def read_csv(path, delimiter=",", return_serialized=True):
         pc = PointCloud()
         pc.ParseFromString(pb)
         return pc
+
 
 def read_las(
     lasfiles,
@@ -79,7 +81,10 @@ def read_las(
     print(f"loading with laspy {time()-start_laspy}")
     start_protobuf_pc = time()
     if pts is not None:
+        print("Calling PBPointCloud")
         pb = PBPointCloud(pts, classification, intensity, returnNumber, numberOfReturns)
+        print("PBPointCloud called")
+        print(len(pb))
     else:
         return None
     print(f"converting las to pb {time()-start_protobuf_pc}")
@@ -90,6 +95,7 @@ def read_las(
         pc = PointCloud()
         pc.ParseFromString(pb)
         return pc
+
 
 def write(pointcloud, outfile):
     outfile = Path(outfile)
@@ -103,13 +109,14 @@ def write(pointcloud, outfile):
 
 
 def write_csv(pointcloud, outfile):
-    pts = np.array([[p.x,p.y,p.z] for p in pointcloud.points])
+    pts = np.array([[p.x, p.y, p.z] for p in pointcloud.points])
     np.savetxt(outfile, pts, delimiter=",")
+
 
 def write_las(pointcloud, las_file):
     hdr = laspy.header.Header()
     outfile = laspy.file.File(las_file, mode="w", header=hdr)
-    pts = np.array([[p.x,p.y,p.z] for p in pointcloud.points])
+    pts = np.array([[p.x, p.y, p.z] for p in pointcloud.points])
     cls = np.array([p.classification for p in pointcloud.classification])
     outfile.points = pts
     if len(cls) == len(pts):

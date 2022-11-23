@@ -3,9 +3,12 @@
 
 #%%
 import json
+
 import fiona
 import shapely.geometry
-from dtcc_model.protobuf.dtcc_pb2 import Polygon, Building, LinearRing, Vector2D, CityModel
+
+
+from dtcc.io.dtcc_model.protobuf.dtcc_pb2 import Polygon, Building, LinearRing, Vector2D, CityModel
 
 #%%
 def cleanLinearRing(coords, tol=0.1):
@@ -71,8 +74,12 @@ def read(
     buildings = []
     has_height_field = len(height_field) > 0
     with fiona.open(filename) as src:
+        print("opening file")
         for s in src:
+            print(s)
+            print(shapely.geometry.shape(s["geometry"]).area)
             if area_filter is not None and area_filter > 0:
+                print(shapely.geometry.shape(s["geometry"]).area)
                 if shapely.geometry.shape(s["geometry"]).area < area_filter:
                     continue
             geom_type = s["geometry"]["type"]
