@@ -71,21 +71,20 @@ def create_3d_surface(vertices, faces, normals=None,return_serialized=True):
         return pb
 
 def write(path, pb_mesh):
-    write_3d_surface_with_meshio(path, pb_mesh)
-
-
-def write_3d_surface_with_assimp(path, pb_surface):
     path = str(path)
-    if type(pb_surface) == bytes:
-        surface = Surface3D()
-        surface.ParseFromString(surface)
+    writer_libs = {
+        "obj": write_3d_surface_with_meshio,
+        "ply": write_3d_surface_with_meshio,
+        "stl": write_3d_surface_with_meshio,
+        "vtk": write_3d_surface_with_meshio,
+        "vtu": write_3d_surface_with_meshio,
+    }
+    suffix = path.split(".")[-1].lower()
+    if suffix in writer_libs:
+        writer_libs[suffix](path, pb_mesh)
     else:
-        surface = pb_surface
-    vertices = np.array([[v.x, v.y, v.z] for v in surface.vertices])
-    faces = np.array([[f.v0, f.v1, f.v2] for f in surface.faces])
-    if len(surface.normals) > 0:
-        normals = np.array([[n.x, n.y, n.z] for n in surface.normals])
-    pyassimp.export_mesh(path, vertices, faces, normals)
+        raise ValueError(f"Unknown file format: {suffix}, supported formats are: {list(writer_libs.keys())}")
+
 
 def write_3d_surface_with_meshio(path, pb_surface):
     if type(pb_surface) == bytes:

@@ -4,23 +4,30 @@
 #%%
 import json
 
-import fiona
 import shapely.geometry
+import fiona
 
 
-from dtcc.io.dtcc_model.protobuf.dtcc_pb2 import Polygon, Building, LinearRing, Vector2D, CityModel
+
+from dtcc.io.dtcc_model.protobuf.dtcc_pb2 import (
+    Polygon,
+    Building,
+    LinearRing,
+    Vector2D,
+    CityModel,
+)
 
 #%%
 def cleanLinearRing(coords, tol=0.1):
     # s = shapely.geometry.Polygon(coords)
     # s = shapely.geometry.Polygon.orient(s, 1)  # make ccw
     # s = s.simplify(tol)
-    #return list(s.exterior.coords)[:-1]
+    # return list(s.exterior.coords)[:-1]
     return coords
 
 
 #%%
-def buildLinearRing(coords, clean = True):
+def buildLinearRing(coords, clean=True):
     if clean:
         coords = cleanLinearRing(coords)
     lr = LinearRing()
@@ -34,7 +41,7 @@ def buildLinearRing(coords, clean = True):
     return lr
 
 
-def buildPolygon(geom_coords, clean = True):
+def buildPolygon(geom_coords, clean=True):
     polygon = Polygon()
     shell = geom_coords.pop(0)
     shell = buildLinearRing(shell, clean)
@@ -74,12 +81,10 @@ def read(
     buildings = []
     has_height_field = len(height_field) > 0
     with fiona.open(filename) as src:
-        print("opening file")
         for s in src:
-            print(s)
-            print(shapely.geometry.shape(s["geometry"]).area)
+
             if area_filter is not None and area_filter > 0:
-                print(shapely.geometry.shape(s["geometry"]).area)
+
                 if shapely.geometry.shape(s["geometry"]).area < area_filter:
                     continue
             geom_type = s["geometry"]["type"]
@@ -127,28 +132,32 @@ def read(
         return cityModel.SerializeToString()
     else:
         return cityModel
-        
-def loadCityModelJson(citymodel_path,return_serialized=False,):
+
+
+def loadCityModelJson(
+    citymodel_path,
+    return_serialized=False,
+):
     with open(citymodel_path) as src:
         citymodelJson = json.load(src)
     cityModel = CityModel()
     buildings = []
     for b in citymodelJson["Buildings"]:
-        building = Building()   
-        if isinstance(b["Footprint"],list):
+        building = Building()
+        if isinstance(b["Footprint"], list):
             shell = [(v["x"], v["y"]) for v in b["Footprint"]]
             holes = []
         else:
             shell = [(v["x"], v["y"]) for v in b["Footprint"]["shell"]]
-            holes=[]
+            holes = []
             for hole in b["Footprint"]["holes"]:
                 h = [(v["x"], v["y"]) for v in hole]
                 holes.append(h)
-        footprint = buildPolygon([shell,holes], clean=False)
+        footprint = buildPolygon([shell, holes], clean=False)
         building.footPrint.CopyFrom(footprint)
         building.height = b["Height"]
         building.groundHeight = b["GroundHeight"]
-        building.uuid = b['UUID']
+        building.uuid = b["UUID"]
         building.error = b["Error"]
         buildings.append(building)
     cityModel.buildings.extend(buildings)
@@ -156,6 +165,7 @@ def loadCityModelJson(citymodel_path,return_serialized=False,):
         return cityModel.SerializeToString()
     else:
         return cityModel
+
 
 def write(city_model, out_file, output_format=""):
     if output_format == "":
