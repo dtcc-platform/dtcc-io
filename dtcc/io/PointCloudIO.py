@@ -11,7 +11,7 @@ def read(
     points_only=False,
     points_classification_only=False,
     delimiter=",",
-    return_serialized=True,
+    return_serialized=False,
 ):
     path = Path(path)
     suffix = path.suffix.lower()
@@ -33,7 +33,7 @@ def read(
     return None
 
 
-def read_csv(path, delimiter=",", return_serialized=True):
+def read_csv(path, delimiter=",", return_serialized=False):
     pass
     pts = np.loadtxt(path, delimiter=delimiter)
     assert pts.shape[1] >= 3
@@ -50,7 +50,7 @@ def read_las(
     lasfiles,
     points_only=False,
     points_classification_only=False,
-    return_serialized=True,
+    return_serialized=False,
 ):
     if isinstance(lasfiles, str) or isinstance(lasfiles, Path):
         lasfiles = [lasfiles]

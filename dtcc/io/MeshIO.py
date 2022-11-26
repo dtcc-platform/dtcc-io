@@ -7,7 +7,7 @@ import numpy as np
 from dtcc.io.dtcc_model.protobuf.dtcc_pb2 import Vector3D, Simplex2D, Surface3D
 
 
-def read(path, triangulate = False, return_serialized=True):
+def read(path, triangulate = False, return_serialized=False):
     path = str(path)
     suffix = path.split(".")[-1].lower()
     reader_libs = {
@@ -43,7 +43,7 @@ def read(path, triangulate = False, return_serialized=True):
     # else:
     #     print(f"Cannot read mesh with {mesh.vertices.shape[1]} dimensions")
 
-def read_with_assimp(path, return_serialized=True):
+def read_with_assimp(path, return_serialized=False):
     scene = pyassimp.load(path, pyassimp.postprocess.aiProcess_Triangulate)
     print(f"Loaded {len(scene.meshes)} meshes")
     mesh = scene.meshes[0]
@@ -52,14 +52,14 @@ def read_with_assimp(path, return_serialized=True):
     print(mesh.faces.shape)
     return create_3d_surface(mesh.vertices, mesh.faces, mesh.normals, return_serialized=return_serialized)
 
-def read_with_meshio(path, return_serialized=True):
+def read_with_meshio(path, return_serialized=False):
     mesh = meshio.read(path)
     # print(mesh)
     vertices = mesh.points
     faces = mesh.cells[0].data
     return create_3d_surface(vertices, faces, return_serialized=return_serialized)
 
-def create_3d_surface(vertices, faces, normals=None,return_serialized=True):
+def create_3d_surface(vertices, faces, normals=None,return_serialized=False):
     pb = Surface3D()
     pb.vertices.extend([Vector3D(x=v[0], y=v[1], z=v[2]) for v in vertices])
     pb.faces.extend([Simplex2D(v0=f[0], v1=f[1], v2=f[2]) for f in faces])

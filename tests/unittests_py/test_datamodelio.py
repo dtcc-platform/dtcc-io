@@ -3,7 +3,7 @@ import unittest
 import sys
 from pathlib import Path
 
-sys.path.append(str((Path(__file__).parent.parent.parent).resolve()))
+#sys.path.append(str((Path(__file__).parent.parent.parent).resolve()))
 from dtcc.io import PointCloudIO, CityModelIO, MeshIO, ElevationModelIO
 import tempfile, os
 
@@ -79,6 +79,10 @@ class TestBuildings(unittest.TestCase):
     def test_load_elevation_model(self):
         em = ElevationModelIO.read(self.dem_raster, return_serialized=False)
         self.assertEqual(em.grid.xStep, 0.5)
+        self.assertEqual(em.grid.xSize, 50)
+        self.assertEqual(em.grid.ySize, 50)
+        self.assertEqual(em.values[0], 0.5)
+        self.assertEqual(em.values[-1], (50 * 50) * 0.5)
 
     def test_write_elevation_model(self):
         em = ElevationModelIO.read(self.dem_raster, return_serialized=False)

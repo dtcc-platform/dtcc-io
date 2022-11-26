@@ -10,7 +10,7 @@ from dtcc.io.dtcc_model.protobuf.dtcc_pb2 import (
 )
 
 
-def read(path, return_serialized=True):
+def read(path, return_serialized=False):
     path = str(path)
     suffix = path.split(".")[-1].lower()
     if suffix in ["tif", "tiff"]:
@@ -20,7 +20,7 @@ def read(path, return_serialized=True):
     return None
 
 
-def read_tiff(path, return_serialized=True):
+def read_tiff(path, return_serialized=False):
     with rasterio.open(path) as src:
         data = src.read()
         data = data[0, :, :]
