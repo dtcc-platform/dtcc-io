@@ -63,7 +63,6 @@ def write_tiff(path, gridfield):
         width=grid.xSize,
         count=1,
         dtype=data.dtype,
-        crs="EPSG:4326",
         transform=from_origin(
             grid.boundingBox.p.x,
             grid.boundingBox.q.y,
