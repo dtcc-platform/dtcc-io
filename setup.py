@@ -9,7 +9,7 @@ packages = [
 ]
 
 install_requires = [
-    "numpy>=1.21.0,<2.0.0",
+    "numpy>=1.11.0,<2.0.0",
     "pybind11>=2.10.0,<3.0.0",
     "Fiona>=1.8.0<2.0.0",
     "Shapely>=1.8.0<2.0.0",
