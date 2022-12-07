@@ -4,11 +4,12 @@ import laspy
 from dtcc.io.dtcc_model.pblib.create_pb_pointcloud import PBPointCloud
 from dtcc.io.dtcc_model.protobuf.dtcc_pb2 import PointCloud
 from time import time
-from Bounds import bounds_union
+from dtcc.io.Bounds import bounds_union
 
 def las_file_bounds(las_file):
-    with laspy.read(las_file) as src:
-        return (src.header.x_min, src.header.y_min, src.header.x_max, src.header.y_max)
+    src = laspy.read(las_file)
+    bounds =  (src.header.x_min, src.header.y_min, src.header.x_max, src.header.y_max)
+    return bounds
 
 
 def calc_las_bounds(las_path):

@@ -100,6 +100,7 @@ def read(
 
                 if shapely.geometry.shape(s["geometry"]).area < area_filter:
                     continue
+            if bounds is not None:
                 if not shapely.geometry.shape(s["geometry"]).intersects(bounds):
                     continue
             geom_type = s["geometry"]["type"]
