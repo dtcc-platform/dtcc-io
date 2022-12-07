@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 
 import os, tempfile
-from dtcc.io import ElevationModelIO
+from dtcc import io
 
 class TestMesh(unittest.TestCase):
     @classmethod
@@ -13,7 +13,7 @@ class TestMesh(unittest.TestCase):
         )
 
     def test_load_elevation_model(self):
-        em = ElevationModelIO.read(self.dem_raster, return_serialized=False)
+        em = io.elevationmodel.read(self.dem_raster, return_serialized=False)
         self.assertEqual(em.grid.xStep, 0.5)
         self.assertEqual(em.grid.xSize, 50)
         self.assertEqual(em.grid.ySize, 50)
@@ -21,10 +21,10 @@ class TestMesh(unittest.TestCase):
         self.assertEqual(em.values[-1], (50 * 50) * 0.5)
 
     def test_write_elevation_model(self):
-        em = ElevationModelIO.read(self.dem_raster, return_serialized=False)
+        em = io.elevationmodel.read(self.dem_raster, return_serialized=False)
         outfile = tempfile.NamedTemporaryFile(suffix=".tif", delete=False).name
-        ElevationModelIO.write(outfile, em)
-        em = ElevationModelIO.read(outfile, return_serialized=False)
+        io.elevationmodel.write(outfile, em)
+        em = io.elevationmodel.read(outfile, return_serialized=False)
         self.assertEqual(em.grid.xStep, 0.5)
         os.unlink(outfile)
 

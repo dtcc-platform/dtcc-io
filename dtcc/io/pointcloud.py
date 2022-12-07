@@ -4,7 +4,7 @@ import laspy
 from dtcc.io.dtcc_model.pblib.create_pb_pointcloud import PBPointCloud
 from dtcc.io.dtcc_model.protobuf.dtcc_pb2 import PointCloud
 from time import time
-from dtcc.io.Bounds import bounds_union
+from dtcc.io.bounds import bounds_union
 
 def las_file_bounds(las_file):
     src = laspy.read(las_file)

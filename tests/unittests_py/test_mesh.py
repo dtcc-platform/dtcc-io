@@ -3,8 +3,7 @@ import unittest
 from pathlib import Path
 
 import os, tempfile
-from dtcc.io import MeshIO
-
+from dtcc import io
 
 class TestMesh(unittest.TestCase):
     @classmethod
@@ -17,16 +16,16 @@ class TestMesh(unittest.TestCase):
         )
     
     def test_load_meshio_mesh(self):
-        mesh = MeshIO.read(self.stl_mesh_cube, return_serialized=False)
+        mesh = io.mesh.read(self.stl_mesh_cube, return_serialized=False)
         self.assertEqual(len(mesh.vertices), 24)
         self.assertEqual(len(mesh.faces), 44)
 
     def test_write_meshio_mesh(self):
-        mesh = MeshIO.read(self.stl_mesh_cube, return_serialized=False)
+        mesh = io.mesh.read(self.stl_mesh_cube, return_serialized=False)
         outfile = tempfile.NamedTemporaryFile(suffix=".vtk", delete=False)
         outpath = Path(outfile.name)
-        MeshIO.write(outpath, mesh)
-        mesh = MeshIO.read(outpath, return_serialized=False)
+        io.mesh.write(outpath, mesh)
+        mesh = io.mesh.read(outpath, return_serialized=False)
         self.assertEqual(len(mesh.vertices), 24)
         self.assertEqual(len(mesh.faces), 44)
         outfile.close()
