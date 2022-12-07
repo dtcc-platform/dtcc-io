@@ -34,12 +34,17 @@ ADD_SUBDIRECTORY(dtcc-model/protobuf)
 #set(CMAKE_CXX_FLAGS "-fPIC")
 
 set(DTCC_PROTOBUF_DIR ${CMAKE_SOURCE_DIR}/dtcc-model/protobuf)
+set (DTCC_PROTOBUF_FILE ${DTCC_PROTOBUF_DIR}/dtcc.proto)
 #PROTOBUF_GENERATE_CPP(PROTO_SRC PROTO_HEADER ${DTCC_PROTOBUF_DIR}/dtcc.proto)
-#include_directories(${PROTOBUF_INCLUDE_DIRS})
+include_directories(${PROTOBUF_INCLUDE_DIRS})
 
-PROTOBUF_GENERATE_PYTHON(PROTO_PY ${DTCC_PROTOBUF_DIR}/dtcc.proto)
+find_package(Python COMPONENTS Interpreter REQUIRED)
+
+PROTOBUF_GENERATE_PYTHON(PROTO_PY ${DTCC_PROTOBUF_FILE})
 add_custom_target(python_protobuf ALL DEPENDS ${PROTO_PY})
 SET(PROTO_PY ${PROTO_PY} CACHE INTERNAL "PROTO_PY")
+
+
 
 
 #ADD_LIBRARY(dtccproto ${PROTO_HEADER} ${PROTO_SRC})
@@ -51,10 +56,10 @@ include_directories(${PROTOBUF_INCLUDE_DIRS})
 message(STATUS "Protobuf include dirs: ${PROTOBUF_INCLUDE_DIRS}")
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/dtcc-model)
 include_directories(${CMAKE_SOURCE_DIR}/dtcc-model)
-
-
 add_subdirectory(cpp)
 
 link_directories(/usr/local/lib)
 
+message("execute_process(COMMAND ${Python_EXECUTABLE} -m pip install ${CMAKE_CURRENT_LIST_DIR})")
+install(CODE "execute_process(COMMAND ${Python_EXECUTABLE} -m pip install ${CMAKE_CURRENT_LIST_DIR})")
 

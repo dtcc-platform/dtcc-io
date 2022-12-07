@@ -11,10 +11,13 @@ packages = [
 install_requires = [
     "numpy>=1.11.0,<2.0.0",
     "pybind11>=2.10.0,<3.0.0",
+    "protobuf==3.20.*",
     "Fiona>=1.8.0<2.0.0",
     "Shapely>=1.8.0<2.0.0",
     "rasterio>=1.1.0<2.0.0",
     "meshio>=5.3.0<6.0.0",
+    "laspy[lazrs]>=2.0.0<3.0.0",
+    "pygltflib>1.10.0<2.0.0",
 ]
 
 
