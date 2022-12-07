@@ -17,6 +17,15 @@ from dtcc.io.dtcc_model.protobuf.dtcc_pb2 import (
     CityModel,
 )
 
+def building_bounds(shp_footprint_file, buffer=0):
+    """calculate the bounding box of a shp file without loading it"""
+    with fiona.open(shp_footprint_file) as c:
+        bbox = c.bounds
+    if buffer != 0:
+        px, py, qx, qy = bbox
+        bbox = (px - buffer, py - buffer, qx + buffer, qy + buffer)
+    return bbox
+
 #%%
 def cleanLinearRing(coords, tol=0.1):
     # s = shapely.geometry.Polygon(coords)
@@ -75,17 +84,23 @@ def read(
     uuid_field="id",
     height_field="",
     area_filter=None,
+    bounds = None,
+    min_edge_distance = 2.0,
     return_serialized=False,
 ):
     cityModel = CityModel()
     buildings = []
     has_height_field = len(height_field) > 0
+    if bounds is not None:
+        bounds = shapely.geometry.box(*bounds).buffer(-min_edge_distance)
     with fiona.open(filename) as src:
         for s in src:
 
             if area_filter is not None and area_filter > 0:
 
                 if shapely.geometry.shape(s["geometry"]).area < area_filter:
+                    continue
+                if not shapely.geometry.shape(s["geometry"]).intersects(bounds):
                     continue
             geom_type = s["geometry"]["type"]
             if geom_type == "Polygon":

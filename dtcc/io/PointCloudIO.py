@@ -4,7 +4,27 @@ import laspy
 from dtcc.io.dtcc_model.pblib.create_pb_pointcloud import PBPointCloud
 from dtcc.io.dtcc_model.protobuf.dtcc_pb2 import PointCloud
 from time import time
+from Bounds import bounds_union
 
+def las_file_bounds(las_file):
+    with laspy.read(las_file) as src:
+        return (src.header.x_min, src.header.y_min, src.header.x_max, src.header.y_max)
+
+
+def calc_las_bounds(las_path):
+    las_path = Path(las_path)
+    if not las_path.exists():
+        raise ValueError(f"Path {las_path} does not exist")
+    if las_path.is_file():
+        bbox = las_file_bounds(las_path)
+    if las_path.is_dir():
+        bbox = None
+        for f in las_path.glob("*.la[sz]"):
+            if bbox is None:
+                bbox = las_file_bounds(f)
+            else:
+                bbox = bounds_union(bbox, las_file_bounds(f))
+    return bbox
 
 def read(
     path,
