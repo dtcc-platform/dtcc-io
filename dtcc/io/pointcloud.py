@@ -6,9 +6,10 @@ from dtcc.io.dtcc_model.protobuf.dtcc_pb2 import PointCloud
 from time import time
 from dtcc.io.bounds import bounds_union
 
+
 def las_file_bounds(las_file):
     src = laspy.read(las_file)
-    bounds =  (src.header.x_min, src.header.y_min, src.header.x_max, src.header.y_max)
+    bounds = (src.header.x_min, src.header.y_min, src.header.x_max, src.header.y_max)
     return bounds
 
 
@@ -27,6 +28,7 @@ def calc_las_bounds(las_path):
                 bbox = bounds_union(bbox, las_file_bounds(f))
     return bbox
 
+
 def read(
     path,
     points_only=False,
@@ -36,6 +38,13 @@ def read(
 ):
     path = Path(path)
     suffix = path.suffix.lower()
+    if path.is_dir():
+        return read_dir(
+            path,
+            points_only=points_only,
+            points_classification_only=points_classification_only,
+            return_serialized=return_serialized,
+        )
     if suffix in [".las", ".laz"]:
         return read_las(
             path,
@@ -65,6 +74,18 @@ def read_csv(path, delimiter=",", return_serialized=False):
         pc = PointCloud()
         pc.ParseFromString(pb)
         return pc
+
+
+def read_dir(
+    las_dir,
+    points_only=False,
+    points_classification_only=False,
+    return_serialized=False,
+):
+    las_files = list(las_dir.glob("*.la[sz]"))
+    return read_las(
+        las_files, points_only, points_classification_only, return_serialized
+    )
 
 
 def read_las(
@@ -102,10 +123,10 @@ def read_las(
     print(f"loading with laspy {time()-start_laspy}")
     start_protobuf_pc = time()
     if pts is not None:
-        print("Calling PBPointCloud")
+        # print("Calling PBPointCloud")
         pb = PBPointCloud(pts, classification, intensity, returnNumber, numberOfReturns)
-        print("PBPointCloud called")
-        print(len(pb))
+        # print("PBPointCloud called")
+        # print(len(pb))
     else:
         return None
     print(f"converting las to pb {time()-start_protobuf_pc}")
