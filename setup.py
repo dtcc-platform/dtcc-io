@@ -18,6 +18,7 @@ install_requires = [
     "meshio>=5.3.0<6.0.0",
     "laspy[lazrs]>=2.0.0<3.0.0",
     "pygltflib>1.10.0<2.0.0",
+    "pyassimp>=4.0.0<5.0.0"
 ]
 
 
@@ -37,7 +38,7 @@ package_data = {"": ["*.so", "*.dll", "*.dylib"]}
 
 setup(
     name="dtcc-io",
-    version="0.1.5",
+    version="0.2.0",
     description="IO for DTCC",
     long_description=Path("README.md").read_text(),
     long_description_content_type="text/markdown",
