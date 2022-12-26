@@ -34,15 +34,20 @@ def read(
     points_only=False,
     points_classification_only=False,
     delimiter=",",
+    bounds=(),
     return_serialized=False,
 ):
     path = Path(path)
     suffix = path.suffix.lower()
+    if len(bounds) > 0 and len(bounds) != 4:
+        print("WARNING, invalid bouds {bounds}, ignoring")
+        bounds = ()
     if path.is_dir():
         return read_dir(
             path,
             points_only=points_only,
             points_classification_only=points_classification_only,
+            bounds=bounds,
             return_serialized=return_serialized,
         )
     if suffix in [".las", ".laz"]:
@@ -50,12 +55,14 @@ def read(
             path,
             points_only=points_only,
             points_classification_only=points_classification_only,
+            bounds=bounds,
             return_serialized=return_serialized,
         )
     if suffix in [".csv"]:
         return read_csv(
             path,
             delimiter=delimiter,
+            bounds=bounds,
             return_serialized=return_serialized,
         )
     else:
@@ -63,7 +70,7 @@ def read(
     return None
 
 
-def read_csv(path, delimiter=",", return_serialized=False):
+def read_csv(path, delimiter=",", bounds=(), return_serialized=False):
     pass
     pts = np.loadtxt(path, delimiter=delimiter)
     assert pts.shape[1] >= 3
@@ -80,11 +87,12 @@ def read_dir(
     las_dir,
     points_only=False,
     points_classification_only=False,
+    bounds=(),
     return_serialized=False,
 ):
     las_files = list(las_dir.glob("*.la[sz]"))
     return read_las(
-        las_files, points_only, points_classification_only, return_serialized
+        las_files, points_only, points_classification_only, bounds, return_serialized
     )
 
 
@@ -92,6 +100,7 @@ def read_las(
     lasfiles,
     points_only=False,
     points_classification_only=False,
+    bounds=(),
     return_serialized=False,
 ):
     if isinstance(lasfiles, str) or isinstance(lasfiles, Path):
@@ -102,22 +111,29 @@ def read_las(
     returnNumber = np.array([]).astype(np.uint8)
     numberOfReturns = np.array([]).astype(np.uint8)
     start_laspy = time()
+    use_bounds_filter = len(bounds) == 4
+
     for filename in lasfiles:
         las = laspy.read(filename)
-        if pts is None:
-            pts = las.xyz
+        if use_bounds_filter:
+            valid_pts = (las.xyz[:,0]>=bounds[0]) * (las.xyz[:,0]<=bounds[2]) #valid X
+            valid_pts *= (las.xyz[:,1]>=bounds[1]) * (las.xyz[:,1]<=bounds[3]) # valid Y
         else:
-            pts = np.concatenate((pts, las.xyz))
+            valid_pts = np.ones(las.xyz.shape[0]).astype(bool)
+        if pts is None:
+            pts = las.xyz[valid_pts]
+        else:
+            pts = np.concatenate((pts, las.xyz[valid_pts]))
 
         if not points_only:
             classification = np.concatenate(
-                (classification, np.array(las.classification))
+                (classification, np.array(las.classification)[valid_pts])
             )
         if not (points_only or points_classification_only):
-            intensity = np.concatenate((intensity, np.array(las.intensity)))
-            returnNumber = np.concatenate((returnNumber, np.array(las.return_num)))
+            intensity = np.concatenate((intensity, np.array(las.intensity)[valid_pts]))
+            returnNumber = np.concatenate((returnNumber, np.array(las.return_num)[valid_pts]))
             numberOfReturns = np.concatenate(
-                (numberOfReturns, np.array(las.num_returns))
+                (numberOfReturns, np.array(las.num_returns)[valid_pts])
             )
         print(classification.shape)
     print(f"loading with laspy {time()-start_laspy}")

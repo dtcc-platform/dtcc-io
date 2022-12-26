@@ -7,9 +7,10 @@ from dtcc import io
 class TestPointcloud(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        cls.data_dir = (Path(__file__).parent / ".." / "data" / "MinimalCase").resolve()
         cls.building_las_file = str(
             (
-                Path(__file__).parent / ".." / "data" / "MinimalCase" / "pointcloud.las"
+                cls.data_dir / "pointcloud.las"
             ).resolve()
         )
 
@@ -18,6 +19,15 @@ class TestPointcloud(unittest.TestCase):
         self.assertEqual(len(pc.points), 8148)
         self.assertEqual(len(pc.classification), 8148)
         self.assertEqual(len(pc.usedClassifications), 2)
+
+    def test_load_pointcloud_from_dir(self):
+        pc = io.pointcloud.read(self.data_dir, return_serialized=False)
+        self.assertEqual(len(pc.points), 8148)
+
+    def test_load_pointcloud_bounded(self):
+        pc = io.pointcloud.read(self.building_las_file,  bounds=(-2, -2, 0, 0), return_serialized=False)
+        self.assertEqual(len(pc.points), 64)
+        self.assertEqual(len(pc.classification), 64)
 
     def test_point_cloud_bounds(self):
         bounds = io.pointcloud.calc_las_bounds(self.building_las_file)
