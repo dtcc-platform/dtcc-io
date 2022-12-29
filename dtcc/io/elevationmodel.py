@@ -9,7 +9,6 @@ from dtcc.io.dtcc_model.protobuf.dtcc_pb2 import (
     BoundingBox2D,
 )
 
-
 def read(path, return_serialized=False):
     path = str(path)
     suffix = path.split(".")[-1].lower()
@@ -42,6 +41,10 @@ def read_tiff(path, return_serialized=False):
     else:
         return gridfield
 
+def to_array(gridfield):
+    grid = gridfield.grid
+    return np.array(gridfield.values).reshape(grid.ySize, grid.xSize)
+
 def write(path, gridfield):
     path = str(path)
     suffix = path.split(".")[-1].lower()
@@ -52,9 +55,8 @@ def write(path, gridfield):
     return None
 
 def write_tiff(path, gridfield):
+    data = to_array(gridfield)
     grid = gridfield.grid
-
-    data = np.array(gridfield.values).reshape(grid.ySize, grid.xSize)
     with rasterio.open(
         path,
         "w",
