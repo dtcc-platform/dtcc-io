@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 python3 -m pip install \
-    numpy \
+    numpynumpy==1.20.* \
     laspy[lazrs] \
     protobuf==3.20.* \
     h5py \
