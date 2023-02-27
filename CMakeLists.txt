@@ -46,7 +46,7 @@ SET(PROTO_PY ${PROTO_PY} CACHE INTERNAL "PROTO_PY")
 
 #ADD_LIBRARY(dtccproto ${PROTO_HEADER} ${PROTO_SRC})
 #message(STATUS "Cmake root: ${CMAKE_SOURCE_DIR}")
-INSTALL(FILES ${PROTO_PY} DESTINATION ${CMAKE_SOURCE_DIR}/dtcc/io/dtcc_model/protobuf)
+INSTALL(FILES ${PROTO_PY} DESTINATION ${CMAKE_SOURCE_DIR}/src/dtcc/io/dtcc_model/protobuf)
 
 message(STATUS "protobuf header and src: ${PROTO_PY} ${PROTO_HEADER} ${PROTO_SRC}")
 include_directories(${PROTOBUF_INCLUDE_DIRS})
@@ -60,7 +60,7 @@ include_directories(${CMAKE_CURRENT_LIST_DIR}/include)
 message(STATUS "DTCC protobuf include:" ${CMAKE_CURRENT_LIST_DIR}/include)
 link_libraries(dtccproto ${PROTOBUF_LIBRARY} Threads::Threads)
 pybind11_add_module(${LIBRARY} src/${LIBRARY}.cpp)
-set_target_properties(${LIBRARY} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/dtcc/io/dtcc_model/pblib)
+set_target_properties(${LIBRARY} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/src/dtcc/io/dtcc_model/pblib)
 
 
 link_directories(/usr/local/lib)
