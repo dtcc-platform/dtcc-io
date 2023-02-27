@@ -1,7 +1,5 @@
 # DTCC IO
 
-# DTCC IO
-
 DTCC IO provides input/output (IO) to/from the Protobuf data model
 defined by DTCC Model.
 
@@ -13,18 +11,19 @@ supported by Sweden’s Innovation Agency Vinnova under Grant No. 2019-421 00041
 
 ## Documentation
 
-* [Introduction](./doc/introduction.md)
-* [Installation](./doc/installation.md)
-* [Usage](./doc/usage.md)
-* [Development](./doc/development.md)
+* [Introduction](./docs/introduction.md)
+* [Installation](./docs/installation.md)
+* [Usage](./docs/usage.md)
+* [Development](./docs/development.md)
 
 ## Authors (in order of appearance)
 
 * [Dag Wästerberg](https://chalmersindustriteknik.se/sv/medarbetare/dag-wastberg/)
+* [Anders Logg](http://anders.logg.org)
 
 ## License
 
-DTCC Modules is licensed under the
+DTCC IO is licensed under the
 [MIT license](https://opensource.org/licenses/MIT).
 
 Copyright is held by the individual authors as listed at the top of
