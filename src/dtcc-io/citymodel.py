@@ -7,8 +7,6 @@ import json
 import shapely.geometry
 import fiona
 
-
-
 from dtcc.io.dtcc_model.protobuf.dtcc_pb2 import (
     Polygon,
     Building,
