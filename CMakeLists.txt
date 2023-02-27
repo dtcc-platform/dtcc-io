@@ -1,6 +1,6 @@
 # Project configuration
-cmake_minimum_required(VERSION 3.5)
-project(Core)
+cmake_minimum_required(VERSION 3.15)
+project(dtcc.io)
 
 # Set build flags
 set(CMAKE_CXX_STANDARD 14)
@@ -44,9 +44,6 @@ PROTOBUF_GENERATE_PYTHON(PROTO_PY ${DTCC_PROTOBUF_FILE})
 add_custom_target(python_protobuf ALL DEPENDS ${PROTO_PY})
 SET(PROTO_PY ${PROTO_PY} CACHE INTERNAL "PROTO_PY")
 
-
-
-
 #ADD_LIBRARY(dtccproto ${PROTO_HEADER} ${PROTO_SRC})
 #message(STATUS "Cmake root: ${CMAKE_SOURCE_DIR}")
 INSTALL(FILES ${PROTO_PY} DESTINATION ${CMAKE_SOURCE_DIR}/dtcc/io/dtcc_model/protobuf)
@@ -56,10 +53,15 @@ include_directories(${PROTOBUF_INCLUDE_DIRS})
 message(STATUS "Protobuf include dirs: ${PROTOBUF_INCLUDE_DIRS}")
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/dtcc-model)
 include_directories(${CMAKE_SOURCE_DIR}/dtcc-model)
-add_subdirectory(cpp)
+
+set(LIBRARY create_pb_pointcloud)
+
+include_directories(${CMAKE_CURRENT_LIST_DIR}/include)
+message(STATUS "DTCC protobuf include:" ${CMAKE_CURRENT_LIST_DIR}/include)
+link_libraries(dtccproto ${PROTOBUF_LIBRARY} Threads::Threads)
+pybind11_add_module(${LIBRARY} src/${LIBRARY}.cpp)
+set_target_properties(${LIBRARY} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/dtcc/io/dtcc_model/pblib)
+
 
 link_directories(/usr/local/lib)
-
-message("execute_process(COMMAND ${Python_EXECUTABLE} -m pip install ${CMAKE_CURRENT_LIST_DIR})")
-install(CODE "execute_process(COMMAND ${Python_EXECUTABLE} -m pip install ${CMAKE_CURRENT_LIST_DIR})")
 
