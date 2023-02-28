@@ -14,16 +14,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 find_package(pybind11 CONFIG REQUIRED)
 find_package(Protobuf REQUIRED)
 
-#set(pybind11_DIR /usr/local/lib/cmake/pybind11)
-#find_package(pybind11 REQUIRED)
-#execute_process(
-#  COMMAND "${PYTHON_EXECUTABLE}" -c "if True:
-#    from distutils import sysconfig as sc
-#    print(sc.get_python_lib())"
-#  OUTPUT_VARIABLE PYTHON_SITE
-#  OUTPUT_STRIP_TRAILING_WHITESPACE)
-#set(pybind11_INCLUDE_DIR ${PYTHON_SITE}/pybind11/include)
-#include_directories(${pybind11_INCLUDE_DIR})
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
@@ -40,8 +30,6 @@ PROTOBUF_GENERATE_PYTHON(PROTO_PY ${DTCC_PROTOBUF_FILE})
 add_custom_target(python_protobuf ALL DEPENDS ${PROTO_PY})
 SET(PROTO_PY ${PROTO_PY} CACHE INTERNAL "PROTO_PY")
 
-#ADD_LIBRARY(dtccproto ${PROTO_HEADER} ${PROTO_SRC})
-#message(STATUS "Cmake root: ${CMAKE_SOURCE_DIR}")
 INSTALL(FILES ${PROTO_PY} DESTINATION ${CMAKE_SOURCE_DIR}/src/dtcc-io/dtcc_model/protobuf)
 include_directories(${PROTOBUF_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/dtcc-model)
@@ -59,3 +47,5 @@ target_compile_definitions(${PYBIND_LIBRARY} PRIVATE VERSION_INFO=${PROJECT_VERS
 
 link_directories(/usr/local/lib)
 
+# Set install targets
+install(TARGETS ${PYBIND_LIBRARY} DESTINATION dtcc_io)
