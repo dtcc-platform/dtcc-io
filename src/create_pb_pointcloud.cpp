@@ -3,7 +3,8 @@
 
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
-#include "protobuf/dtcc.pb.h"
+
+#include "dtcc.pb.h"
 #include "protobuf/include/VectorMethods.h"
 #include "protobuf/include/BoundingBoxMethods.h"
 
