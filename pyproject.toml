@@ -21,13 +21,13 @@ classifiers = [
 dependencies = [
   "pybind11 >= 2.10.0, < 2.11.0",
   "protobuf >= 3.20.0, < 3.21.0",  
-  "laspy[lazrs] >= 2.4.1",
-  "numpy >= 1.24.2",  
-  "Fiona >= 1.9.1",
-  "rasterio >= 1.3.6",
-  "shapely >= 2.0.1",
-  "meshio >= 5.3.4",
-  "pyassimp >= 4.1.4",
+  "laspy[lazrs]",
+  "numpy",  
+  "Fiona",
+  "rasterio",
+  "shapely",
+  "meshio",
+  "pyassimp",
   "dtcc-model@git+https://github.com/dtcc-platform/dtcc-model.git@dev/new-build-system"
 ]
 
