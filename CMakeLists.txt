@@ -42,7 +42,7 @@ include_directories(${DTCCMODEL_INCLUDE_DIRS})
 # include_directories(${CMAKE_CURRENT_BINARY_DIR}/dtcc-model)
 # include_directories(${CMAKE_SOURCE_DIR}/dtcc-model)
 
-set(PYBIND_LIBRARY create_pb_pointcloud)
+set(PYBIND_LIBRARY bindings)
 
 include_directories(${CMAKE_CURRENT_LIST_DIR}/include)
 # message(STATUS "DTCC protobuf include:" ${CMAKE_CURRENT_LIST_DIR}/include)
