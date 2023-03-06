@@ -3,9 +3,9 @@ import numpy as np
 import laspy
 from time import time
 
-from dtcc_model import PointCloud, PBPointCloud
+from dtcc_model import PointCloud
 from dtcc_io.bounds import bounds_union
-
+from dtcc_io.bindings import PBPointCloud
 
 def las_file_bounds(las_file):
     src = laspy.read(las_file)
