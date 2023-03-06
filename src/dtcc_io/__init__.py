@@ -1,5 +1,7 @@
-import dtcc.io.bounds as bounds
-import dtcc.io.citymodel as citymodel
-import dtcc.io.pointcloud as pointcloud
-import dtcc.io.elevationmodel
-import dtcc.io.mesh as mesh
+import dtcc_io.bounds as bounds
+import dtcc_io.citymodel as citymodel
+import dtcc_io.elevationmodel as elevationmodel
+import dtcc_io.mesh as mesh
+import dtcc_io.pointcloud as pointcloud
+
+__all__ = ['bounds', 'citymodel', 'elevationmodel', 'mesh', 'pointcloud']
