@@ -2,12 +2,9 @@ import rasterio
 from rasterio.transform import from_origin
 import os
 import numpy as np
-from dtcc.io.dtcc_model.protobuf.dtcc_pb2 import (
-    Grid2D,
-    Vector2D,
-    GridField2D,
-    BoundingBox2D,
-)
+
+from dtcc_model import Grid2D, Vector2D, GridField2D, BoundingBox2D
+
 
 def read(path, return_serialized=False):
     path = str(path)
@@ -25,7 +22,8 @@ def read_tiff(path, return_serialized=False):
         data = data[0, :, :]
         grid = Grid2D()
         boundingbox = BoundingBox2D()
-        boundingbox.p.CopyFrom(Vector2D(x=src.bounds.left, y=src.bounds.bottom))
+        boundingbox.p.CopyFrom(
+            Vector2D(x=src.bounds.left, y=src.bounds.bottom))
         boundingbox.q.CopyFrom(Vector2D(x=src.bounds.right, y=src.bounds.top))
         grid.boundingBox.CopyFrom(boundingbox)
         grid.ySize = src.height
@@ -41,9 +39,11 @@ def read_tiff(path, return_serialized=False):
     else:
         return gridfield
 
+
 def to_array(gridfield):
     grid = gridfield.grid
     return np.array(gridfield.values).reshape(grid.ySize, grid.xSize)
+
 
 def write(path, gridfield):
     path = str(path)
@@ -53,6 +53,7 @@ def write(path, gridfield):
     else:
         raise ValueError(f"Cannot write file with suffix {suffix}")
     return None
+
 
 def write_tiff(path, gridfield):
     data = to_array(gridfield)
@@ -73,4 +74,3 @@ def write_tiff(path, gridfield):
         ),
     ) as dst:
         dst.write(data, 1)
-
