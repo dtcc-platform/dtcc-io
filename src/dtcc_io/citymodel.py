@@ -7,13 +7,7 @@ import json
 import shapely.geometry
 import fiona
 
-from dtcc_model import (
-    Polygon,
-    Building,
-    LinearRing,
-    Vector2D,
-    CityModel,
-)
+from dtcc_model import Polygon, Building, LinearRing, Vector2D, CityModel
 
 
 def building_bounds(shp_footprint_file, buffer=0):

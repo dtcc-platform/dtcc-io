@@ -3,12 +3,7 @@ from rasterio.transform import from_origin
 import os
 import numpy as np
 
-from dtcc_model import (
-    Grid2D,
-    Vector2D,
-    GridField2D,
-    BoundingBox2D,
-)
+from dtcc_model import Grid2D, Vector2D, GridField2D, BoundingBox2D
 
 
 def read(path, return_serialized=False):

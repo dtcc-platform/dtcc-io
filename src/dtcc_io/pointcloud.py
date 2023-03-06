@@ -1,15 +1,16 @@
 from pathlib import Path
 import numpy as np
 import laspy
-from dtcc.io.dtcc_model.pblib.create_pb_pointcloud import PBPointCloud
-from dtcc.io.dtcc_model.protobuf.dtcc_pb2 import PointCloud
 from time import time
-from dtcc.io.bounds import bounds_union
+
+from dtcc_model import PointCloud, PBPointCloud
+from dtcc_io.bounds import bounds_union
 
 
 def las_file_bounds(las_file):
     src = laspy.read(las_file)
-    bounds = (src.header.x_min, src.header.y_min, src.header.x_max, src.header.y_max)
+    bounds = (src.header.x_min, src.header.y_min,
+              src.header.x_max, src.header.y_max)
     return bounds
 
 
@@ -116,8 +117,10 @@ def read_las(
     for filename in lasfiles:
         las = laspy.read(filename)
         if use_bounds_filter:
-            valid_pts = (las.xyz[:,0]>=bounds[0]) * (las.xyz[:,0]<=bounds[2]) #valid X
-            valid_pts *= (las.xyz[:,1]>=bounds[1]) * (las.xyz[:,1]<=bounds[3]) # valid Y
+            valid_pts = (las.xyz[:, 0] >= bounds[0]) * \
+                (las.xyz[:, 0] <= bounds[2])  # valid X
+            valid_pts *= (las.xyz[:, 1] >= bounds[1]) * \
+                (las.xyz[:, 1] <= bounds[3])  # valid Y
         else:
             valid_pts = np.ones(las.xyz.shape[0]).astype(bool)
         if pts is None:
@@ -130,8 +133,10 @@ def read_las(
                 (classification, np.array(las.classification)[valid_pts])
             )
         if not (points_only or points_classification_only):
-            intensity = np.concatenate((intensity, np.array(las.intensity)[valid_pts]))
-            returnNumber = np.concatenate((returnNumber, np.array(las.return_num)[valid_pts]))
+            intensity = np.concatenate(
+                (intensity, np.array(las.intensity)[valid_pts]))
+            returnNumber = np.concatenate(
+                (returnNumber, np.array(las.return_num)[valid_pts]))
             numberOfReturns = np.concatenate(
                 (numberOfReturns, np.array(las.num_returns)[valid_pts])
             )
@@ -140,7 +145,8 @@ def read_las(
     start_protobuf_pc = time()
     if pts is not None:
         # print("Calling PBPointCloud")
-        pb = PBPointCloud(pts, classification, intensity, returnNumber, numberOfReturns)
+        pb = PBPointCloud(pts, classification, intensity,
+                          returnNumber, numberOfReturns)
         # print("PBPointCloud called")
         # print(len(pb))
     else:
