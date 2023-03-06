@@ -9,7 +9,8 @@ version = "0.2.2"
 description = "DTCC IO"
 readme = "README.md"
 authors = [
-  { name = "Dag Wästberg", email = "dwastberg@gmail.com" }
+  { name = "Dag Wästberg", email = "dwastberg@gmail.com" },
+  { name = "Anders Logg", email = "logg@chalmers.se" }
 ]
 requires-python = ">=3.8"
 classifiers = [
@@ -20,9 +21,9 @@ classifiers = [
 ]
 dependencies = [
   "pybind11 >= 2.10.0, < 2.11.0",
-  "protobuf >= 3.20.0, < 3.21.0",  
+  "protobuf >= 3.20.0, < 3.21.0",
   "laspy[lazrs]",
-  "numpy",  
+  "numpy",
   "Fiona",
   "rasterio",
   "shapely",
