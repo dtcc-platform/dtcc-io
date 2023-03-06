@@ -4,9 +4,9 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 
-#include "dtcc.pb.h"
-#include "protobuf/include/VectorMethods.h"
-#include "protobuf/include/BoundingBoxMethods.h"
+#include "dtcc_model/dtcc.pb.h"
+#include "dtcc_model/VectorMethods.h"
+#include "dtcc_model/BoundingBoxMethods.h"
 
 namespace py = pybind11;
 using namespace DTCC;
