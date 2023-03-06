@@ -1,19 +1,20 @@
 # Copyright (C) 2022 Dag Wästberg
 # Licensed under the MIT License
 
-#%%
+# %%
 import json
 
 import shapely.geometry
 import fiona
 
-from dtcc.io.dtcc_model.protobuf.dtcc_pb2 import (
+from dtcc_model import (
     Polygon,
     Building,
     LinearRing,
     Vector2D,
     CityModel,
 )
+
 
 def building_bounds(shp_footprint_file, buffer=0):
     """calculate the bounding box of a shp file without loading it"""
@@ -24,7 +25,9 @@ def building_bounds(shp_footprint_file, buffer=0):
         bbox = (px - buffer, py - buffer, qx + buffer, qy + buffer)
     return bbox
 
-#%%
+# %%
+
+
 def cleanLinearRing(coords, tol=0.1):
     # s = shapely.geometry.Polygon(coords)
     # s = shapely.geometry.Polygon.orient(s, 1)  # make ccw
@@ -33,7 +36,7 @@ def cleanLinearRing(coords, tol=0.1):
     return coords
 
 
-#%%
+# %%
 def buildLinearRing(coords, clean=True):
     if clean:
         coords = cleanLinearRing(coords)
@@ -82,8 +85,8 @@ def read(
     uuid_field="id",
     height_field="",
     area_filter=None,
-    bounds = None,
-    min_edge_distance = 2.0,
+    bounds=None,
+    min_edge_distance=2.0,
     return_serialized=False,
 ):
     cityModel = CityModel()
@@ -133,7 +136,8 @@ def read(
                         and s["properties"][height_field]
                     ):
                         try:
-                            building.height = float(s["properties"][height_field])
+                            building.height = float(
+                                s["properties"][height_field])
                         except ValueError:
                             print(
                                 f"Error cannot parse height field: {s['properties'][height_field]}"
