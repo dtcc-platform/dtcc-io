@@ -3,7 +3,7 @@ import pyassimp.postprocess
 import meshio
 import numpy as np
 
-from dtcc_model import Vector3D, Simplex2D, Surface3D
+from dtcc_model import Vector3D, Simplex2D, Surface3D, Mesh3D
 
 
 def read(path, triangulate=False, return_serialized=False):
@@ -73,15 +73,21 @@ def create_3d_surface(vertices, faces, normals=None, return_serialized=False):
         return pb
 
 
-def write(path, pb_mesh):
+def write(path, pb_mesh, volume_mesh=False):
     path = str(path)
-    writer_libs = {
-        "obj": write_3d_surface_with_meshio,
-        "ply": write_3d_surface_with_meshio,
-        "stl": write_3d_surface_with_meshio,
-        "vtk": write_3d_surface_with_meshio,
-        "vtu": write_3d_surface_with_meshio,
-    }
+    if not volume_mesh:
+        writer_libs = {
+            "obj": write_3d_surface_with_meshio,
+            "ply": write_3d_surface_with_meshio,
+            "stl": write_3d_surface_with_meshio,
+            "vtk": write_3d_surface_with_meshio,
+            "vtu": write_3d_surface_with_meshio,
+        }
+    if volume_mesh:
+        writer_libs = {
+            "vtk": write_3d_volume_mesh_with_meshio,
+            "vtu": write_3d_volume_mesh_with_meshio,
+        }
     suffix = path.split(".")[-1].lower()
     if suffix in writer_libs:
         writer_libs[suffix](path, pb_mesh)
@@ -103,4 +109,17 @@ def write_3d_surface_with_meshio(path, pb_surface):
     if len(surface.normals) > 0:
         normals = [[n.x, n.y, n.z] for n in surface.normals]
         mesh.cell_data["normals"] = normals
+    meshio.write(path, mesh)
+
+def write_3d_volume_mesh_with_meshio(path, pb_mesh):
+    if type(pb_mesh) == bytes:
+        volume_mesh = Mesh3D()
+        volume_mesh.ParseFromString(volume_mesh)
+    else:
+        volume_mesh = pb_mesh
+    vertices = [[v.x, v.y, v.z] for v in volume_mesh.vertices]
+    cells = [[c.v0, c.v1, c.v2, c.v3] for c in volume_mesh.cells]
+
+    cells = [("tetra", cells)]
+    mesh = meshio.Mesh(vertices, cells)
     meshio.write(path, mesh)
