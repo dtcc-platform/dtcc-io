@@ -20,6 +20,7 @@ supported by Sweden’s Innovation Agency Vinnova under Grant No. 2019-421 00041
 
 * [Dag Wästerberg](https://chalmersindustriteknik.se/sv/medarbetare/dag-wastberg/)
 * [Anders Logg](http://anders.logg.org)
+* [Vasilis Naserentin](https://www.chalmers.se/personer/vasnas/)
 
 ## License
 
