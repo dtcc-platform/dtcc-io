@@ -99,7 +99,7 @@ def write(path, pb_mesh, volume_mesh=False):
 def write_3d_surface_with_meshio(path, pb_surface):
     if type(pb_surface) == bytes:
         surface = Surface3D()
-        surface.ParseFromString(surface)
+        surface.ParseFromString(pb_surface)
     else:
         surface = pb_surface
     vertices = [[v.x, v.y, v.z] for v in surface.vertices]
@@ -114,7 +114,7 @@ def write_3d_surface_with_meshio(path, pb_surface):
 def write_3d_volume_mesh_with_meshio(path, pb_mesh):
     if type(pb_mesh) == bytes:
         volume_mesh = Mesh3D()
-        volume_mesh.ParseFromString(volume_mesh)
+        volume_mesh.ParseFromString(pb_mesh)
     else:
         volume_mesh = pb_mesh
     vertices = [[v.x, v.y, v.z] for v in volume_mesh.vertices]
