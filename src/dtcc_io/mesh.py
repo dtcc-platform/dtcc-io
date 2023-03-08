@@ -102,8 +102,8 @@ def write_3d_surface_with_meshio(path, pb_surface):
         surface.ParseFromString(pb_surface)
     else:
         surface = pb_surface
-    vertices = [[v.x, v.y, v.z] for v in surface.vertices]
-    faces = [[f.v0, f.v1, f.v2] for f in surface.faces]
+    vertices = np.array([[v.x, v.y, v.z] for v in surface.vertices])
+    faces = np.array([[f.v0, f.v1, f.v2] for f in surface.faces])
     cells = [("triangle", faces)]
     mesh = meshio.Mesh(vertices, cells)
     if len(surface.normals) > 0:
@@ -117,8 +117,8 @@ def write_3d_volume_mesh_with_meshio(path, pb_mesh):
         volume_mesh.ParseFromString(pb_mesh)
     else:
         volume_mesh = pb_mesh
-    vertices = [[v.x, v.y, v.z] for v in volume_mesh.vertices]
-    cells = [[c.v0, c.v1, c.v2, c.v3] for c in volume_mesh.cells]
+    vertices = np.array([[v.x, v.y, v.z] for v in volume_mesh.vertices])
+    cells = np.array([[c.v0, c.v1, c.v2, c.v3] for c in volume_mesh.cells])
 
     cells = [("tetra", cells)]
     mesh = meshio.Mesh(vertices, cells)
