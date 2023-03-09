@@ -30,7 +30,7 @@ dependencies = [
   "shapely",
   "meshio",
   "pyassimp",
-  "dtcc-model@git+https://github.com/dtcc-platform/dtcc-model.git@dev/new-build-system"
+  "dtcc-model@git+https://github.com/dtcc-platform/dtcc-model.git@develop"
 ]
 
 [project.optional-dependencies]
