@@ -13,7 +13,7 @@ class TestCityModel(unittest.TestCase):
                 / ".."
                 / "data"
                 / "MinimalCase"
-                / "propertyMap.shp"
+                / "PropertyMap.shp"
             ).resolve()
         )
 
