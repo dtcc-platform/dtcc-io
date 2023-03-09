@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 
 import os, tempfile
-from dtcc import io
+import dtcc_io as io
 
 class TestMesh(unittest.TestCase):
     @classmethod

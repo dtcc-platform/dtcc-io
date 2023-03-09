@@ -2,7 +2,7 @@ import unittest
 
 from pathlib import Path
 
-from dtcc import io
+import dtcc_io as io
 
 class TestCityModel(unittest.TestCase):
     @classmethod

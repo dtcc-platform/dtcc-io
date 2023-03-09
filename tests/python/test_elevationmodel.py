@@ -4,7 +4,7 @@ from pathlib import Path
 
 import numpy as np
 import os, tempfile
-from dtcc import io
+import dtcc_io as io
 
 class TestMesh(unittest.TestCase):
     @classmethod
