@@ -1,5 +1,5 @@
-#include "protobuf/include/PointCloudMethods.h"
-#include "protobuf/include/VectorMethods.h"
+#include "dtcc_model/PointCloudMethods.h"
+#include "dtcc_model/VectorMethods.h"
 
 TEST_CASE("PointCloud")
 {
@@ -24,7 +24,7 @@ TEST_CASE("PointCloud")
     cls.push_back(6);
     cls.push_back(7);
     cls.push_back(8);
-  
+
 
     SECTION("Create PointCloud")
     {
@@ -45,4 +45,3 @@ TEST_CASE("PointCloud")
         REQUIRE(pc.bounds().q().y()==9);
     }
 }
-

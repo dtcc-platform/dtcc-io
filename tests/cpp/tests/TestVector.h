@@ -1,4 +1,4 @@
-#include "protobuf/include/VectorMethods.h"
+#include "dtcc_model/VectorMethods.h"
 
 TEST_CASE("Vectors")
 {
@@ -12,7 +12,7 @@ TEST_CASE("Vectors")
     v2.set_y(2.0);
     v2.set_z(1.0);
 
-    
+
     SECTION("Get and Set")
     {
         REQUIRE(v1.x() == 1.0);

@@ -2,8 +2,7 @@
 
 #include "catch.hpp"
 
-#include "protobuf/dtcc.pb.h"
-
+#include "dtcc_model/dtcc.pb.h"
 
 using namespace DTCC;
 #include "tests/TestVector.h"

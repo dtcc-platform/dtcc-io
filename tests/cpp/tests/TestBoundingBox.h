@@ -1,11 +1,11 @@
-#include "protobuf/include/BoundingBoxMethods.h"
+#include "dtcc_model/BoundingBoxMethods.h"
 
 TEST_CASE("BoundingBox")
 {
     SECTION("2D vector bounds")
     {
         std::vector<Vector2D> vecs;
-        
+
         Vector2D v1;
         v1.set_x(1.0);
         v1.set_y(2.0);
