@@ -30,12 +30,10 @@ set(PYBIND_LIBRARY bindings)
 pybind11_add_module(${PYBIND_LIBRARY} src/cpp/${PYBIND_LIBRARY}.cpp)
 target_link_libraries(${PYBIND_LIBRARY} PRIVATE ${DTCCMODEL_LIBRARIES} ${PROTOBUF_LIBRARY} Threads::Threads)
 target_compile_definitions(${PYBIND_LIBRARY} PRIVATE VERSION_INFO=${PROJECT_VERSION})
+install(TARGETS ${PYBIND_LIBRARY} DESTINATION dtcc_io)
 
 # FIXME: Why is this needed?
 link_directories(/usr/local/lib)
 
 # Add tests
 ADD_SUBDIRECTORY(tests/cpp)
-
-# Set install targets
-install(TARGETS ${PYBIND_LIBRARY} DESTINATION dtcc_io)
