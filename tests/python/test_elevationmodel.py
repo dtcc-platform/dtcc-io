@@ -14,7 +14,7 @@ class TestMesh(unittest.TestCase):
         )
 
     def test_load_elevation_model(self):
-        em = io.elevationmodel.read(self.dem_raster, return_serialized=False)
+        em = io.read_elevationmodel(self.dem_raster, return_serialized=False)
         self.assertEqual(em.grid.xStep, 0.5)
         self.assertEqual(em.grid.xSize, 50)
         self.assertEqual(em.grid.ySize, 50)
@@ -22,16 +22,16 @@ class TestMesh(unittest.TestCase):
         self.assertEqual(em.values[-1], (50 * 50) * 0.5)
 
     def test_to_array(self):
-        em = io.elevationmodel.read(self.dem_raster, return_serialized=False)
+        em = io.read_elevationmodel(self.dem_raster, return_serialized=False)
         data = io.elevationmodel.to_array(em)
         self.assertIsInstance(data,np.ndarray)
         self.assertEqual(data.shape, (50,50))
 
     def test_write_elevation_model(self):
-        em = io.elevationmodel.read(self.dem_raster, return_serialized=False)
+        em = io.read_elevationmodel(self.dem_raster, return_serialized=False)
         outfile = tempfile.NamedTemporaryFile(suffix=".tif", delete=False).name
-        io.elevationmodel.write(outfile, em)
-        em = io.elevationmodel.read(outfile, return_serialized=False)
+        io.write_elevationmodel(outfile, em)
+        em = io.read_elevationmodel(outfile, return_serialized=False)
         self.assertEqual(em.grid.xStep, 0.5)
         os.unlink(outfile)
     

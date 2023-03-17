@@ -18,9 +18,9 @@ class TestCityModel(unittest.TestCase):
         )
 
     def test_load_shp_buildings(self):
-        cm = io.citymodel.read(self.building_shp_file, "uuid")
+        cm = io.read_citymodel(self.building_shp_file, "uuid")
         self.assertEqual(len(cm.buildings), 5)
-        cm2 = io.citymodel.read(self.building_shp_file, "uuid", area_filter=36)
+        cm2 = io.read_citymodel(self.building_shp_file, "uuid", area_filter=36)
         self.assertEqual(len(cm2.buildings), 4)
     
     def test_buildings_bounds(self):

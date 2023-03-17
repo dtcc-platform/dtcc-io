@@ -15,13 +15,13 @@ class TestPointcloud(unittest.TestCase):
         )
 
     def test_load_pointcloud(self):
-        pc = io.pointcloud.read(self.building_las_file, return_serialized=False)
+        pc = io.read_pointcloud(self.building_las_file, return_serialized=False)
         self.assertEqual(len(pc.points), 8148)
         self.assertEqual(len(pc.classification), 8148)
         self.assertEqual(len(pc.usedClassifications), 2)
 
     def test_load_pointcloud_from_dir(self):
-        pc = io.pointcloud.read(self.data_dir, return_serialized=False)
+        pc = io.read_pointcloud(self.data_dir, return_serialized=False)
         self.assertEqual(len(pc.points), 8148)
 
     def test_load_pointcloud_bounded(self):
