@@ -51,7 +51,11 @@ def read(
             bounds=bounds,
             return_serialized=return_serialized,
         )
-    if suffix in [".las", ".laz"]:
+    if suffix in [".pb", ".pb2"]:
+        pc = PointCloud()
+        pc.ParseFromString(path.read_bytes())
+        return pc
+    elif suffix in [".las", ".laz"]:
         return read_las(
             path,
             points_only=points_only,
@@ -59,7 +63,7 @@ def read(
             bounds=bounds,
             return_serialized=return_serialized,
         )
-    if suffix in [".csv"]:
+    elif suffix in [".csv"]:
         return read_csv(
             path,
             delimiter=delimiter,

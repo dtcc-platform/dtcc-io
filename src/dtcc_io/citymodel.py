@@ -83,7 +83,11 @@ def read(
     min_edge_distance=2.0,
     return_serialized=False,
 ):
+    filename = Path(filename)
     cityModel = CityModel()
+    if filename.suffix.lower() in [".pb", ".pb2"]:
+        cityModel.ParseFromString(filename.read_bytes())
+        return cityModel
     buildings = []
     has_height_field = len(height_field) > 0
     if bounds is not None:
@@ -185,9 +189,14 @@ def write(city_model, out_file, output_format=""):
         output_format = out_file.suffix.lower()
     if not output_format.startswith("."):
         output_format = "." + output_format
-    if not output_format in [".shp", ".json", ".geojson", ".gpkg"]:
-        print(f"Error! Format {output_format} not recognized")
+    supported_formats = [".shp", ".json", ".geojson", ".gpkg",".pb",".pb2"]
+    if not output_format in supported_formats:
+        print(f"Error! Format {output_format} not recognized, currently supported formats are: {supported_formats}")
         return None
+    if output_format == ".pb" or output_format == ".pb2":
+        with open(out_file, "wb") as dst:
+            dst.write(city_model.SerializeToString())
+        return True
     driver = {
         ".shp": "ESRI Shapefile",
         ".json": "GeoJSON",
