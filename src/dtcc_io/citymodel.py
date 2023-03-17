@@ -3,7 +3,7 @@
 
 # %%
 import json
-
+from pathlib import Path
 import shapely.geometry
 import fiona
 
@@ -180,8 +180,9 @@ def loadCityModelJson(
 
 
 def write(city_model, out_file, output_format=""):
+    out_file = Path(out_file)
     if output_format == "":
-        output_format = out_file.split(".")[-1].lower()
+        output_format = out_file.suffix.lower()
     if not output_format.startswith("."):
         output_format = "." + output_format
     if not output_format in [".shp", ".json", ".geojson", ".gpkg"]:

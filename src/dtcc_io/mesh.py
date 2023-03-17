@@ -2,13 +2,14 @@ import pyassimp
 import pyassimp.postprocess
 import meshio
 import numpy as np
+from pathlib import Path
 
 from dtcc_model import Vector3D, Simplex2D, Surface3D, Mesh3D
 
 
 def read(path, triangulate=False, return_serialized=False):
-    path = str(path)
-    suffix = path.split(".")[-1].lower()
+    path = Path(path)
+    suffix = path.suffix.lower()[1:] # remove leading dot
     reader_libs = {
         "obj": read_with_meshio,
         "ply": read_with_meshio,

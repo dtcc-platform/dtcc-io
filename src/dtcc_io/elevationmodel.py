@@ -2,13 +2,15 @@ import rasterio
 from rasterio.transform import from_origin
 import os
 import numpy as np
+from pathlib import Path
 
 from dtcc_model import Grid2D, Vector2D, GridField2D, BoundingBox2D
 
 
 def read(path, return_serialized=False):
-    path = str(path)
-    suffix = path.split(".")[-1].lower()
+
+    path = Path(path)
+    suffix = path.suffix.lower()[1:]
     if suffix in ["tif", "tiff"]:
         return read_tiff(path, return_serialized=return_serialized)
     else:
@@ -46,8 +48,8 @@ def to_array(gridfield):
 
 
 def write(path, gridfield):
-    path = str(path)
-    suffix = path.split(".")[-1].lower()
+    path = Path(path)
+    suffix = path.suffix.lower()[1:]
     if suffix in ["tif", "tiff"]:
         return write_tiff(path, gridfield)
     else:
