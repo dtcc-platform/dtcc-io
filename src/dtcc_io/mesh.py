@@ -4,7 +4,7 @@ import meshio
 import numpy as np
 from pathlib import Path
 
-from dtcc_model import Vector3D, Simplex2D, Surface3D, Mesh3D
+from dtcc_model import Vector3D, Simplex2D, Surface3D, Mesh3D, Mesh2D
 
 
 def read(path, triangulate=False, return_serialized=False):
@@ -74,9 +74,9 @@ def create_3d_surface(vertices, faces, normals=None, return_serialized=False):
         return pb
 
 
-def write(path, pb_mesh, volume_mesh=False):
+def write(path, pb_mesh):
     path = str(path)
-    if not volume_mesh:
+    if isinstance(pb_mesh, Surface3D):
         writer_libs = {
             "obj": write_3d_surface_with_meshio,
             "ply": write_3d_surface_with_meshio,
@@ -84,11 +84,13 @@ def write(path, pb_mesh, volume_mesh=False):
             "vtk": write_3d_surface_with_meshio,
             "vtu": write_3d_surface_with_meshio,
         }
-    if volume_mesh:
+    if isinstance(pb_mesh, Mesh3D):
         writer_libs = {
             "vtk": write_3d_volume_mesh_with_meshio,
             "vtu": write_3d_volume_mesh_with_meshio,
         }
+    if isinstance(pb_mesh, Mesh2D):
+        raise NotImplementedError("Writing 2D meshes is not implemeted yet")
     suffix = path.split(".")[-1].lower()
     if suffix in writer_libs:
         writer_libs[suffix](path, pb_mesh)
