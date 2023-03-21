@@ -84,6 +84,8 @@ def read(
     return_serialized=False,
 ):
     filename = Path(filename)
+    if not filename.is_file():
+        raise FileNotFoundError(f"File {filename} not found")
     cityModel = CityModel()
     if filename.suffix.lower() in [".pb", ".pb2"]:
         cityModel.ParseFromString(filename.read_bytes())
@@ -92,6 +94,12 @@ def read(
     has_height_field = len(height_field) > 0
     if bounds is not None:
         bounds = shapely.geometry.box(*bounds).buffer(-min_edge_distance)
+    try:
+        f = fiona.open(filename)
+        f.close()
+    except fiona.errors.DriverError:
+        raise ValueError(f"File {filename} is not a valid file format")
+    
     with fiona.open(filename) as src:
         for s in src:
 
@@ -184,6 +192,9 @@ def loadCityModelJson(
 
 
 def write(city_model, out_file, output_format=""):
+
+    offset = (city_model.georeference.x0,city_model.georeference.y0)
+
     out_file = Path(out_file)
     if output_format == "":
         output_format = out_file.suffix.lower()
@@ -211,6 +222,7 @@ def write(city_model, out_file, output_format=""):
     with fiona.open(out_file, "w", driver[output_format], schema) as dst:
         for building in city_model.buildings:
             shapely_footprint = pbFootprint2Shapely(building.footPrint)
+            shapely_footprint = shapely.affinity.translate(shapely_footprint, xoff=offset[0], yoff=offset[1])
             dst.write(
                 {
                     "geometry": shapely.geometry.mapping(shapely_footprint),
