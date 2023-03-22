@@ -5,6 +5,8 @@
 import json
 from pathlib import Path
 import shapely.geometry
+import shapely.ops
+import shapely.affinity
 import fiona
 
 from dtcc_model import Polygon, Building, LinearRing, Vector2D, CityModel
