@@ -28,10 +28,10 @@ class TestMesh(unittest.TestCase):
         self.assertEqual(data.shape, (50,50))
 
     def test_write_elevation_model(self):
-        em = io.read_elevationmodel(self.dem_raster, return_serialized=False)
+        em = io.load_elevationmodel(self.dem_raster, return_serialized=False)
         outfile = tempfile.NamedTemporaryFile(suffix=".tif", delete=False).name
-        io.write_elevationmodel(outfile, em)
-        em = io.read_elevationmodel(outfile, return_serialized=False)
+        io.save_elevationmodel(outfile, em)
+        em = io.load_elevationmodel(outfile, return_serialized=False)
         self.assertEqual(em.grid.xStep, 0.5)
         os.unlink(outfile)
     

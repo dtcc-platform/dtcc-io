@@ -76,7 +76,7 @@ def pbFootprint2Shapely(pb_footprint):
     return poly
 
 
-def read(
+def load(
     filename,
     uuid_field="id",
     height_field="",
@@ -193,7 +193,7 @@ def loadCityModelJson(
         return cityModel
 
 
-def write(city_model, out_file, output_format=""):
+def save(city_model, out_file, output_format=""):
 
     offset = (city_model.georeference.x0,city_model.georeference.y0)
 

@@ -16,16 +16,16 @@ class TestMesh(unittest.TestCase):
         )
     
     def test_load_meshio_mesh(self):
-        mesh = io.read_mesh(self.stl_mesh_cube, return_serialized=False)
+        mesh = io.load_mesh(self.stl_mesh_cube, return_serialized=False)
         self.assertEqual(len(mesh.vertices), 24)
         self.assertEqual(len(mesh.faces), 44)
 
     def test_write_meshio_mesh(self):
-        mesh = io.read_mesh(self.stl_mesh_cube, return_serialized=False)
+        mesh = io.load_mesh(self.stl_mesh_cube, return_serialized=False)
         outfile = tempfile.NamedTemporaryFile(suffix=".vtk", delete=False)
         outpath = Path(outfile.name)
-        io.write_mesh(outpath, mesh)
-        mesh = io.read_mesh(outpath, return_serialized=False)
+        io.save_mesh(outpath, mesh)
+        mesh = io.load_mesh(outpath, return_serialized=False)
         self.assertEqual(len(mesh.vertices), 24)
         self.assertEqual(len(mesh.faces), 44)
         outfile.close()

@@ -8,7 +8,7 @@ from dtcc_model import Vector3D, Simplex2D, Surface3D, Mesh3D, Mesh2D
 
 mesh_types = ["surface", "volume", "2d"]
 
-def read(path, return_serialized=False, mesh_type="surface"):
+def load(path, return_serialized=False, mesh_type="surface"):
     
     
     mesh_type = mesh_type.lower()
@@ -18,18 +18,18 @@ def read(path, return_serialized=False, mesh_type="surface"):
     path = Path(path)
     suffix = path.suffix.lower()[1:] # remove leading dot
     reader_libs = {
-        "pb":   read_protobuf,
-        "pb2":  read_protobuf,
-        "obj": read_with_meshio,
-        "ply": read_with_meshio,
-        "stl": read_with_meshio,
-        "vtk": read_with_meshio,
-        "vtu": read_with_meshio,
+        "pb":   load_protobuf,
+        "pb2":  load_protobuf,
+        "obj": load_with_meshio,
+        "ply": load_with_meshio,
+        "stl": load_with_meshio,
+        "vtk": load_with_meshio,
+        "vtu": load_with_meshio,
 
-        "dae": read_with_assimp,
-        "fbx": read_with_assimp,
-        "gltf": read_with_assimp,
-        "glb": read_with_assimp
+        "dae": load_with_assimp,
+        "fbx": load_with_assimp,
+        "gltf": load_with_assimp,
+        "glb": load_with_assimp
     }
     print(f"Reading mesh from {path}")
     if suffix in reader_libs:
@@ -44,7 +44,7 @@ def read(path, return_serialized=False, mesh_type="surface"):
     # mesh = scene.meshes[0]
     # if mesh.vertices.shape[1] == 3:
     #     if mesh.faces.shape[1] == 3:
-    #         return read_3d_surface(mesh, return_serialized)
+    #         return load_3d_surface(mesh, return_serialized)
     #     else:
     #         raise NotImplementedError(
     #             "Only triangular surface meshes are supported"
@@ -52,7 +52,7 @@ def read(path, return_serialized=False, mesh_type="surface"):
     # else:
     #     print(f"Cannot read mesh with {mesh.vertices.shape[1]} dimensions")
 
-def read_protobuf(path, return_serialized=False, mesh_type="surface"):
+def load_protobuf(path, return_serialized=False, mesh_type="surface"):
     if return_serialized:
         return open(path, "rb").read()
     if mesh_type == "surface":
@@ -67,7 +67,7 @@ def read_protobuf(path, return_serialized=False, mesh_type="surface"):
         pb_mesh.ParseFromString(f.read())
     return pb_mesh
 
-def read_with_assimp(path, return_serialized=False, mesh_type="surface"):
+def load_with_assimp(path, return_serialized=False, mesh_type="surface"):
     scene = pyassimp.load(path, pyassimp.postprocess.aiProcess_Triangulate)
     print(f"Loaded {len(scene.meshes)} meshes")
     mesh = scene.meshes[0]
@@ -77,7 +77,7 @@ def read_with_assimp(path, return_serialized=False, mesh_type="surface"):
     return create_3d_surface(mesh.vertices, mesh.faces, mesh.normals, return_serialized=return_serialized)
 
 
-def read_with_meshio(path, return_serialized=False, mesh_type="surface"):
+def load_with_meshio(path, return_serialized=False, mesh_type="surface"):
     mesh = meshio.read(path)
     # print(mesh)
     vertices = mesh.points
@@ -97,24 +97,24 @@ def create_3d_surface(vertices, faces, normals=None, return_serialized=False):
         return pb
 
 
-def write(path, pb_mesh):
+def save(path, pb_mesh):
     path = str(path)
     if isinstance(pb_mesh, Surface3D):
         writer_libs = {
-            "pb": write_to_pb,
-            "pb2": write_to_pb,
-            "obj": write_3d_surface_with_meshio,
-            "ply": write_3d_surface_with_meshio,
-            "stl": write_3d_surface_with_meshio,
-            "vtk": write_3d_surface_with_meshio,
-            "vtu": write_3d_surface_with_meshio,
+            "pb": save_to_pb,
+            "pb2": save_to_pb,
+            "obj": save_3d_surface_with_meshio,
+            "ply": save_3d_surface_with_meshio,
+            "stl": save_3d_surface_with_meshio,
+            "vtk": save_3d_surface_with_meshio,
+            "vtu": save_3d_surface_with_meshio,
         }
     if isinstance(pb_mesh, Mesh3D):
         writer_libs = {
-            "pb": write_to_pb,
-            "pb2": write_to_pb,
-            "vtk": write_3d_volume_mesh_with_meshio,
-            "vtu": write_3d_volume_mesh_with_meshio,
+            "pb": save_to_pb,
+            "pb2": save_to_pb,
+            "vtk": save_3d_volume_mesh_with_meshio,
+            "vtu": save_3d_volume_mesh_with_meshio,
         }
     if isinstance(pb_mesh, Mesh2D):
         raise NotImplementedError("Writing 2D meshes is not implemeted yet")
@@ -125,11 +125,11 @@ def write(path, pb_mesh):
         raise ValueError(
             f"Unknown file format: {suffix}, supported formats are: {list(writer_libs.keys())}")
     
-def write_to_pb(path, pb_mesh):
+def save_to_pb(path, pb_mesh):
     with open(path, "wb") as f:
         f.write(pb_mesh.SerializeToString())
 
-def write_3d_surface_with_meshio(path, pb_surface):
+def save_3d_surface_with_meshio(path, pb_surface):
     if type(pb_surface) == bytes:
         surface = Surface3D()
         surface.ParseFromString(pb_surface)
@@ -144,7 +144,7 @@ def write_3d_surface_with_meshio(path, pb_surface):
         mesh.cell_data["normals"] = normals
     meshio.write(path, mesh)
 
-def write_3d_volume_mesh_with_meshio(path, pb_mesh):
+def save_3d_volume_mesh_with_meshio(path, pb_mesh):
     if type(pb_mesh) == bytes:
         volume_mesh = Mesh3D()
         volume_mesh.ParseFromString(pb_mesh)

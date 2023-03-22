@@ -7,18 +7,18 @@ from pathlib import Path
 from dtcc_model import Grid2D, Vector2D, GridField2D, BoundingBox2D
 
 
-def read(path, return_serialized=False):
+def load(path, return_serialized=False):
 
     path = Path(path)
     suffix = path.suffix.lower()[1:]
     if suffix in ["tif", "tiff"]:
-        return read_tiff(path, return_serialized=return_serialized)
+        return load_tiff(path, return_serialized=return_serialized)
     else:
         raise ValueError(f"Cannot read file with suffix {suffix}")
     return None
 
 
-def read_tiff(path, return_serialized=False):
+def load_tiff(path, return_serialized=False):
     with rasterio.open(path) as src:
         data = src.read()
         data = data[0, :, :]
@@ -47,17 +47,17 @@ def to_array(gridfield):
     return np.array(gridfield.values).reshape(grid.ySize, grid.xSize)
 
 
-def write(path, gridfield):
+def save(path, gridfield):
     path = Path(path)
     suffix = path.suffix.lower()[1:]
     if suffix in ["tif", "tiff"]:
-        return write_tiff(path, gridfield)
+        return save_tiff(path, gridfield)
     else:
         raise ValueError(f"Cannot write file with suffix {suffix}")
     return None
 
 
-def write_tiff(path, gridfield):
+def save_tiff(path, gridfield):
     data = to_array(gridfield)
     grid = gridfield.grid
     with rasterio.open(
