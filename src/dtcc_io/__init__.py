@@ -18,6 +18,8 @@ read_citymodel = citymodel.load
 write_citymodel = citymodel.save
 load_citymodel = citymodel.load
 save_citymodel = citymodel.save
+load_footprints = citymodel.load
+save_footprints = citymodel.save
 
 read_elevationmodel = elevationmodel.load
 write_elevationmodel = elevationmodel.save
