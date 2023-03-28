@@ -144,8 +144,7 @@ def load_las(
             numberOfReturns = np.concatenate(
                 (numberOfReturns, np.array(las.num_returns)[valid_pts])
             )
-        print(classification.shape)
-    print(f"loading with laspy {time()-start_laspy}")
+    #print(f"loading with laspy {time()-start_laspy}")
     start_protobuf_pc = time()
     if pts is not None:
         # print("Calling PBPointCloud")
@@ -155,13 +154,14 @@ def load_las(
         # print(len(pb))
     else:
         return None
-    print(f"converting las to pb {time()-start_protobuf_pc}")
-
+    #print(f"converting las to pb {time()-start_protobuf_pc}")
     if return_serialized:
         return pb
     else:
         pc = PointCloud()
         pc.ParseFromString(pb)
+        print(f"loaded {len(pc.points)} points from {len(lasfiles)} files")
+
         return pc
 
 
