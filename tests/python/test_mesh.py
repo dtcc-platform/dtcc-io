@@ -1,5 +1,6 @@
 import unittest
 
+import json
 from pathlib import Path
 
 import os, tempfile
@@ -35,6 +36,21 @@ class TestMesh(unittest.TestCase):
             outpath_dir.rmdir()
         except OSError:
             pass
+    def test_write_to_json(self):
+        mesh = io.load_mesh(self.stl_mesh_cube, return_serialized=False)
+        outfile = tempfile.NamedTemporaryFile(suffix=".json", delete=False)
+        outpath = Path(outfile.name)
+        io.save_mesh(mesh, outfile.name)
+        with open(outpath, "r") as f:
+            json_data = json.load(f)
+        self.assertEqual(len(json_data["vertices"]), 24)
+        outpath_dir = outpath.parent
+        outpath.unlink()
+        try:
+            outpath_dir.rmdir()
+        except OSError:
+            pass
+
 
 if __name__ == "__main__":
     unittest.main()

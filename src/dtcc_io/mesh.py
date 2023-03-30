@@ -123,16 +123,16 @@ def save(pb_mesh, path):
         raise NotImplementedError("Writing 2D meshes is not implemeted yet")
     suffix = path.split(".")[-1].lower()
     if suffix in writer_libs:
-        writer_libs[suffix](path, pb_mesh)
+        writer_libs[suffix](pb_mesh, path)
     else:
         raise ValueError(
             f"Unknown file format: {suffix}, supported formats are: {list(writer_libs.keys())}")
     
-def save_to_pb(path, pb_mesh):
+def save_to_pb(pb_mesh, path):
     with open(path, "wb") as f:
         f.write(pb_mesh.SerializeToString())
 
-def save_3d_surface_with_meshio(path, pb_surface):
+def save_3d_surface_with_meshio(pb_surface, path):
     if type(pb_surface) == bytes:
         surface = Surface3D()
         surface.ParseFromString(pb_surface)
@@ -147,7 +147,7 @@ def save_3d_surface_with_meshio(path, pb_surface):
         mesh.cell_data["normals"] = normals
     meshio.write(path, mesh)
 
-def save_3d_volume_mesh_with_meshio(path, pb_mesh):
+def save_3d_volume_mesh_with_meshio(pb_mesh, path):
     if type(pb_mesh) == bytes:
         volume_mesh = Mesh3D()
         volume_mesh.ParseFromString(pb_mesh)

@@ -178,7 +178,7 @@ def save(pointcloud, outfile):
     if suffix in [".pb", ".pb2"]:
         outfile.save_bytes(pointcloud.SerializeToString())
     if suffix in [".json"]:
-        protobuf_to_json(outfile, pointcloud)
+        protobuf_to_json(pointcloud, outfile)
     else:
         print(f"Cannot write file with suffix {suffix}")
 
