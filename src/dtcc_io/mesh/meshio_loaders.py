@@ -1,6 +1,6 @@
 import meshio
 import numpy as np
-from dtcc_io.mesh.mesh import create_3d_surface
+from dtcc_io.mesh.utils import create_3d_surface
 from dtcc_model import Surface3D, Mesh3D, Mesh2D
 
 def load_with_meshio(path, return_serialized=False, mesh_type="surface"):
