@@ -4,6 +4,7 @@ import meshio
 import numpy as np
 from pathlib import Path
 
+from .utils import protobuf_to_json
 from dtcc_model import Vector3D, Simplex2D, Surface3D, Mesh3D, Mesh2D
 
 mesh_types = ["surface", "volume", "2d"]
@@ -97,7 +98,7 @@ def create_3d_surface(vertices, faces, normals=None, return_serialized=False):
         return pb
 
 
-def save(path, pb_mesh):
+def save(pb_mesh, path):
     path = str(path)
     if isinstance(pb_mesh, Surface3D):
         writer_libs = {
@@ -108,6 +109,7 @@ def save(path, pb_mesh):
             "stl": save_3d_surface_with_meshio,
             "vtk": save_3d_surface_with_meshio,
             "vtu": save_3d_surface_with_meshio,
+            "json" : protobuf_to_json
         }
     if isinstance(pb_mesh, Mesh3D):
         writer_libs = {
@@ -115,6 +117,7 @@ def save(path, pb_mesh):
             "pb2": save_to_pb,
             "vtk": save_3d_volume_mesh_with_meshio,
             "vtu": save_3d_volume_mesh_with_meshio,
+            "json" : protobuf_to_json
         }
     if isinstance(pb_mesh, Mesh2D):
         raise NotImplementedError("Writing 2D meshes is not implemeted yet")

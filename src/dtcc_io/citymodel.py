@@ -9,6 +9,7 @@ import shapely.ops
 import shapely.affinity
 import fiona
 
+from .utils import protobuf_to_json
 from dtcc_model import Polygon, Building, LinearRing, Vector2D, CityModel
 
 
@@ -210,9 +211,11 @@ def save(city_model, out_file, output_format=""):
         with open(out_file, "wb") as dst:
             dst.write(city_model.SerializeToString())
         return True
+    if output_format == ".json":
+        protobuf_to_json(city_model, out_file)
+        return True
     driver = {
         ".shp": "ESRI Shapefile",
-        ".json": "GeoJSON",
         ".geojson": "GeoJSON",
         ".gpkg": "GPKG",
     }

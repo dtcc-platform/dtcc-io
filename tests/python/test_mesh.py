@@ -24,7 +24,7 @@ class TestMesh(unittest.TestCase):
         mesh = io.load_mesh(self.stl_mesh_cube, return_serialized=False)
         outfile = tempfile.NamedTemporaryFile(suffix=".vtk", delete=False)
         outpath = Path(outfile.name)
-        io.save_mesh(outpath, mesh)
+        io.save_mesh(mesh, outfile.name)
         mesh = io.load_mesh(outpath, return_serialized=False)
         self.assertEqual(len(mesh.vertices), 24)
         self.assertEqual(len(mesh.faces), 44)
