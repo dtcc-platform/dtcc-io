@@ -8,6 +8,7 @@ import shapely.geometry
 import shapely.ops
 import shapely.affinity
 import fiona
+import pyproj
 
 from .utils import protobuf_to_json
 from dtcc_model import Polygon, Building, LinearRing, Vector2D, CityModel
@@ -104,6 +105,11 @@ def load(
         raise ValueError(f"File {filename} is not a valid file format")
     
     with fiona.open(filename) as src:
+        crs = str(src.crs)
+        try:
+            epsg = int(crs.split(":")[1])
+        except ValueError:
+            epsg = None
         for s in src:
 
             if area_filter is not None and area_filter > 0:
@@ -155,6 +161,9 @@ def load(
                     building.footPrint.CopyFrom(footprint)
                     buildings.append(building)
     cityModel.buildings.extend(buildings)
+    cityModel.georeference.crs = crs
+    if epsg is not None:
+        cityModel.georeference.epsg = epsg
     if return_serialized:
         return cityModel.SerializeToString()
     else:
@@ -219,15 +228,23 @@ def save(city_model, out_file, output_format=""):
         ".geojson": "GeoJSON",
         ".gpkg": "GPKG",
     }
-
+    crs = city_model.georeference.crs
+    if driver == "GeoJSON" and crs:
+        #geojson needs to be in lat/lon
+        wgs84 = pyproj.CRS('EPSG:4326')
+        cm_crs = pyproj.CRS(crs) #don't hardcode this
+        wgs84_projection = pyproj.Transformer.from_crs(cm_crs, wgs84, always_xy=True)
+        crs = "EPSG:4326"
     schema = {
         "geometry": "Polygon",
         "properties": {"id": "str", "height": "float", "ground_height": "float"},
     }
-    with fiona.open(out_file, "w", driver[output_format], schema) as dst:
+    with fiona.open(out_file, "w", driver[output_format], schema, crs=crs) as dst:
         for building in city_model.buildings:
             shapely_footprint = pbFootprint2Shapely(building.footPrint)
             shapely_footprint = shapely.affinity.translate(shapely_footprint, xoff=offset[0], yoff=offset[1])
+            if driver == "GeoJSON":
+                shapely_footprint = shapely.ops.transform(wgs84_projection.transform, shapely_footprint)
             dst.write(
                 {
                     "geometry": shapely.geometry.mapping(shapely_footprint),

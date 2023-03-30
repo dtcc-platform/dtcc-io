@@ -25,6 +25,10 @@ class TestCityModel(unittest.TestCase):
         cm2 = io.load_footprints(self.building_shp_file, "uuid", area_filter=36)
         self.assertEqual(len(cm2.buildings), 4)
     
+    def test_read_crs(self):
+        cm = io.load_footprints(self.building_shp_file)
+        self.assertEqual(cm.georeference.crs.lower(), "epsg:3857")
+    
     def test_buildings_bounds(self):
         bounds = io.citymodel.building_bounds(self.building_shp_file)
         self.assertAlmostEqual(bounds[0], -5.14247442, places=3)
