@@ -40,10 +40,42 @@ class TestMesh(unittest.TestCase):
         mesh = io.load_mesh(self.stl_mesh_cube, return_serialized=False)
         outfile = tempfile.NamedTemporaryFile(suffix=".json", delete=False)
         outpath = Path(outfile.name)
-        io.save_mesh(mesh, outfile.name)
+        io.save_mesh(mesh, outpath)
         with open(outpath, "r") as f:
             json_data = json.load(f)
         self.assertEqual(len(json_data["vertices"]), 24)
+        outpath_dir = outpath.parent
+        outpath.unlink()
+        try:
+            outpath_dir.rmdir()
+        except OSError:
+            pass
+    def test_write_gltf(self):
+        mesh = io.load_mesh(self.stl_mesh_cube, return_serialized=False)
+        outfile = tempfile.NamedTemporaryFile(suffix=".gltf", delete=False)
+        outpath = Path(outfile.name)
+        #outpath = Path("test_cube.gltf")
+        io.save_mesh(mesh, outpath)
+        #mesh = io.load_mesh(outpath, return_serialized=False)
+        #self.assertEqual(len(mesh.vertices), 24)
+        #self.assertEqual(len(mesh.faces), 44)
+        outfile.close()
+        outpath_dir = outpath.parent
+        outpath.unlink()
+        try:
+            outpath_dir.rmdir()
+        except OSError:
+            pass
+    
+    def test_write_glb(self):
+        mesh = io.load_mesh(self.stl_mesh_cube, return_serialized=False)
+        outfile = tempfile.NamedTemporaryFile(suffix=".glb", delete=False)
+        outpath = Path(outfile.name)
+        io.save_mesh(mesh, outpath)
+        #mesh = io.load_mesh(outpath, return_serialized=False)
+        #self.assertEqual(len(mesh.vertices), 24)
+        #self.assertEqual(len(mesh.faces), 44)
+        outfile.close()
         outpath_dir = outpath.parent
         outpath.unlink()
         try:

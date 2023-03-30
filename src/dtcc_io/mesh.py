@@ -1,8 +1,10 @@
 import pyassimp
 import pyassimp.postprocess
 import meshio
+import pygltflib
 import numpy as np
 from pathlib import Path
+import base64
 
 from .utils import protobuf_to_json
 from dtcc_model import Vector3D, Simplex2D, Surface3D, Mesh3D, Mesh2D
@@ -69,6 +71,7 @@ def load_protobuf(path, return_serialized=False, mesh_type="surface"):
     return pb_mesh
 
 def load_with_assimp(path, return_serialized=False, mesh_type="surface"):
+    path = str(path)
     scene = pyassimp.load(path, pyassimp.postprocess.aiProcess_Triangulate)
     print(f"Loaded {len(scene.meshes)} meshes")
     mesh = scene.meshes[0]
@@ -109,6 +112,10 @@ def save(pb_mesh, path):
             "stl": save_3d_surface_with_meshio,
             "vtk": save_3d_surface_with_meshio,
             "vtu": save_3d_surface_with_meshio,
+            "gltf": save_3d_surface_with_gltflib,
+            "gltf2": save_3d_surface_with_gltflib,
+            "glb": save_3d_surface_with_gltflib,
+
             "json" : protobuf_to_json
         }
     if isinstance(pb_mesh, Mesh3D):
@@ -159,3 +166,61 @@ def save_3d_volume_mesh_with_meshio(pb_mesh, path):
     cells = [("tetra", cells)]
     mesh = meshio.Mesh(vertices, cells)
     meshio.write(path, mesh)
+
+def save_3d_surface_with_gltflib(pb_mesh, path):
+    suffix = Path(path).suffix.lower()
+    if suffix.startswith(".gltf"):
+        write_format = "json"
+    elif suffix.startswith(".glb"):
+        write_format = "binary"
+    if type(pb_mesh) == bytes:
+        surface = Surface3D()
+        surface.ParseFromString(pb_mesh)
+    else:
+        surface = pb_mesh
+    vertices = np.array([[v.x, v.y, v.z] for v in surface.vertices],dtype=np.float32)
+    faces = np.array([[f.v0, f.v1, f.v2] for f in surface.faces], dtype=np.uint32)
+    # normals = [[n.x, n.y, n.z] for n in surface.normals]
+    #data = np.concatenate([vertices, faces]).tobytes()
+
+    triangles_binary_blob = faces.flatten().tobytes()
+    points_binary_blob = vertices.tobytes()
+    data = triangles_binary_blob + points_binary_blob
+
+    # Create a glTF asset
+    model = pygltflib.GLTF2()
+    scene = pygltflib.Scene(nodes=[0])
+    model.scenes.append(scene)
+    model.scene = 0
+    nodes=pygltflib.Node(mesh=0)
+    model.nodes.append(nodes)
+
+    buffer = pygltflib.Buffer()
+    buffer.byteLength = len(data)
+    model.buffers.append(buffer)
+
+    model.set_binary_blob(data)
+
+    triangle_accessor = pygltflib.Accessor(bufferView=0, componentType=pygltflib.UNSIGNED_INT, count=faces.size, type=pygltflib.SCALAR, max=[int(faces.max())],
+                min=[int(faces.min())],)
+    model.accessors.append(triangle_accessor)
+    points_accessor = pygltflib.Accessor(bufferView=1, componentType=pygltflib.FLOAT, count=len(vertices), type=pygltflib.VEC3, max=vertices.max(axis=0).tolist(),
+                min=vertices.min(axis=0).tolist())
+    model.accessors.append(points_accessor)
+
+    triangle_view  = pygltflib.BufferView(buffer=0, byteLength=len(triangles_binary_blob), byteOffset=0, target=pygltflib.ELEMENT_ARRAY_BUFFER)
+    model.bufferViews.append(triangle_view)
+    points_view  = pygltflib.BufferView(buffer=0, byteLength=len(points_binary_blob), byteOffset=len(triangles_binary_blob), target=pygltflib.ARRAY_BUFFER)
+    model.bufferViews.append(points_view)
+
+    mesh = pygltflib.Mesh()
+    primitive = pygltflib.Primitive(attributes={"POSITION": 1}, indices=0)
+    mesh.primitives.append(primitive)
+    model.meshes.append(mesh)
+
+    if write_format == "json":
+        buffer.uri = "data:application/octet-stream;base64," + base64.b64encode(data).decode("utf-8")
+    elif write_format == "binary":
+        model.set_binary_blob(data)
+
+    model.save(path)
