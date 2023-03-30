@@ -1,12 +1,7 @@
 from pathlib import Path
 
 from dtcc_io.utils import protobuf_to_json, save_to_pb
-from dtcc_io.mesh.utils import (
-    create_3d_surface,
-    create_3d_volume_mesh,
-    create_2d_mesh,
-    load_protobuf,
-)
+from dtcc_io.mesh.utils import load_protobuf
 
 from dtcc_io.mesh.meshio_loaders import (
     load_with_meshio,
