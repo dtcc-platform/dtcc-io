@@ -1,13 +1,20 @@
 import dtcc_io.bounds as bounds
 import dtcc_io.citymodel as citymodel
 import dtcc_io.elevationmodel as elevationmodel
-import dtcc_io.mesh as mesh
+import dtcc_io.mesh.mesh as mesh
 import dtcc_io.pointcloud as pointcloud
 
-read_mesh = mesh.load
-write_mesh = mesh.save
-load_mesh = mesh.load
-save_mesh = mesh.save
+read_surface3d = mesh.load_surface3d
+write_surface3d = mesh.save_surface3d
+load_surface3d = mesh.load_surface3d
+save_surface3d = mesh.save_surface3d
+load_mesh = mesh.load_surface3d
+save_mesh = mesh.save_surface3d
+
+load_mesh3d = mesh.load_mesh3d
+save_mesh3d = mesh.save_mesh3d
+
+save_mesh2d = mesh.save_mesh2d
 
 read_pointcloud = pointcloud.load
 write_pointcloud = pointcloud.save
