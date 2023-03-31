@@ -229,10 +229,15 @@ def save(city_model, out_file, output_format=""):
         ".gpkg": "GPKG",
     }
     crs = city_model.georeference.crs
-    if driver == "GeoJSON" and crs:
+    if not crs:
+        if city_model.georeference.epsg:
+            crs = "EPSG:" + str(city_model.georeference.epsg)
+        else:
+            crs = "EPSG:3006"
+    if driver[output_format] == "GeoJSON" and crs:
         #geojson needs to be in lat/lon
         wgs84 = pyproj.CRS('EPSG:4326')
-        cm_crs = pyproj.CRS(crs) #don't hardcode this
+        cm_crs = pyproj.CRS(crs) 
         wgs84_projection = pyproj.Transformer.from_crs(cm_crs, wgs84, always_xy=True)
         crs = "EPSG:4326"
     schema = {
@@ -243,7 +248,7 @@ def save(city_model, out_file, output_format=""):
         for building in city_model.buildings:
             shapely_footprint = pbFootprint2Shapely(building.footPrint)
             shapely_footprint = shapely.affinity.translate(shapely_footprint, xoff=offset[0], yoff=offset[1])
-            if driver == "GeoJSON":
+            if driver[output_format] == "GeoJSON":
                 shapely_footprint = shapely.ops.transform(wgs84_projection.transform, shapely_footprint)
             dst.write(
                 {
