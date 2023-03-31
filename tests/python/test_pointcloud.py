@@ -1,8 +1,9 @@
 import unittest
 
 from pathlib import Path
-
+import json
 import dtcc_io as io
+import tempfile
 
 class TestPointcloud(unittest.TestCase):
     @classmethod
@@ -36,7 +37,20 @@ class TestPointcloud(unittest.TestCase):
         self.assertAlmostEqual(bounds[2], 15.92373, places=3)
         self.assertAlmostEqual(bounds[3], 1.83826, places=3)
         
-
+    def test_save_json(self):
+        pc = io.load_pointcloud(self.building_las_file, return_serialized=False)
+        outfile = tempfile.NamedTemporaryFile(suffix=".json", delete=False)
+        outpath = Path(outfile.name)
+        io.save_pointcloud(pc, outfile.name)
+        with open(outpath, "r") as f:
+            json_data = json.load(f)
+        self.assertEqual(len(json_data["points"]), 8148)
+        outpath_dir = outpath.parent
+        outpath.unlink()
+        try:
+            outpath_dir.rmdir()
+        except OSError:
+            pass
 
 if __name__ == "__main__":
     unittest.main()

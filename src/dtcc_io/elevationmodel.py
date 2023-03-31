@@ -47,7 +47,7 @@ def to_array(gridfield):
     return np.array(gridfield.values).reshape(grid.ySize, grid.xSize)
 
 
-def save(path, gridfield):
+def save(gridfield, path):
     path = Path(path)
     suffix = path.suffix.lower()[1:]
     if suffix in ["tif", "tiff"]:

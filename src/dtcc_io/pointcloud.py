@@ -7,6 +7,9 @@ from dtcc_model import PointCloud
 from dtcc_io.bounds import bounds_union
 from dtcc_io.bindings import PBPointCloud
 
+from .utils import protobuf_to_json
+
+
 def las_file_bounds(las_file):
     src = laspy.read(las_file)
     bounds = (src.header.x_min, src.header.y_min,
@@ -172,6 +175,10 @@ def save(pointcloud, outfile):
         save_las(pointcloud, outfile)
     if suffix in [".csv"]:
         save_csv(pointcloud, outfile)
+    if suffix in [".pb", ".pb2"]:
+        outfile.save_bytes(pointcloud.SerializeToString())
+    if suffix in [".json"]:
+        protobuf_to_json(pointcloud, outfile)
     else:
         print(f"Cannot write file with suffix {suffix}")
 
