@@ -5,7 +5,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "dtcc-io"
-version = "0.3.2"
+version = "0.3.4"
 description = "DTCC IO"
 readme = "README.md"
 authors = [
