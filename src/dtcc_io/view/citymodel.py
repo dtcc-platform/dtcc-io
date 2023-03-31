@@ -14,7 +14,8 @@ def view(citymodel_pb):
     
     with open(outpath, "r") as f:
         cm_geojson = f.read()
-    folium.GeoJson(cm_geojson).add_to(m)
+    cm_layers =  folium.GeoJson(cm_geojson).add_child(folium.GeoJsonPopup(fields=['id','height','error'],aliases=['UUID','Height','Error']))  
+    m.add_child(cm_layers)
     tmp_geojson.close()
     outpath_dir = outpath.parent
     outpath.unlink()

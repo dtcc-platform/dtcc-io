@@ -242,7 +242,7 @@ def save(city_model, out_file, output_format=""):
         crs = "EPSG:4326"
     schema = {
         "geometry": "Polygon",
-        "properties": {"id": "str", "height": "float", "ground_height": "float"},
+        "properties": {"id": "str", "height": "float", "ground_height": "float", "error": "int"},
     }
     with fiona.open(out_file, "w", driver[output_format], schema, crs=crs) as dst:
         for building in city_model.buildings:
@@ -257,6 +257,7 @@ def save(city_model, out_file, output_format=""):
                         "id": building.uuid,
                         "height": building.height,
                         "ground_height": building.groundHeight,
+                        "error": building.error,
                     },
                 }
             )
