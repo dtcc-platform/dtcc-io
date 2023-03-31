@@ -31,6 +31,7 @@ dependencies = [
   "meshio",
   "pyassimp",
   "pygltflib",
+  "pyproj",
   "dtcc-model@git+https://github.com/dtcc-platform/dtcc-model.git@develop"
 ]
 
