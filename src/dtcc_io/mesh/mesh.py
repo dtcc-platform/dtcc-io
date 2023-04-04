@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 
 from dtcc_io.utils import protobuf_to_json, save_to_pb
@@ -9,7 +10,16 @@ from dtcc_io.mesh.meshio_loaders import (
     save_3d_volume_mesh_with_meshio,
     save_2d_surface_mesh_with_meshio,
 )
-from dtcc_io.mesh.pyassimp_loaders import load_with_assimp
+
+try:
+    from dtcc_io.mesh.pyassimp_loaders import load_with_assimp
+
+    HAS_ASSIMP = True
+except ImportError:
+    logging.warning(
+        "Could not import pyassimp, some file formats will not be supported"
+    )
+    HAS_ASSIMP = False
 from dtcc_io.mesh.pygltflib_loaders import save_3d_surface_with_gltflib
 from dtcc_model import Surface3D, Mesh3D, Mesh2D
 
@@ -27,11 +37,15 @@ def load_surface3d(path, return_serialized=False):
         ".stl": load_with_meshio,
         ".vtk": load_with_meshio,
         ".vtu": load_with_meshio,
-        ".dae": load_with_assimp,
-        ".fbx": load_with_assimp,
-        # ".gltf": load_with_assimp,
-        # ".glb": load_with_assimp,
     }
+    if HAS_ASSIMP:
+        reader_libs.update(
+            {
+                ".dae": load_with_assimp,
+                ".fbx": load_with_assimp,
+            }
+        )
+
     if suffix in reader_libs:
         pb = reader_libs[suffix](
             path, return_serialized=return_serialized, mesh_type="surface"
