@@ -13,9 +13,8 @@ from dtcc_io.mesh.meshio_loaders import (
 
 try:
     from dtcc_io.mesh.pyassimp_loaders import load_with_assimp
-
     HAS_ASSIMP = True
-except ImportError:
+except:
     logging.warning(
         "Could not import pyassimp, some file formats will not be supported"
     )
