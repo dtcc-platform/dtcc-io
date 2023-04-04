@@ -34,4 +34,6 @@ the following dependencies.
 
 ### Mac
 
+    brew install assimp
     brew install gdal
+    brew install pybind11
