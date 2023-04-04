@@ -26,3 +26,12 @@ To install from the source directory:
 > To fix this, run the following commmand before `pip install`:
 >
 >     export DEB_PYTHON_INSTALL_LAYOUT=deb_system
+
+## Preparing your system for installation
+
+Before the above step can be run, you need to prepare your system with
+the following dependencies.
+
+### Mac
+
+    brew install gdal
