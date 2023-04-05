@@ -3,6 +3,7 @@ import dtcc_io.citymodel as citymodel
 import dtcc_io.elevationmodel as elevationmodel
 import dtcc_io.mesh.mesh as mesh
 import dtcc_io.pointcloud as pointcloud
+import dtcc_io.view as view
 
 read_surface3d = mesh.load_surface3d
 write_surface3d = mesh.save_surface3d
@@ -33,4 +34,5 @@ write_elevationmodel = elevationmodel.save
 load_elevationmodel = elevationmodel.load
 save_elevationmodel = elevationmodel.save
 
+view_citymodel = view.view_citymodel
 __all__ = ['bounds', 'citymodel', 'elevationmodel', 'mesh', 'pointcloud']
