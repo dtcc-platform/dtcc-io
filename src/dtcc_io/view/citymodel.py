@@ -3,6 +3,7 @@ import tempfile
 import dtcc_io as io
 from pathlib import Path
 import tempfile
+from dtcc_io.bounds import bounds_center
 
 from .notebook import is_notebook
 
@@ -18,9 +19,12 @@ def view(citymodel_pb, return_html=False, show_in_browser=False):
     outpath = Path(tmp_geojson.name)
     io.save_citymodel(citymodel_pb, outpath)
     bounds = io.citymodel.building_bounds(outpath)
+    data_mid = bounds_center(bounds)
+    data_mid = [data_mid[1],data_mid[0]]
     print(bounds)
-    m = folium.Map(min_zoom=5, max_zoom=22, zoom_start=15)
-    m.fit_bounds([(bounds[1],bounds[0]),(bounds[3],bounds[2])])
+    print(data_mid)
+    m = folium.Map(location = data_mid, min_zoom=5, max_zoom=22, zoom_start=13)
+    
     
     with open(outpath, "r") as f:
         cm_geojson = f.read()

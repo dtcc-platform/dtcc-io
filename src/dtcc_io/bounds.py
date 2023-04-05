@@ -23,3 +23,6 @@ def bounds_intersect(
 
 def bounds_area(b: Tuple[float, float, float, float]) -> float:
     return (b[2] - b[0]) * (b[3] - b[1])
+
+def bounds_center(b: Tuple[float, float, float, float]) -> Tuple[float, float]:
+    return ((b[0] + b[2]) / 2, (b[1] + b[3]) / 2)

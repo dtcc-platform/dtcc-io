@@ -105,11 +105,8 @@ def load(
         raise ValueError(f"File {filename} is not a valid file format")
     
     with fiona.open(filename) as src:
-        crs = str(src.crs)
-        try:
-            epsg = int(crs.split(":")[1])
-        except ValueError:
-            epsg = None
+        crs = src.crs.to_string()
+        epsg = src.crs.to_epsg()
         for s in src:
 
             if area_filter is not None and area_filter > 0:
