@@ -4,7 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "dtcc-io"
-version = "0.3.5"
+version = "0.3.6"
 description = "DTCC IO"
 readme = "README.md"
 authors = [
@@ -31,6 +31,7 @@ dependencies = [
   "pyassimp",
   "pygltflib",
   "pyproj",
+  "folium",
   "dtcc-model@git+https://github.com/dtcc-platform/dtcc-model.git@develop"
 ]
 
