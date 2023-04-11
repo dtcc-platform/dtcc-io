@@ -13,6 +13,7 @@ from dtcc_io.mesh.meshio_loaders import (
 
 try:
     from dtcc_io.mesh.pyassimp_loaders import load_with_assimp
+
     HAS_ASSIMP = True
 except:
     logging.warning(
@@ -20,7 +21,7 @@ except:
     )
     HAS_ASSIMP = False
 from dtcc_io.mesh.pygltflib_loaders import save_3d_surface_with_gltflib
-from dtcc_model import Surface3D, Mesh3D, Mesh2D
+from dtcc_model import Mesh, VolumeMesh
 
 mesh_types = ["surface", "volume", "2d"]
 
@@ -127,9 +128,7 @@ def save_mesh2d(pb_mesh, path):
 
 def save(pb_mesh, path):
     path = str(path)
-    if isinstance(pb_mesh, Surface3D):
+    if isinstance(pb_mesh, Mesh):
         save_surface3d(pb_mesh, path)
-    if isinstance(pb_mesh, Mesh3D):
+    if isinstance(pb_mesh, VolumeMesh):
         save_mesh3d(pb_mesh, path)
-    if isinstance(pb_mesh, Mesh2D):
-        save_mesh2d(pb_mesh, path)

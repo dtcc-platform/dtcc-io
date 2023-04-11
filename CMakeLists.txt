@@ -25,6 +25,10 @@ include_directories(${pybind11_INCLUDE_DIR})
 include_directories(${CMAKE_CURRENT_LIST_DIR}/include)
 include_directories(/usr/local/include)
 
+# Set installation directory
+set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/src)
+set(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY true)
+
 # Add Python bindings
 set(PYBIND_LIBRARY bindings)
 pybind11_add_module(${PYBIND_LIBRARY} src/cpp/${PYBIND_LIBRARY}.cpp)

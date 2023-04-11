@@ -1,7 +1,8 @@
 import meshio
 import numpy as np
 from dtcc_io.mesh.utils import create_3d_surface
-from dtcc_model import Surface3D, Mesh3D, Mesh2D
+from dtcc_model import Mesh, VolumeMesh
+
 
 def load_with_meshio(path, return_serialized=False, mesh_type="surface"):
     mesh = meshio.read(path)
@@ -13,7 +14,7 @@ def load_with_meshio(path, return_serialized=False, mesh_type="surface"):
 
 def save_3d_surface_with_meshio(pb_surface, path):
     if type(pb_surface) == bytes:
-        surface = Surface3D()
+        surface = Mesh()
         surface.ParseFromString(pb_surface)
     else:
         surface = pb_surface
@@ -29,7 +30,7 @@ def save_3d_surface_with_meshio(pb_surface, path):
 
 def save_3d_volume_mesh_with_meshio(pb_mesh, path):
     if type(pb_mesh) == bytes:
-        volume_mesh = Mesh3D()
+        volume_mesh = VolumeMesh()
         volume_mesh.ParseFromString(pb_mesh)
     else:
         volume_mesh = pb_mesh
@@ -40,13 +41,14 @@ def save_3d_volume_mesh_with_meshio(pb_mesh, path):
     mesh = meshio.Mesh(vertices, cells)
     meshio.write(path, mesh)
 
+
 def save_2d_surface_mesh_with_meshio(pb_mesh, path):
     if type(pb_mesh) == bytes:
-        surface_mesh = Mesh2D()
+        surface_mesh = Mesh()
         surface_mesh.ParseFromString(pb_mesh)
     else:
         surface_mesh = pb_mesh
-    vertices = [[v.x, v.y] for v in surface_mesh.vertices]
+    vertices = [[v.x, v.y, 0] for v in surface_mesh.vertices]
     faces = [[f.v0, f.v1, f.v2] for f in surface_mesh.faces]
     cells = [("triangle", faces)]
     mesh = meshio.Mesh(vertices, cells)

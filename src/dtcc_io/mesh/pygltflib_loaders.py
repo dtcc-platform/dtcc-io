@@ -1,8 +1,9 @@
 import pygltflib
 from pathlib import Path
 import numpy as np
-from dtcc_model import Surface3D
+from dtcc_model import Mesh
 import base64
+
 
 def save_3d_surface_with_gltflib(pb_mesh, path):
     suffix = Path(path).suffix.lower()
@@ -11,7 +12,7 @@ def save_3d_surface_with_gltflib(pb_mesh, path):
     elif suffix.startswith(".glb"):
         write_format = "binary"
     if type(pb_mesh) == bytes:
-        surface = Surface3D()
+        surface = Mesh()
         surface.ParseFromString(pb_mesh)
     else:
         surface = pb_mesh
