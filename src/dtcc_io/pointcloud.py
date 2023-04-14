@@ -12,8 +12,7 @@ from .utils import protobuf_to_json
 
 def las_file_bounds(las_file):
     src = laspy.read(las_file)
-    bounds = (src.header.x_min, src.header.y_min,
-              src.header.x_max, src.header.y_max)
+    bounds = (src.header.x_min, src.header.y_min, src.header.x_max, src.header.y_max)
     return bounds
 
 
@@ -124,10 +123,12 @@ def load_las(
     for filename in lasfiles:
         las = laspy.read(filename)
         if use_bounds_filter:
-            valid_pts = (las.xyz[:, 0] >= bounds[0]) * \
-                (las.xyz[:, 0] <= bounds[2])  # valid X
-            valid_pts *= (las.xyz[:, 1] >= bounds[1]) * \
-                (las.xyz[:, 1] <= bounds[3])  # valid Y
+            valid_pts = (las.xyz[:, 0] >= bounds[0]) * (
+                las.xyz[:, 0] <= bounds[2]
+            )  # valid X
+            valid_pts *= (las.xyz[:, 1] >= bounds[1]) * (
+                las.xyz[:, 1] <= bounds[3]
+            )  # valid Y
         else:
             valid_pts = np.ones(las.xyz.shape[0]).astype(bool)
         if pts is None:
@@ -140,24 +141,23 @@ def load_las(
                 (classification, np.array(las.classification)[valid_pts])
             )
         if not (points_only or points_classification_only):
-            intensity = np.concatenate(
-                (intensity, np.array(las.intensity)[valid_pts]))
+            intensity = np.concatenate((intensity, np.array(las.intensity)[valid_pts]))
             returnNumber = np.concatenate(
-                (returnNumber, np.array(las.return_num)[valid_pts]))
+                (returnNumber, np.array(las.return_num)[valid_pts])
+            )
             numberOfReturns = np.concatenate(
                 (numberOfReturns, np.array(las.num_returns)[valid_pts])
             )
-    #print(f"loading with laspy {time()-start_laspy}")
+    # print(f"loading with laspy {time()-start_laspy}")
     start_protobuf_pc = time()
     if pts is not None:
         # print("Calling PBPointCloud")
-        pb = PBPointCloud(pts, classification, intensity,
-                          returnNumber, numberOfReturns)
+        pb = PBPointCloud(pts, classification, intensity, returnNumber, numberOfReturns)
         # print("PBPointCloud called")
         # print(len(pb))
     else:
         return None
-    #print(f"converting las to pb {time()-start_protobuf_pc}")
+    # print(f"converting las to pb {time()-start_protobuf_pc}")
     if return_serialized:
         return pb
     else:
@@ -173,11 +173,11 @@ def save(pointcloud, outfile):
     suffix = outfile.suffix.lower()
     if suffix in [".las", ".laz"]:
         save_las(pointcloud, outfile)
-    if suffix in [".csv"]:
+    elif suffix in [".csv"]:
         save_csv(pointcloud, outfile)
-    if suffix in [".pb", ".pb2"]:
-        outfile.save_bytes(pointcloud.SerializeToString())
-    if suffix in [".json"]:
+    elif suffix in [".pb", ".pb2"]:
+        outfile.write_bytes(pointcloud.SerializeToString())
+    elif suffix in [".json"]:
         protobuf_to_json(pointcloud, outfile)
     else:
         print(f"Cannot write file with suffix {suffix}")
