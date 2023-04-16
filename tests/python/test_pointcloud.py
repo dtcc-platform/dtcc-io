@@ -5,28 +5,25 @@ import json
 import dtcc_io as io
 import tempfile
 
+
 class TestPointcloud(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.data_dir = (Path(__file__).parent / ".." / "data" / "MinimalCase").resolve()
-        cls.building_las_file = str(
-            (
-                cls.data_dir / "pointcloud.las"
-            ).resolve()
-        )
+        cls.building_las_file = str((cls.data_dir / "pointcloud.las").resolve())
 
     def test_load_pointcloud(self):
-        pc = io.load_pointcloud(self.building_las_file, return_serialized=False)
+        pc = io.load_pointcloud(self.building_las_file)
         self.assertEqual(len(pc.points), 8148)
         self.assertEqual(len(pc.classification), 8148)
-        self.assertEqual(len(pc.usedClassifications), 2)
+        self.assertEqual(len(pc.used_classifications()), 2)
 
     def test_load_pointcloud_from_dir(self):
-        pc = io.load_pointcloud(self.data_dir, return_serialized=False)
+        pc = io.load_pointcloud(self.data_dir)
         self.assertEqual(len(pc.points), 8148)
 
     def test_load_pointcloud_bounded(self):
-        pc = io.load_pointcloud(self.building_las_file,  bounds=(-2, -2, 0, 0), return_serialized=False)
+        pc = io.load_pointcloud(self.building_las_file, bounds=(-2, -2, 0, 0))
         self.assertEqual(len(pc.points), 64)
         self.assertEqual(len(pc.classification), 64)
 
@@ -36,21 +33,18 @@ class TestPointcloud(unittest.TestCase):
         self.assertAlmostEqual(bounds[1], -18.850332, places=3)
         self.assertAlmostEqual(bounds[2], 15.92373, places=3)
         self.assertAlmostEqual(bounds[3], 1.83826, places=3)
-        
-    def test_save_json(self):
-        pc = io.load_pointcloud(self.building_las_file, return_serialized=False)
-        outfile = tempfile.NamedTemporaryFile(suffix=".json", delete=False)
+
+    def test_save_pointcloud(self):
+        pc = io.load_pointcloud(self.building_las_file)
+        outfile = tempfile.NamedTemporaryFile(suffix=".las", delete=False)
         outpath = Path(outfile.name)
-        io.save_pointcloud(pc, outfile.name)
-        with open(outpath, "r") as f:
-            json_data = json.load(f)
-        self.assertEqual(len(json_data["points"]), 8148)
-        outpath_dir = outpath.parent
+        io.save_pointcloud(pc, outpath)
+        pc2 = io.load_pointcloud(outpath)
+        self.assertEqual(len(pc.points), len(pc2.points))
+        self.assertEqual(len(pc.classification), len(pc2.classification))
+        outfile.close()
         outpath.unlink()
-        try:
-            outpath_dir.rmdir()
-        except OSError:
-            pass
+
 
 if __name__ == "__main__":
     unittest.main()
