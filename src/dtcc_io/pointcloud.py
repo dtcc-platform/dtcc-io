@@ -152,8 +152,8 @@ def load_las(
             pc.classification = classification
         if not (points_only or points_classification_only):
             pc.intensity = intensity
-            pc.returnNumber = returnNumber
-            pc.numberOfReturns = numberOfReturns
+            pc.return_number = returnNumber
+            pc.number_of_returns = numberOfReturns
         logging.info(f"Loaded {len(pts)} points from {lasfiles}")
         return pc
     else:
