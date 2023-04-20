@@ -29,16 +29,16 @@ def save(field, path):
 
 
 def save_mesh_field(field, path):
-    info(f"Saving DTCC MeshField to {path}")
+    info(f"Saving MeshField to {path}")
 
 
 def save_mesh_vector_field(field, path):
-    info(f"Saving DTCC MeshVectorField to {path}")
+    info(f"Saving MeshVectorField to {path}")
 
 
 def save_volume_mesh_field(field, path):
-    info(f"Saving DTCC VolumeMeshField to {path}")
+    info(f"Saving VolumeMeshField to {path}")
 
 
 def save_volume_mesh_vector_field(field, path):
-    info(f"Saving DTCC VolumeMeshVectorField to {path}")
+    info(f"Saving VolumeMeshVectorField to {path}")

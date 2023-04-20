@@ -66,7 +66,7 @@ _save_volume_mesh_format = {}
 
 
 def _load_mesh(mesh, path):
-    info(f"Loading DTCC Mesh from {path}")
+    info(f"Loading Mesh from {path}")
     if path.suffix in _load_mesh_format:
         _load_mesh_format[path.suffix](mesh, path)
     else:
@@ -74,15 +74,15 @@ def _load_mesh(mesh, path):
 
 
 def _load_volume_mesh(mesh, path):
-    info(f"Loading DTCC VolumeMesh from {path}")
+    info(f"Loading VolumeMesh from {path}")
     if path.suffix in _load_volume_mesh_format:
-        _load_volume_mesh_dispatch[path.suffix](mesh, path)
+        _load_volume_mesh_format[path.suffix](mesh, path)
     else:
         error(f'Unable to load VolumeMesh; format "{path.suffix}" not supported')
 
 
 def _save_mesh(mesh, path):
-    info(f"Saving DTCC Mesh to {path}")
+    info(f"Saving Mesh to {path}")
     if path.suffix in _save_mesh_format:
         _save_mesh_format[path.suffix](mesh, path)
     else:
@@ -90,7 +90,7 @@ def _save_mesh(mesh, path):
 
 
 def _save_volume_mesh(mesh, path):
-    info(f"Saving DTCC VolumeMesh to {path}")
+    info(f"Saving VolumeMesh to {path}")
     if path.suffix in _save_volume_mesh_format:
         _save_volume_mesh_format[path.suffix](mesh, path)
     else:
@@ -110,24 +110,16 @@ _save_mesh_type = {
 
 
 def load(mesh, path):
-    path = pathlib.Path(path)
     if type(mesh) in _load_mesh_type:
+        path = pathlib.Path(path)
         _load_mesh_type[type(mesh)](mesh, path)
     else:
         error(f'Unable to load mesh; type "{type(mesh)}" not supported' % type(mesh))
 
 
 def save(mesh, path):
-    path = pathlib.Path(path)
     if type(mesh) in _save_mesh_type:
+        path = pathlib.Path(path)
         _save_mesh_type[type(mesh)](mesh, path)
     else:
         error(f'Unable to save mesh; type "{type(mesh)}" not supported' % type(mesh))
-
-
-def load_with_meshio(path, return_serialized=False, mesh_type="surface"):
-    mesh = meshio.read(path)
-    # print(mesh)
-    vertices = mesh.points
-    faces = mesh.cells[0].data
-    return create_3d_surface(vertices, faces, return_serialized=return_serialized)
