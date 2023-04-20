@@ -1,7 +1,22 @@
 # Playground for testing
 
-from dtcc_io.logging import set_log_level, info
+from dtcc_model import *
+from dtcc_io import *
 
-set_log_level('DEBUG')
+logging.set_log_level("DEBUG")
 
-info('Hello world')
+mesh = Mesh()
+volume_mesh = VolumeMesh()
+
+save_mesh(mesh, "mesh.obj")
+save_mesh(volume_mesh, "volume_mesh.obj")
+
+f0 = MeshField()
+f1 = MeshVectorField()
+f2 = VolumeMeshField()
+f3 = VolumeMeshVectorField()
+
+save_field(f0, "f0.vtu")
+save_field(f1, "f1.vtu")
+save_field(f2, "f2.vtu")
+save_field(f3, "f3.vtu")

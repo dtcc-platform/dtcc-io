@@ -1,31 +1,13 @@
+# FIXME: Use Bounds class from dtcc-model
 import dtcc_io.bounds as bounds
-import dtcc_io.citymodel as citymodel
-import dtcc_io.gridfield as gridfield
+
+from . import pointcloud
 from . import meshes
 from . import fields
+from . import citymodel
 
-# import dtcc_io.elevationmodel as elevationmodel
-# import dtcc_io.mesh.mesh as mesh
-import dtcc_io.pointcloud as pointcloud
-
-# import dtcc_io.view as view
-
-
-# load_mesh = mesh.load_surface3d
-# save_mesh = mesh.save_surface3d
-# load_volume_mesh = mesh.load_mesh3d
-# save_volume_mesh = mesh.save_mesh3d
-
-read_pointcloud = pointcloud.load
-write_pointcloud = pointcloud.save
 load_pointcloud = pointcloud.load
 save_pointcloud = pointcloud.save
-
-# read_elevationmodel = elevationmodel.load
-# write_elevationmodel = elevationmodel.save
-load_gridfield = gridfield.load
-save_gridfield = gridfield.save
-
 
 load_mesh = meshes.load
 save_mesh = meshes.save
@@ -33,7 +15,19 @@ save_mesh = meshes.save
 load_field = fields.load
 save_field = fields.save
 
+load_citymodel = citymodel.load
+save_citymodel = citymodel.save
+
+# FIXME: Move to fields
+import dtcc_io.gridfield as gridfield
+
+load_gridfield = gridfield.load
+save_gridfield = gridfield.save
+
+
 # FIXME: Remove read/write, use load/save
+read_pointcloud = pointcloud.load
+write_pointcloud = pointcloud.save
 read_citymodel = citymodel.load
 write_citymodel = citymodel.save
 load_citymodel = citymodel.load
