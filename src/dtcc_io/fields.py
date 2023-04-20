@@ -16,7 +16,6 @@ def load(path):
 
 
 def save(field, path):
-    path = str(path)
     if isinstance(field, MeshField):
         save_mesh_field(field, path)
     elif isinstance(field, MeshVectorField):
