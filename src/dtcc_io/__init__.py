@@ -1,6 +1,8 @@
 import dtcc_io.bounds as bounds
 import dtcc_io.citymodel as citymodel
 import dtcc_io.gridfield as gridfield
+from . import meshes
+from . import fields
 
 # import dtcc_io.elevationmodel as elevationmodel
 # import dtcc_io.mesh.mesh as mesh
@@ -24,6 +26,14 @@ save_pointcloud = pointcloud.save
 load_gridfield = gridfield.load
 save_gridfield = gridfield.save
 
+
+load_mesh = meshes.load
+save_mesh = meshes.save
+
+load_field = fields.load
+save_field = fields.save
+
+# FIXME: Remove read/write, use load/save
 read_citymodel = citymodel.load
 write_citymodel = citymodel.save
 load_citymodel = citymodel.load
