@@ -1,90 +1,84 @@
 import unittest
-
 import json
-from pathlib import Path
-
-import os, tempfile
+import os, tempfile, pathlib
 import dtcc_io as io
+
+io.logging.set_log_level("DEBUG")
 
 
 class TestMesh(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.stl_mesh_cube = str(
-            (Path(__file__).parent / ".." / "data" / "cube.stl").resolve()
+        cls.mesh_cube_stl = str(
+            (pathlib.Path(__file__).parent / ".." / "data" / "cube.stl").resolve()
         )
-        cls.fbx_mesh_cube = str(
-            (Path(__file__).parent / ".." / "data" / "cube.fbx").resolve()
+        cls.mesh_cube_vtk = str(
+            (pathlib.Path(__file__).parent / ".." / "data" / "cube.vtk").resolve()
         )
+        cls.mesh_cube_fbx = str(
+            (pathlib.Path(__file__).parent / ".." / "data" / "cube.fbx").resolve()
+        )
+
+    # FIXME: Not really testing all formats here, just a few
 
     def test_load_mesh_stl(self):
-        mesh = io.load_mesh(self.stl_mesh_cube)
+        mesh = io.load_mesh(self.mesh_cube_stl)
         self.assertEqual(len(mesh.vertices), 24)
         self.assertEqual(len(mesh.faces), 44)
 
-    def _test_write_meshio_mesh(self):
-        mesh = io.load_mesh(self.stl_mesh_cube, return_serialized=False)
-        outfile = tempfile.NamedTemporaryFile(suffix=".vtk", delete=False)
-        outpath = Path(outfile.name)
-        io.save_mesh(mesh, outfile.name)
-        mesh = io.load_mesh(outpath, return_serialized=False)
+    def test_load_mesh_vtk(self):
+        mesh = io.load_mesh(self.mesh_cube_vtk)
         self.assertEqual(len(mesh.vertices), 24)
         self.assertEqual(len(mesh.faces), 44)
-        outfile.close()
-        outpath_dir = outpath.parent
-        outpath.unlink()
-        try:
-            outpath_dir.rmdir()
-        except OSError:
-            pass
 
-    def _test_write_to_json(self):
-        mesh = io.load_mesh(self.stl_mesh_cube, return_serialized=False)
-        outfile = tempfile.NamedTemporaryFile(suffix=".json", delete=False)
-        outpath = Path(outfile.name)
-        io.save_mesh(mesh, outpath)
-        with open(outpath, "r") as f:
-            json_data = json.load(f)
-        self.assertEqual(len(json_data["vertices"]), 24)
-        outpath_dir = outpath.parent
-        outpath.unlink()
-        try:
-            outpath_dir.rmdir()
-        except OSError:
-            pass
+    # FIXME: This segfaults
+    def _test_load_mesh_fbx(self):
+        mesh = io.load_mesh(self.mesh_cube_fbx)
+        self.assertEqual(len(mesh.vertices), 24)
+        self.assertEqual(len(mesh.faces), 44)
 
-    def _test_write_gltf(self):
-        mesh = io.load_mesh(self.stl_mesh_cube, return_serialized=False)
-        outfile = tempfile.NamedTemporaryFile(suffix=".gltf", delete=False)
-        outpath = Path(outfile.name)
-        # outpath = Path("test_cube.gltf")
-        io.save_mesh(mesh, outpath)
-        # mesh = io.load_mesh(outpath, return_serialized=False)
+    def test_save_load_mesh_stl(self):
+        mesh = io.load_mesh(self.mesh_cube_stl)
+        path = tempfile.NamedTemporaryFile(suffix=".stl", delete=False).name
+        io.save_mesh(mesh, path)
+        mesh = io.load_mesh(path)
+        self.assertEqual(len(mesh.vertices), 24)
+        self.assertEqual(len(mesh.faces), 44)
+
+    def test_save_load_mesh_vtk(self):
+        mesh = io.load_mesh(self.mesh_cube_stl)
+        path = tempfile.NamedTemporaryFile(suffix=".vtk", delete=False).name
+        io.save_mesh(mesh, path)
+        mesh = io.load_mesh(path)
+        self.assertEqual(len(mesh.vertices), 24)
+        self.assertEqual(len(mesh.faces), 44)
+
+    # FIXME: Save to FBX not implemented
+    def _test_save_load_mesh_fbx(self):
+        mesh = io.load_mesh(self.mesh_cube_stl)
+        path = tempfile.NamedTemporaryFile(suffix=".fbx", delete=False).name
+        io.save_mesh(mesh, path)
+        mesh = io.load_mesh(path)
+        self.assertEqual(len(mesh.vertices), 24)
+        self.assertEqual(len(mesh.faces), 44)
+
+    # FIXME: Load from GLB not implemented
+    def test_save_load_mesh_glb(self):
+        mesh = io.load_mesh(self.mesh_cube_stl)
+        path = tempfile.NamedTemporaryFile(suffix=".glb", delete=False).name
+        io.save_mesh(mesh, path)
+        # mesh = io.load_mesh(path)
         # self.assertEqual(len(mesh.vertices), 24)
         # self.assertEqual(len(mesh.faces), 44)
-        outfile.close()
-        outpath_dir = outpath.parent
-        outpath.unlink()
-        try:
-            outpath_dir.rmdir()
-        except OSError:
-            pass
 
-    def _test_write_glb(self):
-        mesh = io.load_mesh(self.stl_mesh_cube, return_serialized=False)
-        outfile = tempfile.NamedTemporaryFile(suffix=".glb", delete=False)
-        outpath = Path(outfile.name)
-        io.save_mesh(mesh, outpath)
-        # mesh = io.load_mesh(outpath, return_serialized=False)
+    # FIXME: Load from GLTF not implemented
+    def test_save_load_mesh_gltf(self):
+        mesh = io.load_mesh(self.mesh_cube_stl)
+        path = tempfile.NamedTemporaryFile(suffix=".gltf", delete=False).name
+        io.save_mesh(mesh, path)
+        # mesh = io.load_mesh(path)
         # self.assertEqual(len(mesh.vertices), 24)
         # self.assertEqual(len(mesh.faces), 44)
-        outfile.close()
-        outpath_dir = outpath.parent
-        outpath.unlink()
-        try:
-            outpath_dir.rmdir()
-        except OSError:
-            pass
 
 
 if __name__ == "__main__":

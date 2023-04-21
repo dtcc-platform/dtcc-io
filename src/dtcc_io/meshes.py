@@ -1,11 +1,13 @@
 # Copyright(C) 2023 Anders Logg and Dag Wästberg
 # Licensed under the MIT License
 
-import meshio
 import pathlib
+import meshio
+import pygltflib
+
 
 from dtcc_model import Mesh, VolumeMesh
-from .logging import warning
+from .logging import warning, error
 from . import generic
 
 try:
@@ -63,8 +65,8 @@ def _save_meshio_volume_mesh(mesh, path):
 
 
 def _save_gltf_mesh(mesh, path):
-    triangles_binary_blob = faces.flatten().tobytes()
-    points_binary_blob = vertices.flatten().tobytes()
+    triangles_binary_blob = mesh.faces.flatten().tobytes()
+    points_binary_blob = mesh.vertices.flatten().tobytes()
     data = triangles_binary_blob + points_binary_blob
 
     model = pygltflib.GLTF2()
@@ -82,19 +84,19 @@ def _save_gltf_mesh(mesh, path):
     triangle_accessor = pygltflib.Accessor(
         bufferView=0,
         componentType=pygltflib.UNSIGNED_INT,
-        count=faces.size,
+        count=mesh.faces.size,
         type=pygltflib.SCALAR,
-        max=[int(faces.max())],
-        min=[int(faces.min())],
+        max=[int(mesh.faces.max())],
+        min=[int(mesh.faces.min())],
     )
     model.accessors.append(triangle_accessor)
     points_accessor = pygltflib.Accessor(
         bufferView=1,
         componentType=pygltflib.FLOAT,
-        count=len(vertices),
+        count=len(mesh.vertices),
         type=pygltflib.VEC3,
-        max=vertices.max(axis=0).tolist(),
-        min=vertices.min(axis=0).tolist(),
+        max=mesh.vertices.max(axis=0).tolist(),
+        min=mesh.vertices.min(axis=0).tolist(),
     )
     model.accessors.append(points_accessor)
 
@@ -131,7 +133,7 @@ def _save_gltf_mesh(mesh, path):
 
 
 def _load_assimp_mesh(path):
-    scene = pyassimp.load(path, pyassimp.postprocess.aiProcess_Triangulate)
+    scene = pyassimp.load(str(path), pyassimp.postprocess.aiProcess_Triangulate)
     _mesh = scene.meshes[0]
     return Mesh(vertices=_mesh.vertices, normals=_mesh.normals, faces=_mesh.faces)
 
@@ -201,11 +203,11 @@ if HAS_ASSIMP:
 
 
 def load_mesh(path):
-    generic.load(path, "mesh", Mesh, _load_formats)
+    return generic.load(path, "mesh", Mesh, _load_formats)
 
 
 def load_volume_mesh(path):
-    generic.load(path, "volume mesh", VolumeMesh, _load_formats)
+    return generic.load(path, "volume mesh", VolumeMesh, _load_formats)
 
 
 def save(mesh, path):
