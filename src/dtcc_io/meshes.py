@@ -32,9 +32,9 @@ def _save_proto_mesh(mesh, path):
         f.write(mesh.to_proto())
 
 
-def _save_proto_volume_mesh(volume_mesh, path):
+def _save_proto_volume_mesh(mesh, path):
     with open(path, "wb") as f:
-        f.write(volume_mesh.to_proto())
+        f.write(mesh.to_proto())
 
 
 def _load_meshio_mesh(path):
@@ -44,8 +44,11 @@ def _load_meshio_mesh(path):
     return Mesh(vertices=vertices, faces=faces)
 
 
-def _load_meshio_volume_meshio(path):
-    pass
+def _load_meshio_volume_mesh(path):
+    mesh = meshio.read(path)
+    vertices = mesh.points
+    cells = mesh.cells[0].data
+    return VolumeMesh(vertices=vertices, cells=cells)
 
 
 def _save_meshio_mesh(mesh, path):
@@ -53,8 +56,8 @@ def _save_meshio_mesh(mesh, path):
     meshio.write(path, _mesh)
 
 
-def _save_mesh_gltflib(mesh, path):
-    pass
+def _save_meshio_volume_mesh(mesh, path):
+    _mesh = meshio.Mesh(mesh.vertices, [("tetra", _mesh.cells)])
 
 
 _load_formats = {
