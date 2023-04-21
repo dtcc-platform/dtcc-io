@@ -8,11 +8,11 @@ logging.set_log_level("DEBUG")
 mesh = Mesh()
 volume_mesh = VolumeMesh()
 
+print_mesh_io()
+
 save_mesh(mesh, "mesh.obj")
 # save_mesh(volume_mesh, "volume_mesh.obj")
 
-list_mesh_io()
-print_mesh_io()
 
 f0 = MeshField()
 f1 = MeshVectorField()

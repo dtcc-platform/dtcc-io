@@ -188,14 +188,14 @@ _save_formats = {
 if HAS_ASSIMP:
     _load_formats[Mesh].update(
         {
-            ".dae": load_assimp_mesh,
-            ".fbx": load_assimp_mesh,
+            ".dae": _load_assimp_mesh,
+            ".fbx": _load_assimp_mesh,
         }
     )
     _save_formats[Mesh].update(
         {
-            ".dae": save_assimp_mesh,
-            ".fbx": save_assimp_mesh,
+            ".dae": _save_assimp_mesh,
+            ".fbx": _save_assimp_mesh,
         }
     )
 
