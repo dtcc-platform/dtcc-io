@@ -1,5 +1,7 @@
 # FIXME: Use Bounds class from dtcc-model
 import dtcc_io.bounds as bounds
+import dtcc_io.citymodel as citymodel
+import dtcc_io.raster as raster
 
 from . import pointcloud
 from . import meshes
@@ -8,6 +10,9 @@ from . import citymodel
 
 load_pointcloud = pointcloud.load
 save_pointcloud = pointcloud.save
+
+load_raster = raster.load
+save_raster = raster.save
 
 load_mesh = meshes.load_mesh
 load_volume_mesh = meshes.load_volume_mesh
