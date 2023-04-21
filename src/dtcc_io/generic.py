@@ -25,7 +25,7 @@ def load(path, name, type, formats):
     path = pathlib.Path(path)
     if path.suffix not in formats[type]:
         error(f"Unable to load {name}; format {path.suffix} not supported")
-    info(f"Loading {name} ({type.__name__})from {path}")
+    info(f"Loading {name} ({type.__name__}) from {path}")
     return formats[type][path.suffix](path)
 
 

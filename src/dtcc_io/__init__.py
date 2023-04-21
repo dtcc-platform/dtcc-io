@@ -20,8 +20,11 @@ save_mesh = meshes.save
 list_mesh_io = meshes.list_io
 print_mesh_io = meshes.print_io
 
-load_field = fields.load
+load_mesh_field = fields.load_field
+load_mesh_vector_field = fields.load_vector_field
 save_field = fields.save
+list_field_io = fields.list_io
+print_field_io = fields.print_io
 
 load_citymodel = citymodel.load
 save_citymodel = citymodel.save
