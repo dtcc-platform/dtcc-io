@@ -30,6 +30,7 @@ dependencies = [
   "pygltflib",
   "pyproj",
   "folium",
+  "pillow",
   "dtcc-model@git+https://github.com/dtcc-platform/dtcc-model.git@develop",
 ]
 

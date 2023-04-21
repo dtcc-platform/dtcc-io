@@ -4,7 +4,7 @@ import os
 import numpy as np
 from pathlib import Path
 
-from dtcc_model.gridfield import GridField2D
+from dtcc_model.gridfields import GridField
 
 
 def load(path):

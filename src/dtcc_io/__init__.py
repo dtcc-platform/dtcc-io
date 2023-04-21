@@ -1,6 +1,6 @@
 import dtcc_io.bounds as bounds
 import dtcc_io.citymodel as citymodel
-import dtcc_io.gridfield as gridfield
+import dtcc_io.raster as raster
 
 # import dtcc_io.elevationmodel as elevationmodel
 # import dtcc_io.mesh.mesh as mesh
@@ -19,10 +19,8 @@ write_pointcloud = pointcloud.save
 load_pointcloud = pointcloud.load
 save_pointcloud = pointcloud.save
 
-# read_elevationmodel = elevationmodel.load
-# write_elevationmodel = elevationmodel.save
-load_gridfield = gridfield.load
-save_gridfield = gridfield.save
+load_raster = raster.load
+save_raster = raster.save
 
 read_citymodel = citymodel.load
 write_citymodel = citymodel.save
