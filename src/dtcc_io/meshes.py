@@ -60,6 +60,74 @@ def _save_meshio_volume_mesh(mesh, path):
     _mesh = meshio.Mesh(mesh.vertices, [("tetra", _mesh.cells)])
 
 
+def _save_gltf_mesh(mesh, path):
+    triangles_binary_blob = faces.flatten().tobytes()
+    points_binary_blob = vertices.flatten().tobytes()
+    data = triangles_binary_blob + points_binary_blob
+
+    model = pygltflib.GLTF2()
+    scene = pygltflib.Scene(nodes=[0])
+    model.scenes.append(scene)
+    model.scene = 0
+    nodes = pygltflib.Node(mesh=0)
+    model.nodes.append(nodes)
+
+    buffer = pygltflib.Buffer()
+    buffer.byteLength = len(data)
+    model.buffers.append(buffer)
+    model.set_binary_blob(data)
+
+    triangle_accessor = pygltflib.Accessor(
+        bufferView=0,
+        componentType=pygltflib.UNSIGNED_INT,
+        count=faces.size,
+        type=pygltflib.SCALAR,
+        max=[int(faces.max())],
+        min=[int(faces.min())],
+    )
+    model.accessors.append(triangle_accessor)
+    points_accessor = pygltflib.Accessor(
+        bufferView=1,
+        componentType=pygltflib.FLOAT,
+        count=len(vertices),
+        type=pygltflib.VEC3,
+        max=vertices.max(axis=0).tolist(),
+        min=vertices.min(axis=0).tolist(),
+    )
+    model.accessors.append(points_accessor)
+
+    triangle_view = pygltflib.BufferView(
+        buffer=0,
+        byteLength=len(triangles_binary_blob),
+        byteOffset=0,
+        target=pygltflib.ELEMENT_ARRAY_BUFFER,
+    )
+    model.bufferViews.append(triangle_view)
+    points_view = pygltflib.BufferView(
+        buffer=0,
+        byteLength=len(points_binary_blob),
+        byteOffset=len(triangles_binary_blob),
+        target=pygltflib.ARRAY_BUFFER,
+    )
+    model.bufferViews.append(points_view)
+
+    mesh = pygltflib.Mesh()
+    primitive = pygltflib.Primitive(attributes={"POSITION": 1}, indices=0)
+    mesh.primitives.append(primitive)
+    model.meshes.append(mesh)
+
+    # FIXME: Figure out how to handle optional arguments
+    # if write_format == "json":
+    #    buffer.uri = "data:application/octet-stream;base64," + base64.b64encode(
+    #        data
+    #    ).decode("utf-8")
+    # elif write_format == "binary":
+    #    model.set_binary_blob(data)
+
+    model.set_binary_blob(data)
+    model.save(path)
+
+
 _load_formats = {
     Mesh: {
         ".pb": _load_proto_mesh,
@@ -73,6 +141,11 @@ _load_formats = {
     VolumeMesh: {
         ".pb": _load_proto_volume_mesh,
         ".pb2": _load_proto_volume_mesh,
+        ".obj": _load_meshio_mesh,
+        ".ply": _load_meshio_mesh,
+        ".stl": _load_meshio_mesh,
+        ".vtk": _load_meshio_mesh,
+        ".vtu": _load_meshio_mesh,
     },
 }
 
@@ -85,13 +158,18 @@ _save_formats = {
         ".stl": _save_meshio_mesh,
         ".vtk": _save_meshio_mesh,
         ".vtu": _save_meshio_mesh,
-        ".gltf": _save_mesh_gltflib,
-        ".gltf2": _save_mesh_gltflib,
-        ".glb": _save_mesh_gltflib,
+        ".gltf": _save_gltf_mesh,
+        ".gltf2": _save_gltf_mesh,
+        ".glb": _save_gltf_mesh,
     },
     VolumeMesh: {
         ".pb": _save_proto_volume_mesh,
         ".pb2": _save_proto_volume_mesh,
+        ".obj": _save_meshio_mesh,
+        ".ply": _save_meshio_mesh,
+        ".stl": _save_meshio_mesh,
+        ".vtk": _save_meshio_mesh,
+        ".vtu": _save_meshio_mesh,
     },
 }
 
@@ -100,6 +178,12 @@ if HAS_ASSIMP:
         {
             ".dae": load_assimp_mesh,
             ".fbx": load_assimp_mesh,
+        }
+    )
+    _save_formats[Mesh].update(
+        {
+            ".dae": save_assimp_mesh,
+            ".fbx": save_assimp_mesh,
         }
     )
 
