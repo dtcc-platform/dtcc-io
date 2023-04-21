@@ -5,45 +5,49 @@ import meshio
 import pathlib
 
 from dtcc_model import Mesh, VolumeMesh
+from .logging import warning
 from . import generic
+
+try:
+    import pyassimp
+
+    HAS_ASSIMP = True
+except:
+    warning("Unable to pyassimp, some file formats will not be supported")
+    HAS_ASSIMP = False
 
 
 def _load_mesh_proto(path):
-    pass
+    with open(path, "rb") as f:
+        return Mesh.from_proto(f.read())
 
 
 def _load_mesh_meshio(path):
     pass
 
 
-def _load_volume_mesh_proto(path):
-    pass
-
-
-def _load_volume_mesh_meshio(path):
-    pass
-
-
 def _save_mesh_proto(mesh, path):
-    pass
+    with open(path, "wb") as f:
+        f.write(mesh.to_proto())
 
 
 def _save_mesh_meshio(mesh, path):
     pass
 
 
-def _save_volume_mesh_proto(mesh, path):
+def _save_mesh_gltflib(mesh, path):
     pass
 
 
-def _save_volume_mesh_meshio(mesh, path):
-    pass
+def _load_volume_mesh_proto(path):
+    with open(path, "rb") as f:
+        return VolumeMesh.from_proto(f.read())
 
 
-save_to_pb = lambda object, path: None
-save_3d_surface_with_meshio = lambda object, path: None
-save_3d_surface_with_gltflib = lambda object, path: None
-protobuf_to_json = None
+def _save_volume_mesh_proto(volume_mesh, path):
+    with open(path, "wb") as f:
+        f.write(volume_mesh.to_proto())
+
 
 _load_formats = {
     Mesh: {
@@ -55,25 +59,38 @@ _load_formats = {
         ".vtk": _load_mesh_meshio,
         ".vtu": _load_mesh_meshio,
     },
-    VolumeMesh: {},
+    VolumeMesh: {
+        ".pb": _load_volume_mesh_proto,
+        ".pb2": _load_volume_mesh_proto,
+    },
 }
 
 _save_formats = {
     Mesh: {
-        ".pb": save_to_pb,
-        ".pb2": save_to_pb,
-        ".obj": save_3d_surface_with_meshio,
-        ".ply": save_3d_surface_with_meshio,
-        ".stl": save_3d_surface_with_meshio,
-        ".vtk": save_3d_surface_with_meshio,
-        ".vtu": save_3d_surface_with_meshio,
-        ".gltf": save_3d_surface_with_gltflib,
-        ".gltf2": save_3d_surface_with_gltflib,
-        ".glb": save_3d_surface_with_gltflib,
-        ".json": protobuf_to_json,
+        ".pb": _save_mesh_proto,
+        ".pb2": _save_mesh_proto,
+        ".obj": _save_mesh_meshio,
+        ".ply": _save_mesh_meshio,
+        ".stl": _save_mesh_meshio,
+        ".vtk": _save_mesh_meshio,
+        ".vtu": _save_mesh_meshio,
+        ".gltf": _save_mesh_gltflib,
+        ".gltf2": _save_mesh_gltflib,
+        ".glb": _save_mesh_gltflib,
     },
-    VolumeMesh: {},
+    VolumeMesh: {
+        ".pb": _save_volume_mesh_proto,
+        ".pb2": _save_volume_mesh_proto,
+    },
 }
+
+if HAS_ASSIMP:
+    _load_formats[Mesh].update(
+        {
+            ".dae": load_with_assimp,
+            ".fbx": load_with_assimp,
+        }
+    )
 
 
 def load_mesh(path):
