@@ -1,7 +1,6 @@
 # Copyright(C) 2023 Anders Logg and Dag Wästberg
 # Licensed under the MIT License
 
-import pathlib
 import meshio
 import pygltflib
 
@@ -207,7 +206,7 @@ def load_mesh(path):
 
 
 def load_volume_mesh(path):
-    return generic.load(path, "volume mesh", VolumeMesh, _load_formats)
+    return generic.load(path, "mesh", VolumeMesh, _load_formats)
 
 
 def save(mesh, path):

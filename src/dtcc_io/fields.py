@@ -2,63 +2,77 @@
 # Licensed under the MIT License
 
 from dtcc_model import (
+    GridField,
+    GridVectorField,
     MeshField,
     MeshVectorField,
     VolumeMeshField,
     VolumeMeshVectorField,
 )
+from .logging import warning
+from . import generic
 
-from .logging import info, error
-
-
-def load(path):
-    pass
+# FIXME: The proto stuff can be made more generic
 
 
-def save(field, path):
-    if isinstance(field, MeshField):
-        save_mesh_field(field, path)
-    elif isinstance(field, MeshVectorField):
-        save_mesh_vector_field(field, path)
-    elif isinstance(field, VolumeMeshField):
-        save_volume_mesh_field(field, path)
-    elif isinstance(field, VolumeMeshVectorField):
-        save_volume_mesh_vector_field(field, path)
-    else:
-        error('Unable to save field of type "%s"' % type(field))
+def _load_proto_mesh_field(path):
+    with open(path, "rb") as f:
+        return MeshField.from_proto(f.read())
 
 
-def save_mesh_field(field, path):
-    info(f"Saving MeshField to {path}")
+def _load_proto_mesh_vector_field(path):
+    with open(path, "rb") as f:
+        return MeshField.from_proto(f.read())
 
 
-def save_mesh_vector_field(field, path):
-    info(f"Saving MeshVectorField to {path}")
+def _save_proto_mesh_field(field, path):
+    with open(path, "wb") as f:
+        f.write(field.to_proto())
 
 
-def save_volume_mesh_field(field, path):
-    info(f"Saving VolumeMeshField to {path}")
+def _save_proto_mesh_vector_field(field, path):
+    with open(path, "wb") as f:
+        f.write(field.to_proto())
 
 
-def save_volume_mesh_vector_field(field, path):
-    info(f"Saving VolumeMeshVectorField to {path}")
+_load_formats = {
+    MeshField: {
+        ".pb": _load_proto_mesh_field,
+        ".pb2": _load_proto_mesh_field,
+    },
+    MeshVectorField: {
+        ".pb": _load_proto_mesh_vector_field,
+        ".pb2": _load_proto_mesh_vector_field,
+    },
+}
+
+_save_formats = {
+    MeshField: {
+        ".pb": _save_proto_mesh_field,
+        ".pb2": _save_proto_mesh_field,
+    },
+    MeshVectorField: {
+        ".pb": _save_proto_mesh_vector_field,
+        ".pb2": _save_proto_mesh_vector_field,
+    },
+}
 
 
-def load_mesh_field(path):
-    _load(path, "field", _load_formats[Mesh])
+def load_field(path):
+    return generic.load(path, "field", MeshField, _load_formats)
 
 
-def load_mesh_vector_field(path):
-    _load(path, "field", VolumeMes, _load_formats)
+def load_vector_field(path):
+    return generic.load(path, "field", MeshVectorField, _load_formats)
 
 
 def save(mesh, path):
-    _save(mesh, path, "mesh", _save_formats)
+    generic.save(mesh, path, "field", _save_formats)
 
 
 def list_io():
-    return _list_io("mesh", _load_formats, _save_formats)
+    return generic.list_io("field", _load_formats, _save_formats)
 
 
 def print_io():
-    _print_io("mesh", _load_formats, _save_formats)
+    generic.print_io("field", _load_formats, _save_formats)
