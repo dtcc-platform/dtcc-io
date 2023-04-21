@@ -41,6 +41,7 @@ def _load_meshio_mesh(path):
     mesh = meshio.read(path)
     vertices = mesh.points
     faces = mesh.cells[0].data
+    # FIXME: What about normals?
     return Mesh(vertices=vertices, faces=faces)
 
 
@@ -58,6 +59,7 @@ def _save_meshio_mesh(mesh, path):
 
 def _save_meshio_volume_mesh(mesh, path):
     _mesh = meshio.Mesh(mesh.vertices, [("tetra", _mesh.cells)])
+    meshio.write(path, _mesh)
 
 
 def _save_gltf_mesh(mesh, path):
@@ -126,6 +128,16 @@ def _save_gltf_mesh(mesh, path):
 
     model.set_binary_blob(data)
     model.save(path)
+
+
+def _load_assimp_mesh(path):
+    scene = pyassimp.load(path, pyassimp.postprocess.aiProcess_Triangulate)
+    _mesh = scene.meshes[0]
+    return Mesh(vertices=_mesh.vertices, normals=_mesh.normals, faces=_mesh.faces)
+
+
+def _save_assimp_mesh(mesh, path):
+    error("Not implemented, please FIXME")
 
 
 _load_formats = {
