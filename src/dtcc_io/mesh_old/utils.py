@@ -31,19 +31,3 @@ def create_2d_mesh(vertices, faces, return_serialized=False):
         return pb.SerializeToString()
     else:
         return pb
-
-
-def load_protobuf(path, return_serialized=False, mesh_type="surface"):
-    if return_serialized:
-        return open(path, "rb").read()
-    if mesh_type == "surface":
-        pb_mesh = Mesh()
-    elif mesh_type == "volume":
-        pb_mesh = VolumeMesh()
-    elif mesh_type == "2d":
-        pb_mesh = Mesh()
-    else:
-        raise ValueError(f"Unknown mesh type: {mesh_type}, must be one of {mesh_types}")
-    with open(path, "rb") as f:
-        pb_mesh.ParseFromString(f.read())
-    return pb_mesh

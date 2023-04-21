@@ -23,7 +23,10 @@ def _load_mesh_proto(path):
 
 
 def _load_mesh_meshio(path):
-    pass
+    mesh = meshio.read(path)
+    vertices = mesh.points
+    faces = mesh.cells[0].data
+    return Mesh(vertices=vertices, faces=faces)
 
 
 def _save_mesh_proto(mesh, path):
@@ -32,7 +35,8 @@ def _save_mesh_proto(mesh, path):
 
 
 def _save_mesh_meshio(mesh, path):
-    pass
+    _mesh = meshio.Mesh(mesh.vertices, [("triangle", mesh.faces)])
+    meshio.write(path, _mesh)
 
 
 def _save_mesh_gltflib(mesh, path):
