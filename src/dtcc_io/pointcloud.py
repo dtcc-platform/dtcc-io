@@ -5,7 +5,9 @@ from time import time
 import logging
 
 from dtcc_model import dtcc_pb2 as proto
-from dtcc_model.pointcloud import PointCloud
+from dtcc_model import PointCloud
+
+# FIXME: Use Bounds class from dtcc-model
 from dtcc_io.bounds import bounds_union
 
 # from dtcc_io.bindings import PBPointCloud
