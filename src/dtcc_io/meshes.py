@@ -5,7 +5,7 @@ import meshio
 import pathlib
 
 from dtcc_model import Mesh, VolumeMesh
-from .logging import info, error
+from . import generic
 
 
 def _load_mesh_proto(path):
@@ -40,86 +40,57 @@ def _save_volume_mesh_meshio(mesh, path):
     pass
 
 
-_load_mesh_format = {
-    ".pb": _load_mesh_proto,
-    ".pb2": _load_mesh_proto,
-    ".obj": _load_mesh_meshio,
-    ".ply": _load_mesh_meshio,
-    ".stl": _load_mesh_meshio,
-    ".vtk": _load_mesh_meshio,
-    ".vtu": _load_mesh_meshio,
+save_to_pb = lambda object, path: None
+save_3d_surface_with_meshio = lambda object, path: None
+save_3d_surface_with_gltflib = lambda object, path: None
+protobuf_to_json = None
+
+_load_formats = {
+    Mesh: {
+        ".pb": _load_mesh_proto,
+        ".pb2": _load_mesh_proto,
+        ".obj": _load_mesh_meshio,
+        ".ply": _load_mesh_meshio,
+        ".stl": _load_mesh_meshio,
+        ".vtk": _load_mesh_meshio,
+        ".vtu": _load_mesh_meshio,
+    },
+    VolumeMesh: {},
 }
 
-_load_volume_mesh_format = {}
-
-_save_mesh_format = {
-    ".pb": _save_mesh_proto,
-    ".pb2": _save_mesh_proto,
-    ".obj": _save_mesh_meshio,
-    ".ply": _save_mesh_meshio,
-    ".stl": _save_mesh_meshio,
-    ".vtk": _save_mesh_meshio,
-    ".vtu": _save_mesh_meshio,
-}
-
-_save_volume_mesh_format = {}
-
-
-def _load_mesh(mesh, path):
-    info(f"Loading Mesh from {path}")
-    if path.suffix in _load_mesh_format:
-        _load_mesh_format[path.suffix](mesh, path)
-    else:
-        error(f'Unable to load Mesh; format "{path.suffix}" not supported')
-
-
-def _load_volume_mesh(mesh, path):
-    info(f"Loading VolumeMesh from {path}")
-    if path.suffix in _load_volume_mesh_format:
-        _load_volume_mesh_format[path.suffix](mesh, path)
-    else:
-        error(f'Unable to load VolumeMesh; format "{path.suffix}" not supported')
-
-
-def _save_mesh(mesh, path):
-    info(f"Saving Mesh to {path}")
-    if path.suffix in _save_mesh_format:
-        _save_mesh_format[path.suffix](mesh, path)
-    else:
-        error(f'Unable to save Mesh; format "{path.suffix}" not supported')
-
-
-def _save_volume_mesh(mesh, path):
-    info(f"Saving VolumeMesh to {path}")
-    if path.suffix in _save_volume_mesh_format:
-        _save_volume_mesh_format[path.suffix](mesh, path)
-    else:
-        error(f'Unable to save VolumeMesh; format "{path.suffix}" not supported')
-
-
-_load_mesh_type = {
-    Mesh: _load_mesh,
-    VolumeMesh: _load_volume_mesh,
+_save_formats = {
+    Mesh: {
+        ".pb": save_to_pb,
+        ".pb2": save_to_pb,
+        ".obj": save_3d_surface_with_meshio,
+        ".ply": save_3d_surface_with_meshio,
+        ".stl": save_3d_surface_with_meshio,
+        ".vtk": save_3d_surface_with_meshio,
+        ".vtu": save_3d_surface_with_meshio,
+        ".gltf": save_3d_surface_with_gltflib,
+        ".gltf2": save_3d_surface_with_gltflib,
+        ".glb": save_3d_surface_with_gltflib,
+        ".json": protobuf_to_json,
+    },
+    VolumeMesh: {},
 }
 
 
-_save_mesh_type = {
-    Mesh: _save_mesh,
-    VolumeMesh: _save_volume_mesh,
-}
+def load_mesh(path):
+    generic.load(path, "mesh", _load_formats[Mesh])
 
 
-def load(mesh, path):
-    if type(mesh) in _load_mesh_type:
-        path = pathlib.Path(path)
-        _load_mesh_type[type(mesh)](mesh, path)
-    else:
-        error(f'Unable to load mesh; type "{type(mesh)}" not supported' % type(mesh))
+def load_volume_mesh(path):
+    generic.load(path, "volume mesh", VolumeMesh, _load_formats)
 
 
 def save(mesh, path):
-    if type(mesh) in _save_mesh_type:
-        path = pathlib.Path(path)
-        _save_mesh_type[type(mesh)](mesh, path)
-    else:
-        error(f'Unable to save mesh; type "{type(mesh)}" not supported' % type(mesh))
+    generic.save(mesh, path, "mesh", _save_formats)
+
+
+def list_io():
+    return generic.list_io("mesh", _load_formats, _save_formats)
+
+
+def print_io():
+    generic.print_io("mesh", _load_formats, _save_formats)

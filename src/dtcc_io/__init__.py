@@ -9,8 +9,11 @@ from . import citymodel
 load_pointcloud = pointcloud.load
 save_pointcloud = pointcloud.save
 
-load_mesh = meshes.load
+load_mesh = meshes.load_mesh
+load_volume_mesh = meshes.load_volume_mesh
 save_mesh = meshes.save
+list_mesh_io = meshes.list_io
+print_mesh_io = meshes.print_io
 
 load_field = fields.load
 save_field = fields.save

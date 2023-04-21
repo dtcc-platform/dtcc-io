@@ -1,20 +1,28 @@
 # Copyright(C) 2023 Anders Logg
 # Licensed under the MIT License
 
-# Configure logging
 import logging
+
 format = "%(asctime)s [%(name)s] [%(levelname)s] %(message)s"
 logging.basicConfig(format=format)
-logger = logging.getLogger('dtcc_io')
+logger = logging.getLogger("dtcc_io")
 
-# Expose logging functions
+
 debug = logger.debug
 info = logger.info
 warning = logger.warning
-error = logger.error
-critical = logger.critical
+
+
+def error(msg):
+    logger.error(msg)
+    raise RuntimeError(msg)
+
+
+def critical(msg):
+    logger.critical(msg)
+    raise RuntimeError(msg)
 
 
 def set_log_level(level):
-    'Set log level'
+    "Set log level"
     logger.setLevel(level)
