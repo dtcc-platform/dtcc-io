@@ -201,7 +201,7 @@ if HAS_ASSIMP:
 
 
 def load_mesh(path):
-    generic.load(path, "mesh", _load_formats[Mesh])
+    generic.load(path, "mesh", Mesh, _load_formats)
 
 
 def load_volume_mesh(path):
