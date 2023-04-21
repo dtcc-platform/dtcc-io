@@ -3,6 +3,22 @@ requires = ["setuptools>=61.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
+dependencies = [
+  "protobuf >= 3.20.0, < 3.21.0",
+  "laspy[lazrs]",
+  "numpy >= 1.20.0, < 2.0.0",
+  "scipy",
+  "Fiona",
+  "rasterio",
+  "shapely",
+  "meshio",
+  "pyassimp",
+  "pygltflib",
+  "pyproj",
+  "folium",
+  "pillow",
+  "dtcc-model@git+https://github.com/dtcc-platform/dtcc-model.git@develop",
+]
 name = "dtcc-io"
 version = "0.3.6"
 description = "DTCC IO"
@@ -17,21 +33,6 @@ classifiers = [
   "Intended Audience :: Science/Research",
   "Programming Language :: Python :: 3",
   "License :: OSI Approved :: MIT License",
-]
-dependencies = [
-  "protobuf >= 3.20.0, < 3.21.0",
-  "laspy[lazrs]",
-  "numpy >= 1.20.0, < 2.0.0",
-  "Fiona",
-  "rasterio",
-  "shapely",
-  "meshio",
-  "pyassimp",
-  "pygltflib",
-  "pyproj",
-  "folium",
-  "pillow",
-  "dtcc-model@git+https://github.com/dtcc-platform/dtcc-model.git@develop",
 ]
 
 [project.optional-dependencies]
