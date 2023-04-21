@@ -17,24 +17,38 @@ except:
     HAS_ASSIMP = False
 
 
-def _load_mesh_proto(path):
+def _load_proto_mesh(path):
     with open(path, "rb") as f:
         return Mesh.from_proto(f.read())
 
 
-def _load_mesh_meshio(path):
+def _load_proto_volume_mesh(path):
+    with open(path, "rb") as f:
+        return VolumeMesh.from_proto(f.read())
+
+
+def _save_proto_mesh(mesh, path):
+    with open(path, "wb") as f:
+        f.write(mesh.to_proto())
+
+
+def _save_proto_volume_mesh(volume_mesh, path):
+    with open(path, "wb") as f:
+        f.write(volume_mesh.to_proto())
+
+
+def _load_meshio_mesh(path):
     mesh = meshio.read(path)
     vertices = mesh.points
     faces = mesh.cells[0].data
     return Mesh(vertices=vertices, faces=faces)
 
 
-def _save_mesh_proto(mesh, path):
-    with open(path, "wb") as f:
-        f.write(mesh.to_proto())
+def _load_meshio_volume_meshio(path):
+    pass
 
 
-def _save_mesh_meshio(mesh, path):
+def _save_meshio_mesh(mesh, path):
     _mesh = meshio.Mesh(mesh.vertices, [("triangle", mesh.faces)])
     meshio.write(path, _mesh)
 
@@ -43,56 +57,46 @@ def _save_mesh_gltflib(mesh, path):
     pass
 
 
-def _load_volume_mesh_proto(path):
-    with open(path, "rb") as f:
-        return VolumeMesh.from_proto(f.read())
-
-
-def _save_volume_mesh_proto(volume_mesh, path):
-    with open(path, "wb") as f:
-        f.write(volume_mesh.to_proto())
-
-
 _load_formats = {
     Mesh: {
-        ".pb": _load_mesh_proto,
-        ".pb2": _load_mesh_proto,
-        ".obj": _load_mesh_meshio,
-        ".ply": _load_mesh_meshio,
-        ".stl": _load_mesh_meshio,
-        ".vtk": _load_mesh_meshio,
-        ".vtu": _load_mesh_meshio,
+        ".pb": _load_proto_mesh,
+        ".pb2": _load_proto_mesh,
+        ".obj": _load_meshio_mesh,
+        ".ply": _load_meshio_mesh,
+        ".stl": _load_meshio_mesh,
+        ".vtk": _load_meshio_mesh,
+        ".vtu": _load_meshio_mesh,
     },
     VolumeMesh: {
-        ".pb": _load_volume_mesh_proto,
-        ".pb2": _load_volume_mesh_proto,
+        ".pb": _load_proto_volume_mesh,
+        ".pb2": _load_proto_volume_mesh,
     },
 }
 
 _save_formats = {
     Mesh: {
-        ".pb": _save_mesh_proto,
-        ".pb2": _save_mesh_proto,
-        ".obj": _save_mesh_meshio,
-        ".ply": _save_mesh_meshio,
-        ".stl": _save_mesh_meshio,
-        ".vtk": _save_mesh_meshio,
-        ".vtu": _save_mesh_meshio,
+        ".pb": _save_proto_mesh,
+        ".pb2": _save_proto_mesh,
+        ".obj": _save_meshio_mesh,
+        ".ply": _save_meshio_mesh,
+        ".stl": _save_meshio_mesh,
+        ".vtk": _save_meshio_mesh,
+        ".vtu": _save_meshio_mesh,
         ".gltf": _save_mesh_gltflib,
         ".gltf2": _save_mesh_gltflib,
         ".glb": _save_mesh_gltflib,
     },
     VolumeMesh: {
-        ".pb": _save_volume_mesh_proto,
-        ".pb2": _save_volume_mesh_proto,
+        ".pb": _save_proto_volume_mesh,
+        ".pb2": _save_proto_volume_mesh,
     },
 }
 
 if HAS_ASSIMP:
     _load_formats[Mesh].update(
         {
-            ".dae": load_with_assimp,
-            ".fbx": load_with_assimp,
+            ".dae": load_assimp_mesh,
+            ".fbx": load_assimp_mesh,
         }
     )
 
