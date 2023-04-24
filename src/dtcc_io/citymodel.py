@@ -75,7 +75,7 @@ def load(
     bounds_filter = None
     if bounds is not None:
         cityModel.bounds = bounds
-        bounds_filter = shapely.geometry.box(*bounds).buffer(-min_edge_distance)
+        bounds_filter = shapely.geometry.box(*bounds.tuple).buffer(-min_edge_distance)
     try:
         f = fiona.open(filename)
         f.close()

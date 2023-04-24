@@ -5,7 +5,7 @@ from time import time
 import logging
 
 from dtcc_model import dtcc_pb2 as proto
-from dtcc_model import PointCloud
+from dtcc_model import PointCloud, Bounds
 
 # FIXME: Use Bounds class from dtcc-model
 from dtcc_io.bounds import bounds_union
@@ -46,6 +46,8 @@ def load(
 ):
     path = Path(path)
     suffix = path.suffix.lower()
+    if isinstance(bounds, Bounds):
+        bounds = bounds.tuple
     if len(bounds) > 0 and len(bounds) != 4:
         print("WARNING, invalid bouds {bounds}, ignoring")
         bounds = ()
@@ -148,7 +150,7 @@ def load_las(
     # print(f"loading with laspy {time()-start_laspy}")
     start_protobuf_pc = time()
     if pts is not None and len(pts) > 0:
-        pc = Pointcloud()
+        pc = PointCloud()
         pc.points = pts
         if not points_only:
             pc.classification = classification
