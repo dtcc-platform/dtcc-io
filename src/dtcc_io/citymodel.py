@@ -14,6 +14,7 @@ import pyproj
 from .utils import protobuf_to_json
 
 # from dtcc_model import Polygon, Building, LinearRing, Vector2D, CityModel
+import dtcc_model as model
 from dtcc_model.building import Building
 from dtcc_model.citymodel import CityModel
 
@@ -109,6 +110,10 @@ def load(
 
     cityModel.buildings = buildings
     cityModel.crs = crs
+    if bounds is not None:
+        cityModel.bounds = model.Bounds(
+            xmin=bounds[0], ymin=bounds[1], xmax=bounds[2], ymax=bounds[3]
+        )
     return cityModel
 
 
