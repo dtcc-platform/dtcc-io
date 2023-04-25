@@ -19,7 +19,7 @@ def save(object, path, name, formats):
 
 def load(path, name, type, formats):
     if not type in formats:
-        error(f'Unable to load {name}; type "{type.__name__}" not supported' % type)
+        error(f'Unable to load {name}; type "{type.__name__}" not supported')
     path = pathlib.Path(path)
     if path.suffix not in formats[type]:
         error(f"Unable to load {name}; format {path.suffix} not supported")
