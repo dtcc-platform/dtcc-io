@@ -179,11 +179,11 @@ _save_formats = {
     VolumeMesh: {
         ".pb": _save_proto_volume_mesh,
         ".pb2": _save_proto_volume_mesh,
-        ".obj": _save_meshio_mesh,
-        ".ply": _save_meshio_mesh,
-        ".stl": _save_meshio_mesh,
-        ".vtk": _save_meshio_mesh,
-        ".vtu": _save_meshio_mesh,
+        ".obj": _save_meshio_volume_mesh,
+        ".ply": _save_meshio_volume_mesh,
+        ".stl": _save_meshio_volume_mesh,
+        ".vtk": _save_meshio_volume_mesh,
+        ".vtu": _save_meshio_volume_mesh,
     },
 }
 
