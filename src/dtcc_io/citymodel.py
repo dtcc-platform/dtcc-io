@@ -111,9 +111,12 @@ def load(
     cityModel.buildings = buildings
     cityModel.crs = crs
     if bounds is not None:
-        cityModel.bounds = model.Bounds(
-            xmin=bounds[0], ymin=bounds[1], xmax=bounds[2], ymax=bounds[3]
-        )
+        if isinstance(bounds, model.Bounds):
+            cityModel.bounds = bounds
+        else:
+            cityModel.bounds = model.Bounds(
+                xmin=bounds[0], ymin=bounds[1], xmax=bounds[2], ymax=bounds[3]
+            )
     return cityModel
 
 

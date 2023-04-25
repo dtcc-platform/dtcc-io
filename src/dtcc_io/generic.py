@@ -7,9 +7,7 @@ from .logging import info, error
 
 def save(object, path, name, formats):
     if not type(object) in formats:
-        error(
-            f'Unable to save {name}; type "{type(object)}" not supported' % type(object)
-        )
+        error(f'Unable to save {name}; type "{type(object)}" not supported')
     path = pathlib.Path(path)
     if path.suffix not in formats[type(object)]:
         error(

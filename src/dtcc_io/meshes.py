@@ -54,12 +54,13 @@ def _load_meshio_volume_mesh(path):
 
 
 def _save_meshio_mesh(mesh, path):
+    print(mesh.vertices.shape, mesh.faces.shape)
     _mesh = meshio.Mesh(mesh.vertices, [("triangle", mesh.faces)])
     meshio.write(path, _mesh)
 
 
 def _save_meshio_volume_mesh(mesh, path):
-    _mesh = meshio.Mesh(mesh.vertices, [("tetra", _mesh.cells)])
+    _mesh = meshio.Mesh(mesh.vertices, [("tetra", mesh.cells)])
     meshio.write(path, _mesh)
 
 
