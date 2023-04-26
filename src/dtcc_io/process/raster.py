@@ -8,9 +8,10 @@ def fill_holes(raster):
     nodata = raster.nodata
     mask = data == nodata
     if np.any(mask):
+        print(f"filling {mask.sum()} holes in raster")
         ind = scipy.ndimage.distance_transform_edt(
             mask, return_distances=False, return_indices=True
         )
-        data[tuple(ind)]
+        data = data[tuple(ind)]
     raster.data = data
     return raster
