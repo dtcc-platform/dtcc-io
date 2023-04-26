@@ -30,12 +30,12 @@ def _load_proto_volume_mesh(path):
 
 def _save_proto_mesh(mesh, path):
     with open(path, "wb") as f:
-        f.write(mesh.to_proto())
+        f.write(mesh.to_proto().SerializeToString())
 
 
 def _save_proto_volume_mesh(mesh, path):
     with open(path, "wb") as f:
-        f.write(mesh.to_proto())
+        f.write(mesh.to_proto().SerializeToString())
 
 
 def _load_meshio_mesh(path):
