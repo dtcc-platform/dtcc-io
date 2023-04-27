@@ -19,3 +19,17 @@ class TestRemoveGlobalOutliers(unittest.TestCase):
         pc = io.load_pointcloud("data/MinimalCase/pointcloud.las")
         pc = pc.remove_global_outliers(1)
         self.assertEqual(len(pc.points), 6965)
+
+
+class TestClassificatioFilter(unittest.TestCase):
+    def test_classification_filter_remove(self):
+        pc = io.load_pointcloud("data/MinimalCase/pointcloud.las")
+        num_not_class_1 = len([c for c in pc.classification if c != 1])
+        pc = pc.classification_filter([1])
+        self.assertEqual(len(pc.points), num_not_class_1)
+
+    def test_classification_filter_kepp(self):
+        pc = io.load_pointcloud("data/MinimalCase/pointcloud.las")
+        num_class_1 = len([c for c in pc.classification if c == 1])
+        pc = pc.classification_filter([1], keep=True)
+        self.assertEqual(len(pc.points), num_class_1)
