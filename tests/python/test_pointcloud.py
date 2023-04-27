@@ -38,7 +38,7 @@ class TestPointcloud(unittest.TestCase):
         pc = io.load_pointcloud(self.building_las_file)
         outfile = tempfile.NamedTemporaryFile(suffix=".las", delete=False)
         outpath = Path(outfile.name)
-        io.save_pointcloud(pc, outpath)
+        pc.save(outpath)
         pc2 = io.load_pointcloud(outpath)
         self.assertEqual(len(pc.points), len(pc2.points))
         self.assertEqual(len(pc.classification), len(pc2.classification))

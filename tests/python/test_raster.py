@@ -39,7 +39,7 @@ class TestGridField(unittest.TestCase):
     def test_write_elevation_model(self):
         em = io.load_raster(self.dem_raster)
         outfile = tempfile.NamedTemporaryFile(suffix=".tif", delete=False).name
-        io.save_raster(em, outfile)
+        em.save(outfile)
         em = io.load_raster(outfile)
         self.assertEqual(em.height, 40)
         self.assertEqual(em.width, 20)

@@ -47,7 +47,7 @@ class TestCityModel(unittest.TestCase):
     def test_save_citymodel(self):
         cm = io.load_footprints(self.building_shp_file, "uuid")
         outfile = tempfile.NamedTemporaryFile(suffix=".geojson")
-        io.save_citymodel(cm, outfile.name)
+        cm.save(outfile.name)
         with open(outfile.name) as f:
             data = json.load(f)
         self.assertEqual(len(data["features"]), 5)
