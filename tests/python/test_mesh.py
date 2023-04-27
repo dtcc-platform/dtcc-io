@@ -66,7 +66,9 @@ class TestMesh(unittest.TestCase):
     def test_save_load_mesh_glb(self):
         mesh = io.load_mesh(self.mesh_cube_stl)
         path = tempfile.NamedTemporaryFile(suffix=".glb", delete=False).name
-        io.save_mesh(mesh, path)
+        mesh.save(path)
+        self.assertTrue(os.path.exists(path))
+        os.unlink(path)
         # mesh = io.load_mesh(path)
         # self.assertEqual(len(mesh.vertices), 24)
         # self.assertEqual(len(mesh.faces), 44)
@@ -75,7 +77,9 @@ class TestMesh(unittest.TestCase):
     def test_save_load_mesh_gltf(self):
         mesh = io.load_mesh(self.mesh_cube_stl)
         path = tempfile.NamedTemporaryFile(suffix=".gltf", delete=False).name
-        io.save_mesh(mesh, path)
+        mesh.save(path)
+        self.assertTrue(os.path.exists(path))
+        os.unlink(path)
         # mesh = io.load_mesh(path)
         # self.assertEqual(len(mesh.vertices), 24)
         # self.assertEqual(len(mesh.faces), 44)
