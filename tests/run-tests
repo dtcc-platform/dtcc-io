@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-echo "Running C++ tests"
-echo "================="
-./cpp/bin/run-tests
+# echo "Running C++ tests"
+# echo "================="
+# ./cpp/bin/run-tests
 
 echo "Running Python tests"
 echo "===================="

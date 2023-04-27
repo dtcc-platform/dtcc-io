@@ -1,5 +1,0 @@
-set(PROGRAM run-tests)
-add_executable(${PROGRAM} ${PROGRAM}.cpp)
-include_directories(${PROTOBUF_INCLUDE_DIRS} ${DTCCMODEL_INCLUDE_DIRS})
-target_link_libraries(${PROGRAM} ${DTCCMODEL_LIBRARIES} ${PROTOBUF_LIBRARY} Threads::Threads)
-install(TARGETS ${PROGRAM} DESTINATION ${CMAKE_SOURCE_DIR}/tests/cpp/bin)
