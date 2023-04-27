@@ -17,10 +17,10 @@ dependencies = [
   "pyproj",
   "folium",
   "pillow",
-  "dtcc-model@git+https://github.com/dtcc-platform/dtcc-model.git@develop",
+  "dtcc-model@git+https://github.com/dtcc-platform/dtcc-model.git@dev/new-data-classes",
 ]
 name = "dtcc-io"
-version = "0.3.6"
+version = "0.4.1"
 description = "DTCC IO"
 readme = "README.md"
 authors = [
