@@ -2,7 +2,8 @@
 import dtcc_io.bounds as bounds
 import dtcc_io.citymodel as citymodel
 import dtcc_io.raster as raster
-import dtcc_io.process as process
+
+import dtcc_io.process
 
 from . import pointcloud
 from . import meshes
@@ -36,17 +37,18 @@ import dtcc_io.gridfield as gridfield
 load_gridfield = gridfield.load
 save_gridfield = gridfield.save
 
-
-# FIXME: Remove read/write, use load/save
-read_pointcloud = pointcloud.load
-write_pointcloud = pointcloud.save
-read_citymodel = citymodel.load
-write_citymodel = citymodel.save
 load_citymodel = citymodel.load
 save_citymodel = citymodel.save
 load_footprints = citymodel.load
 save_footprints = citymodel.save
 
+from dtcc_model import CityModel, PointCloud, Raster, Mesh, VolumeMesh
+
+CityModel.add_processors(save_citymodel, "save")
+PointCloud.add_processors(save_pointcloud, "save")
+Raster.add_processors(save_raster, "save")
+Mesh.add_processors(save_mesh, "save")
+VolumeMesh.add_processors(save_mesh, "save")
 
 # __all__ = ['bounds', 'citymodel', 'elevationmodel', 'mesh', 'pointcloud']
 

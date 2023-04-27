@@ -3,7 +3,7 @@ import numpy as np
 
 
 def fill_holes(raster):
-    """Fill holes in a raster using nearest neighbour interpolation."""
+    """Fill nodata holes in a raster using the nearest neighbour"""
     data = raster.data
     nodata = raster.nodata
     mask = data == nodata
