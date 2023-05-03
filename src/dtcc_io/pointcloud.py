@@ -61,23 +61,24 @@ def load(
     if suffix in [".pb", ".pb2"]:
         pc = PointCloud()
         pc.from_proto(path.load_bytes())
-        return pc
     elif suffix in [".las", ".laz"]:
-        return load_las(
+        pc = load_las(
             path,
             points_only=points_only,
             points_classification_only=points_classification_only,
             bounds=bounds,
         )
     elif suffix in [".csv"]:
-        return load_csv(
+        pc = load_csv(
             path,
             delimiter=delimiter,
             bounds=bounds,
         )
     else:
         print(f"Cannot read file with suffix {suffix}")
-    return None
+        return None
+    pc.calculate_bounds()
+    return pc
 
 
 def load_csv(path, delimiter=",", bounds=()):
