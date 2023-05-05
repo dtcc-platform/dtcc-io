@@ -18,7 +18,7 @@ dependencies = [
   "folium",
   "pillow",
   "dtcc-model@git+https://github.com/dtcc-platform/dtcc-model.git@develop",
-  "pypoints2grid@git+https://github.com/dwastberg/pypoints2grid.git@dev",
+  "pypoints2grid@git+https://github.com/dwastberg/pypoints2grid.git",
 ]
 
 name = "dtcc-io"
