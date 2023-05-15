@@ -9,6 +9,7 @@ from . import pointcloud
 from . import meshes
 from . import fields
 from . import citymodel
+from . import landuse
 
 load_pointcloud = pointcloud.load
 save_pointcloud = pointcloud.save
@@ -41,6 +42,8 @@ load_citymodel = citymodel.load
 save_citymodel = citymodel.save
 load_footprints = citymodel.load
 save_footprints = citymodel.save
+
+load_landuse = landuse.load
 
 from dtcc_model import CityModel, PointCloud, Raster, Mesh, VolumeMesh
 
