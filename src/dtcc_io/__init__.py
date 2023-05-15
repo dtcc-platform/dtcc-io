@@ -10,6 +10,7 @@ from . import meshes
 from . import fields
 from . import citymodel
 from . import landuse
+from . import roadnetwork
 
 load_pointcloud = pointcloud.load
 save_pointcloud = pointcloud.save
@@ -45,13 +46,17 @@ save_footprints = citymodel.save
 
 load_landuse = landuse.load
 
-from dtcc_model import CityModel, PointCloud, Raster, Mesh, VolumeMesh
+load_roadnetwork = roadnetwork.load
+save_roadnetwork = roadnetwork.save
+
+from dtcc_model import CityModel, PointCloud, Raster, Mesh, VolumeMesh, RoadNetwork
 
 CityModel.add_processors(save_citymodel, "save")
 PointCloud.add_processors(save_pointcloud, "save")
 Raster.add_processors(save_raster, "save")
 Mesh.add_processors(save_mesh, "save")
 VolumeMesh.add_processors(save_mesh, "save")
+RoadNetwork.add_processors(save_roadnetwork, "save")
 
 # __all__ = ['bounds', 'citymodel', 'elevationmodel', 'mesh', 'pointcloud']
 
