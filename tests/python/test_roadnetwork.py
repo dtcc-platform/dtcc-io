@@ -57,7 +57,7 @@ class TestRoadnetworkIO(unittest.TestCase):
         self.assertLess(len(rn_simplified.vertices), len(rn.vertices))
 
         ro_start = list(rn.roads[14].road_geometry.coords)[0]
-        ro_end = list(rn.roads[14].road_geometry.coords)[-1]ß
+        ro_end = list(rn.roads[14].road_geometry.coords)[-1]
         rs_start = list(rn_simplified.roads[14].road_geometry.coords)[0]
         rs_end = list(rn_simplified.roads[14].road_geometry.coords)[-1]
         self.assertEqual(ro_start, rs_start)
