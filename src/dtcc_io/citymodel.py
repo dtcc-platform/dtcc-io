@@ -84,8 +84,7 @@ def load(
         raise ValueError(f"File {filename} is not a valid file format")
 
     with fiona.open(filename) as src:
-        crs = src.crs.to_string()
-        epsg = src.crs.to_epsg()
+        crs = src.crs["init"]
         for s in src:
             if area_filter is not None and area_filter > 0:
                 if shapely.geometry.shape(s["geometry"]).area < area_filter:

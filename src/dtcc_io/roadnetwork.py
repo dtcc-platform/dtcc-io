@@ -91,7 +91,7 @@ def load(
     vertex_map = {}
 
     with fiona.open(filename, "r") as src:
-        crs = src.crs.to_string()
+        crs = src.crs["init"]
         for s in src:
             if s["geometry"]["type"] != "LineString":
                 continue
