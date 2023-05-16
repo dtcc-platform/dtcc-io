@@ -47,3 +47,18 @@ class TestRoadnetworkIO(unittest.TestCase):
         self.assertAlmostEqual(
             verts[12][1], list(r0.road_geometry.coords)[12][1], places=3
         )
+
+    def test_simplify(self):
+        rn = io.load_roadnetwork(self.roadnetwork_shp_file, type_field="KATEGORI")
+        rn_simplified = io.load_roadnetwork(
+            self.roadnetwork_shp_file, type_field="KATEGORI", simplify=1
+        )
+        self.assertEqual(len(rn_simplified.roads), len(rn.roads))
+        self.assertLess(len(rn_simplified.vertices), len(rn.vertices))
+
+        ro_start = list(rn.roads[14].road_geometry.coords)[0]
+        ro_end = list(rn.roads[14].road_geometry.coords)[-1]ß
+        rs_start = list(rn_simplified.roads[14].road_geometry.coords)[0]
+        rs_end = list(rn_simplified.roads[14].road_geometry.coords)[-1]
+        self.assertEqual(ro_start, rs_start)
+        self.assertEqual(ro_end, rs_end)
