@@ -45,3 +45,26 @@ class TestResample(unittest.TestCase):
         self.assertEqual(dem.data[0, 0], dem.data[1, 0])
         self.assertEqual(dem.data[0, 0], dem.data[1, 1])
         self.assertEqual(dem.data[0, 0], dem.data[2, 2])
+
+
+class TestRasterStats(unittest.TestCase):
+    def test_single_stat(self):
+        dem = io.load_raster("data/test_dem.tif")
+        cm = io.load_citymodel("data/MinimalCase/PropertyMap.shp")
+        footprints = [b.footprint for b in cm.buildings]
+        stats = dem.stats(footprints, ["mean"])
+        self.assertEqual(stats[0], 0.0)
+        self.assertIsNone(stats[3])
+
+    def test_multiple_stats(self):
+        dem = io.load_raster("data/test_dem.tif")
+        cm = io.load_citymodel("data/MinimalCase/PropertyMap.shp")
+        footprints = [b.footprint for b in cm.buildings]
+        stats = dem.stats(footprints, ["mean", "min", "max"])
+        self.assertEqual(stats[0]["min"], 0.0)
+        self.assertEqual(stats[0]["max"], 0.0)
+        self.assertIsNone(stats[3]["min"])
+        self.assertIsNone(stats[3]["max"])
+        self.assertAlmostEqual(stats[4]["mean"], 10.2666, 3)
+        self.assertAlmostEqual(stats[4]["min"], 8.2, 3)
+        self.assertAlmostEqual(stats[4]["max"], 13, 3)
