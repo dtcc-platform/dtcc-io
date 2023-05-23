@@ -19,13 +19,10 @@ LM_landuse_map = {
     "BEBIND": LanduseClasses.INDUSTRIAL,
 }
 
+LM_landuse_fn = lambda x: LM_landuse_map.get(x, LanduseClasses.URBAN)
 
-def load(
-    filename,
-    landuse_field="DETALJTYP",
-    landuse_map=LM_landuse_map,
-    default_landuse=LanduseClasses.URBAN,
-):
+
+def load(filename, landuse_field="DETALJTYP", landuse_map=LM_landuse_fn):
     filename = Path(filename)
     if not filename.is_file():
         raise FileNotFoundError(f"File {filename} not found")
@@ -36,9 +33,7 @@ def load(
             if geom_type == "Polygon":
                 landuse = Landuse()
                 landuse.footprint = shapely.geometry.shape(s["geometry"])
-                landuse.landuse = landuse_map.get(
-                    s["properties"][landuse_field], default_landuse
-                )
+                landuse.landuse = landuse_map(s["properties"][landuse_field])
                 landuse.properties = s["properties"]
                 Landuses.append(landuse)
             if geom_type == "MultiPolygon":
@@ -48,7 +43,7 @@ def load(
                     # make each polygon its own building
                     landuse = Landuse()
                     landuse.footprint = polygon
-                    landuse.landuse = landuse_map[s["properties"][landuse_field]]
+                    landuse.landuse = landuse_map(s["properties"][landuse_field])
                     landuse.properties = s["properties"]
                     Landuses.append(landuse)
     return Landuses
