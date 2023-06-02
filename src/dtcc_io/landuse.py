@@ -3,6 +3,7 @@ from dtcc_model import proto
 from pathlib import Path
 import fiona
 import shapely.geometry
+from .dtcc_logging import info, error
 
 LM_landuse_map = {
     "VATTEN": LanduseClasses.WATER,
@@ -23,6 +24,7 @@ LM_landuse_fn = lambda x: LM_landuse_map.get(x, LanduseClasses.URBAN)
 
 
 def load(filename, landuse_field="DETALJTYP", landuse_map=LM_landuse_fn):
+    info(f"Loading landuse from {filename}")
     filename = Path(filename)
     if not filename.is_file():
         raise FileNotFoundError(f"File {filename} not found")

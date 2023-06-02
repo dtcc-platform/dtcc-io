@@ -60,16 +60,18 @@ RoadNetwork.add_processors(save_roadnetwork, "save")
 
 # __all__ = ['bounds', 'citymodel', 'elevationmodel', 'mesh', 'pointcloud']
 
-# __all__ = [
-#     "load_mesh",
-#     "save_mesh",
-#     "load_pointcloud",
-#     "save_pointcloud",
-#     "load_elevationmodel",
-#     "save_elevationmodel",
-#     "load_citymodel",
-#     "save_citymodel",
-#     "load_footprints",
-#     "save_footprints",
-#     "view_citymodel",
-# ]
+__all__ = [
+    "load_mesh",
+    "save_mesh",
+    "load_pointcloud",
+    "save_pointcloud",
+    "load_raster",
+    "save_raster",
+    "load_citymodel",
+    "save_citymodel",
+    "load_footprints",
+    "save_footprints",
+    "load_landuse",
+    "load_roadnetwork",
+    "save_roadnetwork",
+]

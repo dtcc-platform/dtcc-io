@@ -13,6 +13,7 @@ import pyproj
 
 from dtcc_model.roadnetwork import RoadNetwork, RoadType, Road
 from dtcc_model.geometry import Georef
+from .dtcc_logging import info, error
 
 
 def lm_road_type_mapping(category) -> Tuple[RoadType, bool, bool]:
@@ -78,6 +79,7 @@ def load(
     name_field="NAMN",
     simplify: float = 0,
 ) -> RoadNetwork:
+    info(f"Loading road network from {road_network_file}")
     filename = Path(road_network_file)
     if not filename.is_file():
         raise FileNotFoundError(f"File {filename} not found")
@@ -124,6 +126,7 @@ def load(
 
 
 def save(road_network: RoadNetwork, out_file: str):
+    info(f"Saving road network to {out_file}")
     out_file = Path(out_file)
     output_format = out_file.suffix
     supported_formats = [".shp", ".json", ".geojson", ".gpkg", ".pb", ".pb2"]

@@ -6,9 +6,11 @@ from pathlib import Path
 from PIL import Image
 
 from dtcc_model.raster import Raster
+from .dtcc_logging import info, error, warning
 
 
 def load(path):
+    info(f"Loading raster from {path}")
     path = Path(path)
     suffix = path.suffix.lower()
     if suffix in [".tif", ".tiff", ".geotif", ".png", ".jpg", ".asc"]:
@@ -36,6 +38,7 @@ def load_rasterio(path):
 
 
 def save(raster, path):
+    info(f"Saving raster to {path}")
     path = Path(path)
     suffix = path.suffix.lower()
     if suffix in [".tif", ".tiff"]:

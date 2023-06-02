@@ -3,7 +3,9 @@ import json
 import os, tempfile, pathlib
 import dtcc_io as io
 
-io.logging.set_log_level("DEBUG")
+import dtcc_io.dtcc_logging as logging
+
+logging.set_log_level("DEBUG")
 
 
 class TestMesh(unittest.TestCase):

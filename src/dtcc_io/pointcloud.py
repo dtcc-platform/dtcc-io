@@ -10,6 +10,8 @@ from dtcc_model import PointCloud, Bounds
 # FIXME: Use Bounds class from dtcc-model
 from dtcc_io.bounds import bounds_union
 
+from .dtcc_logging import info, error, warning
+
 # from dtcc_io.bindings import PBPointCloud
 
 from .utils import protobuf_to_json
@@ -44,12 +46,13 @@ def load(
     delimiter=",",
     bounds=(),
 ):
+    info(f"Loading pointcloud from {path}")
     path = Path(path)
     suffix = path.suffix.lower()
     if isinstance(bounds, Bounds):
         bounds = bounds.tuple
     if len(bounds) > 0 and len(bounds) != 4:
-        print("WARNING, invalid bouds {bounds}, ignoring")
+        warning("invalid bounds {bounds}, ignoring")
         bounds = ()
     if path.is_dir():
         return load_dir(
@@ -75,7 +78,7 @@ def load(
             bounds=bounds,
         )
     else:
-        print(f"Cannot read file with suffix {suffix}")
+        warning(f"Cannot read file with suffix {suffix}, ignoring")
         return None
     pc.calculate_bounds()
     return pc
@@ -167,6 +170,7 @@ def load_las(
 
 
 def save(pointcloud, outfile):
+    info(f"Saving pointcloud to {outfile}")
     outfile = Path(outfile)
     suffix = outfile.suffix.lower()
     if suffix in [".las", ".laz"]:

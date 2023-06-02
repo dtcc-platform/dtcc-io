@@ -6,7 +6,7 @@ import pygltflib
 
 
 from dtcc_model import Mesh, VolumeMesh
-from .logging import warning, error
+from .dtcc_logging import warning, error, info
 from . import generic
 
 try:
@@ -203,14 +203,17 @@ if HAS_ASSIMP:
 
 
 def load_mesh(path):
+    info("Loading mesh from %s" % path)
     return generic.load(path, "mesh", Mesh, _load_formats)
 
 
 def load_volume_mesh(path):
+    info("Loading volume mesh from %s" % path)
     return generic.load(path, "mesh", VolumeMesh, _load_formats)
 
 
 def save(mesh, path):
+    info("Saving mesh to %s" % path)
     generic.save(mesh, path, "mesh", _save_formats)
 
 
