@@ -14,7 +14,7 @@ try:
 
     HAS_ASSIMP = True
 except:
-    warning("Unable to pyassimp, some file formats will not be supported")
+    warning("Unable to find pyassimp, some file formats will not be supported")
     HAS_ASSIMP = False
 
 
