@@ -117,6 +117,12 @@ def load(
             cityModel.bounds = model.Bounds(
                 xmin=bounds[0], ymin=bounds[1], xmax=bounds[2], ymax=bounds[3]
             )
+    else:
+        # calculate bounds
+        for b in cityModel.buildings:
+            bbounds = model.Bounds(*b.footprint.bounds)
+            cityModel.bounds.union(bbounds)
+        cityModel.bounds.buffer(min_edge_distance)
     return cityModel
 
 

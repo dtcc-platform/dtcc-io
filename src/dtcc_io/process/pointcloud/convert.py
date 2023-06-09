@@ -4,7 +4,9 @@ import dtcc_model as model
 import rasterio.transform
 
 
-def rasterize(pc, cell_size, bounds=None, window_size=3, radius=0, ground_only=True):
+def rasterize(
+    pc, cell_size, bounds=None, window_size=3, radius=0, ground_only=True
+) -> model.Raster:
     """Rasterize a pointcloud"""
     if (
         ground_only
@@ -28,5 +30,5 @@ def rasterize(pc, cell_size, bounds=None, window_size=3, radius=0, ground_only=T
         bounds.west, bounds.north, cell_size, cell_size
     )
     dem_raster = dem_raster.fill_holes()
-
+    # print(f"Rasterized pointcloud to {dem_raster}")
     return dem_raster
