@@ -3,7 +3,7 @@
 
 import meshio
 import pygltflib
-
+import numpy as np
 
 from dtcc_model import Mesh, VolumeMesh
 from .dtcc_logging import warning, error, info
@@ -48,9 +48,12 @@ def _load_meshio_mesh(path):
 
 def _load_meshio_volume_mesh(path):
     mesh = meshio.read(path)
-    vertices = mesh.points
+    vertices = mesh.points[:, :3]
+    vertex_colors = np.empty(0)
+    if mesh.points.shape[1] > 3:
+        vertext_colors = mesh.points[:, 3:]
     cells = mesh.cells[0].data
-    return VolumeMesh(vertices=vertices, cells=cells)
+    return VolumeMesh(vertices=vertices, vertext_colors=vertext_colors, cells=cells)
 
 
 def _save_meshio_mesh(mesh, path):
