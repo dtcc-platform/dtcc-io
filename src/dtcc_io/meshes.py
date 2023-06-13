@@ -51,9 +51,9 @@ def _load_meshio_volume_mesh(path):
     vertices = mesh.points[:, :3]
     vertex_colors = np.empty(0)
     if mesh.points.shape[1] > 3:
-        vertext_colors = mesh.points[:, 3:]
+        vertex_colors = mesh.points[:, 3:]
     cells = mesh.cells[0].data
-    return VolumeMesh(vertices=vertices, vertext_colors=vertext_colors, cells=cells)
+    return VolumeMesh(vertices=vertices, vertex_colors=vertex_colors, cells=cells)
 
 
 def _save_meshio_mesh(mesh, path):
