@@ -8,7 +8,7 @@ from .dtcc_logging import info, error
 
 def protobuf_to_json(pb_object, path, *args, **kwargs):
     with open(path, "w") as f:
-        f.write(MessageToJson(pb_object))
+        f.write(MessageToJson(pb_object, including_default_value_fields=True))
 
 
 def save_to_pb(pb_mesh, path):
