@@ -1,15 +1,15 @@
 from dtcc_io.process.pointcloud.convert import rasterize
-from dtcc_model import CityModel, PointCloud, Raster
+from dtcc_model import City, PointCloud, Raster
 
 
 def terrain_from_pointcloud(
-    cm: CityModel,
+    city: City,
     pc: PointCloud,
     cell_size: float,
     window_size=3,
     radius=0,
     ground_only=True,
-) -> CityModel:
+) -> City:
     """Generate a terrain model from a pointcloud
     args:
         pc: PointCloud to use for terrain
@@ -17,16 +17,16 @@ def terrain_from_pointcloud(
         window_size: int window size for interpolation
         radius: float radius for interpolation
     returns:
-        CityModel
+        City
 
     """
     dem = rasterize(
         pc,
         cell_size,
-        bounds=cm.bounds,
+        bounds=city.bounds,
         window_size=window_size,
         radius=radius,
         ground_only=ground_only,
     )
-    cm.terrain = dem
-    return cm
+    city.terrain = dem
+    return city

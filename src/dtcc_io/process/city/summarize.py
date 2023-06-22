@@ -3,9 +3,9 @@ from collections import defaultdict
 from statistics import mean, median, stdev
 
 
-def summerize_landuse(cm, print_summary=True):
+def summarize_landuse(city, print_summary=True):
     landuse_summaries = defaultdict(float)
-    for lu in cm.landuse:
+    for lu in city.landuse:
         landuse_summaries[lu.landuse.name] += lu.area
     if print_summary:
         print("Landuse summary:")
@@ -14,8 +14,8 @@ def summerize_landuse(cm, print_summary=True):
     return landuse_summaries
 
 
-def summerize_buildings(cm, print_summary=True):
-    building_footprint_areas = [b.area for b in cm.buildings]
+def summarize_buildings(city, print_summary=True):
+    building_footprint_areas = [b.area for b in city.buildings]
     summary = {
         "number": len(building_footprint_areas),
         "total_area": sum(building_footprint_areas),

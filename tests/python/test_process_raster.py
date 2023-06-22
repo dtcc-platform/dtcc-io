@@ -50,16 +50,16 @@ class TestResample(unittest.TestCase):
 class TestRasterStats(unittest.TestCase):
     def test_single_stat(self):
         dem = io.load_raster("data/test_dem.tif")
-        cm = io.load_citymodel("data/MinimalCase/PropertyMap.shp")
-        footprints = [b.footprint for b in cm.buildings]
+        city = io.load_city("data/MinimalCase/PropertyMap.shp")
+        footprints = [b.footprint for b in city.buildings]
         stats = dem.stats(footprints, ["mean"])
         self.assertEqual(stats[0], 0.0)
         self.assertIsNone(stats[3])
 
     def test_multiple_stats(self):
         dem = io.load_raster("data/test_dem.tif")
-        cm = io.load_citymodel("data/MinimalCase/PropertyMap.shp")
-        footprints = [b.footprint for b in cm.buildings]
+        city = io.load_city("data/MinimalCase/PropertyMap.shp")
+        footprints = [b.footprint for b in city.buildings]
         stats = dem.stats(footprints, ["mean", "min", "max"])
         self.assertEqual(stats[0]["min"], 0.0)
         self.assertEqual(stats[0]["max"], 0.0)
