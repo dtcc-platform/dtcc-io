@@ -2,7 +2,7 @@ from pathlib import Path
 
 from dtcc_io.utils import protobuf_to_json, save_to_pb
 from dtcc_io.mesh.utils import load_protobuf
-from dtcc_common import info, warning, error
+from .logging import info, warning, error
 
 from dtcc_io.mesh.meshio_loaders import (
     load_with_meshio,

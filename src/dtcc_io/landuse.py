@@ -3,7 +3,7 @@ from dtcc_model import proto
 from pathlib import Path
 import fiona
 import shapely.geometry
-from dtcc_common import info, error
+from .logging import info, warning, error
 
 LM_landuse_map = {
     "VATTEN": LanduseClasses.WATER,

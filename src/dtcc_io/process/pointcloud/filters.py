@@ -2,7 +2,7 @@ import numpy as np
 from typing import List
 
 from dtcc_model import PointCloud
-from dtcc_common import info, warning, error
+from dtcc_io.logging import info, warning, error
 
 def remove_global_outliers(pc, margin):
     """Remove outliers from a pointcloud using a global margin."""

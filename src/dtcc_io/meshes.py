@@ -6,7 +6,7 @@ import pygltflib
 import numpy as np
 
 from dtcc_model import Mesh, VolumeMesh
-from dtcc_common import warning, error, info
+from .logging import info, warning, error
 from . import generic
 
 try:

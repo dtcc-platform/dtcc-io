@@ -12,7 +12,7 @@ import pyproj
 
 from dtcc_model.roadnetwork import RoadNetwork, RoadType, Road
 from dtcc_model.geometry import Georef
-from dtcc_common import info, error
+from .logging import info, warning, error
 
 
 def lm_road_type_mapping(category) -> Tuple[RoadType, bool, bool]:
