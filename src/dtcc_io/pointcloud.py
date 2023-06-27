@@ -2,15 +2,15 @@ from pathlib import Path
 import numpy as np
 import laspy
 from time import time
-import logging
 
 from dtcc_model import dtcc_pb2 as proto
 from dtcc_model import PointCloud, Bounds
+from dtcc_common import info, warning, error
 
 # FIXME: Use Bounds class from dtcc-model
 from dtcc_io.bounds import bounds_union
 
-from .dtcc_logging import info, error, warning
+from dtcc_common import info, error, warning
 
 # from dtcc_io.bindings import PBPointCloud
 
@@ -162,10 +162,10 @@ def load_las(
             pc.intensity = intensity
             pc.return_number = returnNumber
             pc.number_of_returns = numberOfReturns
-        logging.info(f"Loaded {len(pts)} points from {lasfiles}")
+        info(f"Loaded {len(pts)} points from {lasfiles}")
         return pc
     else:
-        logging.warning(f"Could not load any points from {lasfiles}")
+        warning(f"Could not load any points from {lasfiles}")
         return None
 
 

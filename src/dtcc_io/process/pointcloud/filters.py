@@ -1,8 +1,8 @@
 import numpy as np
-from dtcc_model import PointCloud
 from typing import List
-import logging
 
+from dtcc_model import PointCloud
+from dtcc_common import info, warning, error
 
 def remove_global_outliers(pc, margin):
     """Remove outliers from a pointcloud using a global margin."""
@@ -21,7 +21,7 @@ def classification_filter(pc: PointCloud, classes: List[int], keep: bool = False
     @param keep: If True, keep only the specified classes
     """
     if len(pc.points) != len(pc.classification):
-        logging.warning("Pointcloud not classified, returning original pointcloud.")
+        warning("Pointcloud not classified, returning original pointcloud.")
         return pc
     mask = np.isin(pc.classification, classes)
     if keep:

@@ -75,3 +75,8 @@ __all__ = [
     "load_roadnetwork",
     "save_roadnetwork",
 ]
+
+# Initialize logging
+from dtcc_common import init_logging
+
+init_logging("dtcc-io")

@@ -9,7 +9,7 @@ from dtcc_model import (
     VolumeMeshField,
     VolumeMeshVectorField,
 )
-from .dtcc_logging import warning
+from dtcc_common import warning
 from . import generic
 
 # FIXME: The proto stuff can be made more generic

@@ -17,7 +17,7 @@ from .utils import protobuf_to_json
 import dtcc_model as model
 from dtcc_model.building import Building
 from dtcc_model.city import City
-from .dtcc_logging import info, error
+from dtcc_common import info, error
 
 
 def building_bounds(shp_footprint_file, buffer=0):

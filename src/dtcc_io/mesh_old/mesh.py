@@ -1,8 +1,8 @@
-import logging
 from pathlib import Path
 
 from dtcc_io.utils import protobuf_to_json, save_to_pb
 from dtcc_io.mesh.utils import load_protobuf
+from dtcc_common import info, warning, error
 
 from dtcc_io.mesh.meshio_loaders import (
     load_with_meshio,
@@ -16,7 +16,7 @@ try:
 
     HAS_ASSIMP = True
 except:
-    logging.warning(
+    warning(
         "Could not import pyassimp, some file formats will not be supported"
     )
     HAS_ASSIMP = False
