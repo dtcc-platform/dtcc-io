@@ -51,12 +51,12 @@ save_roadnetwork = roadnetwork.save
 
 from dtcc_model import City, PointCloud, Raster, Mesh, VolumeMesh, RoadNetwork
 
-City.add_processors(save_city, "save")
-PointCloud.add_processors(save_pointcloud, "save")
-Raster.add_processors(save_raster, "save")
-Mesh.add_processors(save_mesh, "save")
-VolumeMesh.add_processors(save_mesh, "save")
-RoadNetwork.add_processors(save_roadnetwork, "save")
+City.add_methods(save_city, "save")
+PointCloud.add_methods(save_pointcloud, "save")
+Raster.add_methods(save_raster, "save")
+Mesh.add_methods(save_mesh, "save")
+VolumeMesh.add_methods(save_mesh, "save")
+RoadNetwork.add_methods(save_roadnetwork, "save")
 
 # __all__ = ['bounds', 'city', 'elevationmodel', 'mesh', 'pointcloud']
 
