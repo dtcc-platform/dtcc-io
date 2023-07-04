@@ -4,6 +4,14 @@ from pathlib import Path
 import fiona
 import shapely.geometry
 from .logging import info, warning, error
+from . import generic
+from enum import Enum, auto
+
+
+class datasource(Enum):
+    LM = auto()
+    OSM = auto()
+
 
 LM_landuse_map = {
     "VATTEN": LanduseClasses.WATER,
@@ -22,10 +30,30 @@ LM_landuse_map = {
 
 LM_landuse_fn = lambda x: LM_landuse_map.get(x, LanduseClasses.URBAN)
 
+landuse_mappings = {
+    datasource.LM: LM_landuse_fn,
+    datasource.OSM: None,
+}
 
-def load(filename, landuse_field="DETALJTYP", landuse_map=LM_landuse_fn):
+
+def _load_proto_landuse(filename):
+    landuse = Landuse()
+    landuse.from_proto(filename.read_bytes())
+    return landuse
+
+
+def _load_fiona(
+    filename,
+    landuse_field="DETALJTYP",
+    landuse_datasource=datasource.LM,
+    landuse_mapping_fn=None,
+    **kwargs,
+):
+    if landuse_mapping_fn is None:
+        landuse_mapping_fn = landuse_mappings.get(landuse_datasource)
+    if landuse_mapping_fn is None:
+        error(f"Landuse mapping function not found")
     info(f"Loading landuse from {filename}")
-    filename = Path(filename)
     if not filename.is_file():
         raise FileNotFoundError(f"File {filename} not found")
     Landuses = []
@@ -35,7 +63,7 @@ def load(filename, landuse_field="DETALJTYP", landuse_map=LM_landuse_fn):
             if geom_type == "Polygon":
                 landuse = Landuse()
                 landuse.footprint = shapely.geometry.shape(s["geometry"])
-                landuse.landuse = landuse_map(s["properties"][landuse_field])
+                landuse.landuse = landuse_mapping_fn(s["properties"][landuse_field])
                 landuse.properties = s["properties"]
                 Landuses.append(landuse)
             if geom_type == "MultiPolygon":
@@ -45,7 +73,61 @@ def load(filename, landuse_field="DETALJTYP", landuse_map=LM_landuse_fn):
                     # make each polygon its own building
                     landuse = Landuse()
                     landuse.footprint = polygon
-                    landuse.landuse = landuse_map(s["properties"][landuse_field])
+                    landuse.landuse = landuse_mapping_fn(s["properties"][landuse_field])
                     landuse.properties = s["properties"]
                     Landuses.append(landuse)
     return Landuses
+
+
+def load(
+    filename,
+    landuse_field="DETALJTYP",
+    landuse_datasource=datasource.LM,
+    landuse_mapping_fn=None,
+):
+    filename = Path(filename)
+    return generic.load(
+        filename,
+        "landuse",
+        Landuse,
+        _load_formats,
+        landuse_field="DETALJTYP",
+        landuse_datasource=datasource.LM,
+        landuse_mapping_fn=None,
+    )
+
+
+def _save_proto_landuse(landuse, filename):
+    filename.write_bytes(landuse.to_proto().SerializeToString())
+
+
+def save(landuse, filename):
+    filename = Path(filename)
+    return generic.save(landuse, filename, "landuse", _save_formats)
+
+
+def list_io():
+    return generic.list_io("pointcloud", _load_formats, _save_formats)
+
+
+def print_io():
+    generic.print_io("pointcloud", _load_formats, _save_formats)
+
+
+_load_formats = {
+    Landuse: {
+        ".pb": _load_proto_landuse,
+        ".pb2": _load_proto_landuse,
+        ".shp": _load_fiona,
+        ".geojson": _load_fiona,
+        ".json": _load_fiona,
+        ".gpkg": _load_fiona,
+    }
+}
+
+_save_formats = {
+    Landuse: {
+        ".pb": _save_proto_landuse,
+        ".pb2": _save_proto_landuse,
+    }
+}
