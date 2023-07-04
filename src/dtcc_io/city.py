@@ -11,7 +11,7 @@ import shapely.affinity
 import fiona
 import pyproj
 
-from .utils import protobuf_to_json
+from . import generic
 
 # from dtcc_model import Polygon, Building, LinearRing, Vector2D, City
 import dtcc_model as model
@@ -40,7 +40,7 @@ def cleanLinearRing(coords, tol=0.1):
     return coords
 
 
-def building_from_fiona(s, uuid_field="id", height_field=""):
+def _building_from_fiona(s, uuid_field="id", height_field=""):
     building = Building()
     if uuid_field in s["properties"]:
         building.uuid = str(s["properties"][uuid_field])
@@ -55,22 +55,24 @@ def building_from_fiona(s, uuid_field="id", height_field=""):
     return building
 
 
-def load(
+def _load_proto_city(filename):
+    city = City()
+    city.from_proto(filename.read_bytes())
+    return city
+
+
+def _load_fiona(
     filename,
     uuid_field="id",
     height_field="",
     area_filter=None,
     bounds=None,
     min_edge_distance=2.0,
-    return_serialized=False,
 ):
     filename = Path(filename)
     if not filename.is_file():
         raise FileNotFoundError(f"File {filename} not found")
     city = City()
-    if filename.suffix.lower() in [".pb", ".pb2"]:
-        city.from_proto(filename.read_bytes())
-        return city
     buildings = []
     has_height_field = len(height_field) > 0
     bounds_filter = None
@@ -94,14 +96,14 @@ def load(
                     continue
             geom_type = s["geometry"]["type"]
             if geom_type == "Polygon":
-                building = building_from_fiona(s, uuid_field, height_field)
+                building = _building_from_fiona(s, uuid_field, height_field)
                 buildings.append(building)
             if geom_type == "MultiPolygon":
                 for idx, polygon in enumerate(
                     list(shapely.geometry.shape(s["geometry"]).geoms)
                 ):
                     # make each polygon its own building
-                    building = building_from_fiona(s, uuid_field, height_field)
+                    building = _building_from_fiona(s, uuid_field, height_field)
                     if len(building.uuid) > 0:
                         building.uuid = f"{building.uuid}_{idx}"
                     building.footprint = polygon
@@ -125,26 +127,44 @@ def load(
     return city
 
 
-def save(city, out_file, output_format=""):
+def load(
+    filename,
+    uuid_field="id",
+    height_field="",
+    area_filter=None,
+    bounds=None,
+    min_edge_distance=2.0,
+):
+    filename = Path(filename)
+    if not filename.is_file():
+        raise FileNotFoundError(f"File {filename} not found")
+    return generic.load(
+        filename,
+        "city",
+        City,
+        _load_formats,
+        uuid_field=uuid_field,
+        height_field=height_field,
+        area_filter=area_filter,
+        bounds=bounds,
+        min_edge_distance=min_edge_distance,
+    )
+
+
+def _save_proto_city(city, filename):
+    with open(filename, "wb") as dst:
+        dst.write(city.to_proto().SerializeToString())
+
+
+def _save_json_city(city, filename):
+    with open(filename, "w") as dst:
+        dst.write(city.to_json())
+
+
+def _save_fiona(city, out_file, output_format=""):
     offset = city.origin
     out_file = Path(out_file)
-    if output_format == "":
-        output_format = out_file.suffix.lower()
-    if not output_format.startswith("."):
-        output_format = "." + output_format
-    supported_formats = [".shp", ".json", ".geojson", ".gpkg", ".pb", ".pb2"]
-    if not output_format in supported_formats:
-        print(
-            f"Error! Format {output_format} not recognized, currently supported formats are: {supported_formats}"
-        )
-        return None
-    if output_format == ".pb" or output_format == ".pb2":
-        with open(out_file, "wb") as dst:
-            dst.write(city.to_proto().SerializeToString())
-        return True
-    if output_format == ".json":
-        protobuf_to_json(city.to_proto(), out_file)
-        return True
+    output_format = out_file.suffix.lower()
     driver = {
         ".shp": "ESRI Shapefile",
         ".geojson": "GeoJSON",
@@ -190,3 +210,38 @@ def save(city, out_file, output_format=""):
                     },
                 }
             )
+
+
+def save(city, filename):
+    generic.save(city, filename, "city", _save_formats)
+
+
+def list_io():
+    return generic.list_io("city", _load_formats, _save_formats)
+
+
+def print_io():
+    generic.print_io("city", _load_formats, _save_formats)
+
+
+_load_formats = {
+    City: {
+        ".pb": _load_proto_city,
+        ".pb2": _load_proto_city,
+        ".json": _load_fiona,
+        ".shp": _load_fiona,
+        ".geojson": _load_fiona,
+        ".gpkg": _load_fiona,
+    }
+}
+
+_save_formats = {
+    City: {
+        ".pb": _save_proto_city,
+        ".pb2": _save_proto_city,
+        ".json": _save_json_city,
+        ".shp": _save_fiona,
+        ".geojson": _save_fiona,
+        ".gpkg": _save_fiona,
+    }
+}

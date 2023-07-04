@@ -5,22 +5,19 @@ import numpy as np
 from pathlib import Path
 from PIL import Image
 
+from . import generic
+
 from dtcc_model.raster import Raster
 from .logging import info, error, warning
 
 
-def load(path):
-    info(f"Loading raster from {path}")
-    path = Path(path)
-    suffix = path.suffix.lower()
-    if suffix in [".tif", ".tiff", ".geotif", ".png", ".jpg", ".asc"]:
-        return load_rasterio(path)
-    else:
-        raise ValueError(f"Cannot read file with suffix {suffix}")
-    return None
+def _load_proto_raster(path, **kwargs):
+    raster = Raster()
+    raster.from_proto(path.read_bytes())
+    return raster
 
 
-def load_rasterio(path):
+def _load_rasterio(path, **kwargs):
     raster = Raster()
     with rasterio.open(path) as src:
         data = src.read()
@@ -37,19 +34,27 @@ def load_rasterio(path):
     return raster
 
 
-def save(raster, path):
-    info(f"Saving raster to {path}")
+def _load_csv(path, delimiter=",", **kwargs):
+    raster = Raster()
+    data = np.loadtxt(path, delimiter=delimiter)
+    raster.data = data
+    return raster
+
+
+def load(path, delimiter=","):
     path = Path(path)
-    suffix = path.suffix.lower()
-    if suffix in [".tif", ".tiff"]:
-        return save_geotif(raster, path)
-    elif suffix in [".png", ".jpg"]:
-        return save_image(raster, path)
-    else:
-        raise ValueError(f"Cannot write file with suffix {suffix}")
+    return generic.load(path, "raster", Raster, _load_formats, delimiter=delimiter)
 
 
-def save_geotif(raster, path):
+def _save_proto_raster(raster, path):
+    path.write_bytes(raster.to_proto().SerializeToString())
+
+
+def _save_json_raster(raster, path):
+    path.write_text(raster.to_json())
+
+
+def _save_geotif(raster, path):
     data = raster.data
     with rasterio.open(
         path,
@@ -65,11 +70,10 @@ def save_geotif(raster, path):
             dst.write(data, 1)
         else:
             dst.write(data, list(range(1, raster.channels + 1)))
-
     return True
 
 
-def save_image(raster, path):
+def _save_image(raster, path):
     suffix = path.suffix.lower()
     wld_suffix = f"{suffix[0]}{suffix[-1]}w"
     wld_path = path.with_suffix(wld_suffix)
@@ -83,3 +87,39 @@ def save_image(raster, path):
     im = Image.fromarray(data)
     im.save(path)
     return True
+
+
+def _save_csv(raster, path):
+    np.savetxt(path, raster.data, delimiter=",")
+    return True
+
+
+def save(raster, path):
+    path = Path(path)
+    return generic.save(raster, path, "raster", _save_formats)
+
+
+_load_formats = {
+    Raster: {
+        ".pb": _load_proto_raster,
+        ".pb2": _load_proto_raster,
+        ".tif": _load_rasterio,
+        ".geotif": _load_rasterio,
+        ".png": _load_rasterio,
+        ".asc": _load_rasterio,
+        ".csv": _load_csv,
+        ".txt": _load_csv,
+    }
+}
+
+_save_formats = {
+    Raster: {
+        ".pb": _save_proto_raster,
+        ".pb2": _save_proto_raster,
+        ".json": _save_json_raster,
+        ".tif": _save_geotif,
+        ".png": _save_image,
+        ".jpg": _save_image,
+        ".csv": _save_csv,
+    }
+}
