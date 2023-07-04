@@ -17,7 +17,9 @@ from .utils import protobuf_to_json
 import dtcc_model as model
 from dtcc_model.building import Building
 from dtcc_model.citymodel import CityModel
-from .dtcc_logging import info, error
+from dtcc_common.logger import init_logger
+
+logger = init_logger(__name__)
 
 
 def building_bounds(shp_footprint_file, buffer=0):
@@ -83,7 +85,7 @@ def load(
         f.close()
     except fiona.errors.DriverError:
         raise ValueError(f"File {filename} is not a valid file format")
-    info(f"Loading citymodel from {filename}")
+    logger.info(f"Loading citymodel from {filename}")
     with fiona.open(filename) as src:
         crs = src.crs["init"]
         for s in src:

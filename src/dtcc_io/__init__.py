@@ -2,7 +2,6 @@
 import dtcc_io.bounds as bounds
 import dtcc_io.citymodel as citymodel
 import dtcc_io.raster as raster
-
 import dtcc_io.process
 
 from . import pointcloud
