@@ -9,7 +9,7 @@ from .logging import info, warning, error
 
 # from dtcc_io.bindings import PBPointCloud
 
-from .utils import protobuf_to_json
+from . import generic
 
 
 def las_file_bounds(las_file):
@@ -36,73 +36,6 @@ def calc_las_bounds(las_path):
     return bbox
 
 
-def load(
-    path,
-    points_only=False,
-    points_classification_only=False,
-    delimiter=",",
-    bounds=(),
-):
-    info(f"Loading pointcloud from {path}")
-    path = Path(path)
-    suffix = path.suffix.lower()
-    if isinstance(bounds, Bounds):
-        bounds = bounds.tuple
-    if len(bounds) > 0 and len(bounds) != 4:
-        warning("invalid bounds {bounds}, ignoring")
-        bounds = ()
-    if path.is_dir():
-        return load_dir(
-            path,
-            points_only=points_only,
-            points_classification_only=points_classification_only,
-            bounds=bounds,
-        )
-    if suffix in [".pb", ".pb2"]:
-        pc = PointCloud()
-        pc.from_proto(path.load_bytes())
-    elif suffix in [".las", ".laz"]:
-        pc = load_las(
-            path,
-            points_only=points_only,
-            points_classification_only=points_classification_only,
-            bounds=bounds,
-        )
-    elif suffix in [".csv"]:
-        pc = load_csv(
-            path,
-            delimiter=delimiter,
-            bounds=bounds,
-        )
-    else:
-        warning(f"Cannot read file with suffix {suffix}, ignoring")
-        return None
-    pc.calculate_bounds()
-    return pc
-
-
-def load_csv(path, delimiter=",", bounds=()):
-    pass
-    pts = np.loadtxt(path, delimiter=delimiter)
-    valid_pts = bounds_filter_poinst(pts, bounds)
-    assert pts.shape[1] >= 3
-    pc = Pointcloud()
-    pc.points = pts[:, :3][valid_pts]
-    if pts.shape[1] >= 4:
-        pc.classification = pts[:, 3][valid_pts].astype(np.uint8)
-    return pc
-
-
-def load_dir(
-    las_dir,
-    points_only=False,
-    points_classification_only=False,
-    bounds=(),
-):
-    las_files = list(las_dir.glob("*.la[sz]"))
-    return load_las(las_files, points_only, points_classification_only, bounds)
-
-
 def bounds_filter_poinst(pts, bounds):
     if bounds is not None and len(bounds) == 4:
         valid_pts = (pts[:, 0] >= bounds[0]) * (pts[:, 0] <= bounds[2])  # valid X
@@ -112,82 +45,115 @@ def bounds_filter_poinst(pts, bounds):
     return valid_pts
 
 
-def load_las(
-    lasfiles,
+def load(
+    path,
+    points_only=False,
+    points_classification_only=False,
+    delimiter=",",
+    bounds=(),
+):
+    info(f"Loading pointcloud from {path}")
+    return generic.load(
+        path,
+        "pointcloud",
+        PointCloud,
+        _load_formats,
+        points_only=points_only,
+        points_classification_only=points_classification_only,
+        delimiter=delimiter,
+        bounds=bounds,
+    )
+
+
+def _load_csv(path, point_only=False, delimiter=",", bounds=(), **kwargs):
+    pts = np.loadtxt(path, delimiter=delimiter)
+    valid_pts = bounds_filter_poinst(pts, bounds)
+    if len(valid_pts) == 0:
+        warning(f"Pointcloud {path} has no points")
+        return PointCloud()
+    if pts.shape[1] < 3:
+        error(f"Pointcloud {path} has less than 3 dimensions")
+        return None
+    pc = PointCloud()
+    pc.points = pts[:, :3][valid_pts]
+    if not point_only and pts.shape[1] >= 4:
+        pc.classification = pts[:, 3][valid_pts].astype(np.uint8)
+    pc.calculate_bounds()
+    return pc
+
+
+# def load_dir(
+#     las_dir,
+#     points_only=False,
+#     points_classification_only=False,
+#     bounds=(),
+# ):
+#     las_files = list(las_dir.glob("*.la[sz]"))
+#     return load_las(las_files, points_only, points_classification_only, bounds)
+
+
+def _load_las(
+    lasfile: Path,
     points_only=False,
     points_classification_only=False,
     bounds=(),
+    **kwargs,
 ):
-    if isinstance(lasfiles, str) or isinstance(lasfiles, Path):
-        lasfiles = [lasfiles]
-    pts = None
+    use_bounds_filter = bounds is not None and len(bounds) == 4
+    las = laspy.read(lasfile)
     classification = np.array([]).astype(np.uint8)
     intensity = np.array([]).astype(np.uint16)
     returnNumber = np.array([]).astype(np.uint8)
     numberOfReturns = np.array([]).astype(np.uint8)
-    start_laspy = time()
-    use_bounds_filter = len(bounds) == 4
+    pts = np.array(las.xyz)
 
-    for filename in lasfiles:
-        las = laspy.read(filename)
-        valid_pts = bounds_filter_poinst(las.xyz, bounds)
-        if pts is None:
-            pts = las.xyz[valid_pts]
-        else:
-            pts = np.concatenate((pts, las.xyz[valid_pts]))
+    if use_bounds_filter:
+        valid_pts = bounds_filter_poinst(pts, bounds)
+        pts = pts[valid_pts]
 
-        if not points_only:
-            classification = np.concatenate(
-                (classification, np.array(las.classification)[valid_pts])
-            )
-        if not (points_only or points_classification_only):
-            intensity = np.concatenate((intensity, np.array(las.intensity)[valid_pts]))
-            returnNumber = np.concatenate(
-                (returnNumber, np.array(las.return_num)[valid_pts])
-            )
-            numberOfReturns = np.concatenate(
-                (numberOfReturns, np.array(las.num_returns)[valid_pts])
-            )
-    # print(f"loading with laspy {time()-start_laspy}")
-    start_protobuf_pc = time()
-    if pts is not None and len(pts) > 0:
-        pc = PointCloud()
-        pc.points = pts
-        if not points_only:
-            pc.classification = classification
-        if not (points_only or points_classification_only):
-            pc.intensity = intensity
-            pc.return_number = returnNumber
-            pc.number_of_returns = numberOfReturns
-        info(f"Loaded {len(pts)} points from {lasfiles}")
-        return pc
-    else:
-        warning(f"Could not load any points from {lasfiles}")
-        return None
+    if len(pts) == 0:
+        warning(f"Pointcloud {lasfile} has no points")
+        return PointCloud()
+
+    if not points_only:
+        classification = np.array(las.classification)
+        if use_bounds_filter:
+            classification = classification[valid_pts]
+    if not (points_only or points_classification_only):
+        intensity = np.array(las.intensity)
+        returnNumber = np.array(las.return_num)
+        numberOfReturns = np.array(las.num_returns)
+        if use_bounds_filter:
+            intensity = intensity[valid_pts]
+            returnNumber = returnNumber[valid_pts]
+            numberOfReturns = numberOfReturns[valid_pts]
+    pc = PointCloud()
+    pc.points = pts
+    if not points_only:
+        pc.classification = classification
+    if not (points_only or points_classification_only):
+        pc.intensity = intensity
+        pc.return_number = returnNumber
+        pc.num_returns = numberOfReturns
+    pc.calculate_bounds()
+    return pc
+
+
+def _load_proto_pointcloud(path, **kwargs):
+    with open(path, "rb") as f:
+        return PointCloud.from_proto(f.read())
 
 
 def save(pointcloud, outfile):
-    info(f"Saving pointcloud to {outfile}")
-    outfile = Path(outfile)
-    suffix = outfile.suffix.lower()
-    if suffix in [".las", ".laz"]:
-        save_las(pointcloud, outfile)
-    elif suffix in [".csv"]:
-        save_csv(pointcloud, outfile)
-    elif suffix in [".pb", ".pb2"]:
-        outfile.write_bytes(pointcloud.to_proto().SerializeToString())
-    elif suffix in [".json"]:
-        protobuf_to_json(pointcloud, outfile)
-    else:
-        print(f"Cannot write file with suffix {suffix}")
+    generic.save(pointcloud, outfile, "pointcloud", _save_formats)
 
 
-def save_csv(pointcloud, outfile):
+def _save_csv(pointcloud, outfile):
     pts = np.array([[p.x, p.y, p.z] for p in pointcloud.points])
     np.savetxt(outfile, pts, delimiter=",")
 
 
-def save_las(pointcloud, las_file):
+def _save_las(pointcloud, las_file):
     # hdr = laspy.header
     # las = laspy.create(point_format=2, file_version="1.2")
 
@@ -197,5 +163,46 @@ def save_las(pointcloud, las_file):
     outfile.x = pointcloud.points[:, 0]
     outfile.y = pointcloud.points[:, 1]
     outfile.z = pointcloud.points[:, 2]
-    outfile.classification = pointcloud.classification
+    if len(pointcloud.classification) == len(pointcloud.points):
+        outfile.classification = pointcloud.classification
     outfile.write(las_file)
+
+
+def _save_proto_pointcloud(pointcloud, outfile):
+    outfile = Path(outfile)
+    outfile.write_bytes(pointcloud.to_proto().SerializeToString())
+
+
+def _save_json_pointcloud(pointcloud, outfile):
+    outfile = Path(outfile)
+    outfile.write_text(pointcloud.to_json())
+
+
+def list_io():
+    return generic.list_io("mesh", _load_formats, _save_formats)
+
+
+def print_io():
+    generic.print_io("mesh", _load_formats, _save_formats)
+
+
+_load_formats = {
+    PointCloud: {
+        ".pb": _load_proto_pointcloud,
+        ".pb2": _load_proto_pointcloud,
+        ".las": _load_las,
+        ".laz": _load_las,
+        ".csv": _load_csv,
+    }
+}
+
+_save_formats = {
+    PointCloud: {
+        ".pb": _save_proto_pointcloud,
+        ".pb2": _save_proto_pointcloud,
+        ".json": _save_json_pointcloud,
+        ".las": _save_las,
+        ".laz": _save_las,
+        ".csv": _save_csv,
+    }
+}

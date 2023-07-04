@@ -5,7 +5,7 @@ import pathlib
 from .logging import info, warning, error
 
 
-def save(object, path, name, formats):
+def save(object, path, name, formats, *args, **kwargs):
     if not type(object) in formats:
         error(f'Unable to save {name}; type "{type(object)}" not supported')
     path = pathlib.Path(path)
@@ -14,17 +14,17 @@ def save(object, path, name, formats):
             f"Unable to save {name} ({type(object).__name__}); format {path.suffix} not supported"
         )
     info(f"Saving {name} ({type(object).__name__}) to {path}")
-    formats[type(object)][path.suffix](object, path)
+    formats[type(object)][path.suffix](object, path, *args, **kwargs)
 
 
-def load(path, name, type, formats):
+def load(path, name, type, formats, *args, **kwargs):
     if not type in formats:
         error(f'Unable to load {name}; type "{type.__name__}" not supported')
     path = pathlib.Path(path)
     if path.suffix not in formats[type]:
         error(f"Unable to load {name}; format {path.suffix} not supported")
     info(f"Loading {name} ({type.__name__}) from {path}")
-    return formats[type][path.suffix](path)
+    return formats[type][path.suffix](path, *args, **kwargs)
 
 
 def list_io(name, load_formats, save_formats):

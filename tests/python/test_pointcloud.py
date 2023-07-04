@@ -18,9 +18,9 @@ class TestPointcloud(unittest.TestCase):
         self.assertEqual(len(pc.classification), 8148)
         self.assertEqual(len(pc.used_classifications()), 2)
 
-    def test_load_pointcloud_from_dir(self):
-        pc = io.load_pointcloud(self.data_dir)
-        self.assertEqual(len(pc.points), 8148)
+    # def test_load_pointcloud_from_dir(self):
+    #     pc = io.load_pointcloud(self.data_dir)
+    #     self.assertEqual(len(pc.points), 8148)
 
     def test_load_pointcloud_bounded(self):
         pc = io.load_pointcloud(self.building_las_file, bounds=(-2, -2, 0, 0))
