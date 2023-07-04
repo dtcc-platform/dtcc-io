@@ -16,6 +16,7 @@ from .utils import protobuf_to_json
 # from dtcc_model import Polygon, Building, LinearRing, Vector2D, City
 import dtcc_model as model
 from dtcc_model.building import Building
+from dtcc_model.geometry import Bounds
 from dtcc_model.city import City
 from .logging import info, warning, error
 
@@ -23,10 +24,8 @@ from .logging import info, warning, error
 def building_bounds(shp_footprint_file, buffer=0):
     """calculate the bounding box of a shp file without loading it"""
     with fiona.open(shp_footprint_file) as c:
-        bbox = c.bounds
-    if buffer != 0:
-        px, py, qx, qy = bbox
-        bbox = (px - buffer, py - buffer, qx + buffer, qy + buffer)
+        bbox = Bounds(*c.bounds)
+    bbox.buffer(buffer)
     return bbox
 
 

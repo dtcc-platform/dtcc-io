@@ -7,9 +7,6 @@ from dtcc_model import dtcc_pb2 as proto
 from dtcc_model import PointCloud, Bounds
 from .logging import info, warning, error
 
-# FIXME: Use Bounds class from dtcc-model
-from dtcc_io.bounds import bounds_union
-
 # from dtcc_io.bindings import PBPointCloud
 
 from .utils import protobuf_to_json
@@ -17,7 +14,9 @@ from .utils import protobuf_to_json
 
 def las_file_bounds(las_file):
     src = laspy.read(las_file)
-    bounds = (src.header.x_min, src.header.y_min, src.header.x_max, src.header.y_max)
+    bounds = Bounds(
+        src.header.x_min, src.header.y_min, src.header.x_max, src.header.y_max
+    )
     return bounds
 
 
@@ -33,7 +32,7 @@ def calc_las_bounds(las_path):
             if bbox is None:
                 bbox = las_file_bounds(f)
             else:
-                bbox = bounds_union(bbox, las_file_bounds(f))
+                bbox = bbox.union(las_file_bounds(f))
     return bbox
 
 

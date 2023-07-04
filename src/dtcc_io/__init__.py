@@ -1,5 +1,3 @@
-# FIXME: Use Bounds class from dtcc-model
-import dtcc_io.bounds as bounds
 import dtcc_io.city as city
 import dtcc_io.raster as raster
 import dtcc_io.process

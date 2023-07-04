@@ -29,10 +29,10 @@ class TestPointcloud(unittest.TestCase):
 
     def test_point_cloud_bounds(self):
         bounds = io.pointcloud.calc_las_bounds(self.building_las_file)
-        self.assertAlmostEqual(bounds[0], -8.01747, places=3)
-        self.assertAlmostEqual(bounds[1], -18.850332, places=3)
-        self.assertAlmostEqual(bounds[2], 15.92373, places=3)
-        self.assertAlmostEqual(bounds[3], 1.83826, places=3)
+        self.assertAlmostEqual(bounds.xmin, -8.01747, places=3)
+        self.assertAlmostEqual(bounds.ymin, -18.850332, places=3)
+        self.assertAlmostEqual(bounds.xmax, 15.92373, places=3)
+        self.assertAlmostEqual(bounds.ymax, 1.83826, places=3)
 
     def test_save_pointcloud(self):
         pc = io.load_pointcloud(self.building_las_file)
