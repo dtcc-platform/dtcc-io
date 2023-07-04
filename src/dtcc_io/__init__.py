@@ -1,13 +1,13 @@
 # FIXME: Use Bounds class from dtcc-model
 import dtcc_io.bounds as bounds
-import dtcc_io.citymodel as citymodel
+import dtcc_io.city as city
 import dtcc_io.raster as raster
 import dtcc_io.process
 
 from . import pointcloud
 from . import meshes
 from . import fields
-from . import citymodel
+from . import city
 from . import landuse
 from . import roadnetwork
 
@@ -29,8 +29,8 @@ save_field = fields.save
 list_field_io = fields.list_io
 print_field_io = fields.print_io
 
-load_citymodel = citymodel.load
-save_citymodel = citymodel.save
+load_city = city.load
+save_city = city.save
 
 # FIXME: Move to fields
 import dtcc_io.gridfield as gridfield
@@ -38,26 +38,26 @@ import dtcc_io.gridfield as gridfield
 load_gridfield = gridfield.load
 save_gridfield = gridfield.save
 
-load_citymodel = citymodel.load
-save_citymodel = citymodel.save
-load_footprints = citymodel.load
-save_footprints = citymodel.save
+load_city = city.load
+save_city = city.save
+load_footprints = city.load
+save_footprints = city.save
 
 load_landuse = landuse.load
 
 load_roadnetwork = roadnetwork.load
 save_roadnetwork = roadnetwork.save
 
-from dtcc_model import CityModel, PointCloud, Raster, Mesh, VolumeMesh, RoadNetwork
+from dtcc_model import City, PointCloud, Raster, Mesh, VolumeMesh, RoadNetwork
 
-CityModel.add_processors(save_citymodel, "save")
-PointCloud.add_processors(save_pointcloud, "save")
-Raster.add_processors(save_raster, "save")
-Mesh.add_processors(save_mesh, "save")
-VolumeMesh.add_processors(save_mesh, "save")
-RoadNetwork.add_processors(save_roadnetwork, "save")
+City.add_methods(save_city, "save")
+PointCloud.add_methods(save_pointcloud, "save")
+Raster.add_methods(save_raster, "save")
+Mesh.add_methods(save_mesh, "save")
+VolumeMesh.add_methods(save_mesh, "save")
+RoadNetwork.add_methods(save_roadnetwork, "save")
 
-# __all__ = ['bounds', 'citymodel', 'elevationmodel', 'mesh', 'pointcloud']
+# __all__ = ['bounds', 'city', 'elevationmodel', 'mesh', 'pointcloud']
 
 __all__ = [
     "load_mesh",
@@ -66,8 +66,8 @@ __all__ = [
     "save_pointcloud",
     "load_raster",
     "save_raster",
-    "load_citymodel",
-    "save_citymodel",
+    "load_city",
+    "save_city",
     "load_footprints",
     "save_footprints",
     "load_landuse",

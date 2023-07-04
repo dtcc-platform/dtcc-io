@@ -3,7 +3,7 @@
 
 from google.protobuf.json_format import MessageToJson
 
-from .dtcc_logging import info, error
+from .logging import info, warning, error
 
 
 def protobuf_to_json(pb_object, path, *args, **kwargs):

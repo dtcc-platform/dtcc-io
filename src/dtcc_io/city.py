@@ -13,13 +13,11 @@ import pyproj
 
 from .utils import protobuf_to_json
 
-# from dtcc_model import Polygon, Building, LinearRing, Vector2D, CityModel
+# from dtcc_model import Polygon, Building, LinearRing, Vector2D, City
 import dtcc_model as model
 from dtcc_model.building import Building
-from dtcc_model.citymodel import CityModel
-from dtcc_common.logger import init_logger
-
-logger = init_logger(__name__)
+from dtcc_model.city import City
+from .logging import info, warning, error
 
 
 def building_bounds(shp_footprint_file, buffer=0):
@@ -70,22 +68,22 @@ def load(
     filename = Path(filename)
     if not filename.is_file():
         raise FileNotFoundError(f"File {filename} not found")
-    cityModel = CityModel()
+    city = City()
     if filename.suffix.lower() in [".pb", ".pb2"]:
-        cityModel.from_proto(filename.read_bytes())
-        return cityModel
+        city.from_proto(filename.read_bytes())
+        return city
     buildings = []
     has_height_field = len(height_field) > 0
     bounds_filter = None
     if bounds is not None:
-        cityModel.bounds = bounds
+        city.bounds = bounds
         bounds_filter = shapely.geometry.box(*bounds.tuple).buffer(-min_edge_distance)
     try:
         f = fiona.open(filename)
         f.close()
     except fiona.errors.DriverError:
         raise ValueError(f"File {filename} is not a valid file format")
-    logger.info(f"Loading citymodel from {filename}")
+    info(f"Loading city from {filename}")
     with fiona.open(filename) as src:
         crs = src.crs["init"]
         for s in src:
@@ -110,26 +108,26 @@ def load(
                     building.footprint = polygon
                     buildings.append(building)
 
-    cityModel.buildings = buildings
-    cityModel.crs = crs
+    city.buildings = buildings
+    city.crs = crs
     if bounds is not None:
         if isinstance(bounds, model.Bounds):
-            cityModel.bounds = bounds
+            city.bounds = bounds
         else:
-            cityModel.bounds = model.Bounds(
+            city.bounds = model.Bounds(
                 xmin=bounds[0], ymin=bounds[1], xmax=bounds[2], ymax=bounds[3]
             )
     else:
         # calculate bounds
-        for b in cityModel.buildings:
+        for b in city.buildings:
             bbounds = model.Bounds(*b.footprint.bounds)
-            cityModel.bounds.union(bbounds)
-        cityModel.bounds.buffer(min_edge_distance)
-    return cityModel
+            city.bounds.union(bbounds)
+        city.bounds.buffer(min_edge_distance)
+    return city
 
 
-def save(city_model, out_file, output_format=""):
-    offset = city_model.origin
+def save(city, out_file, output_format=""):
+    offset = city.origin
     out_file = Path(out_file)
     if output_format == "":
         output_format = out_file.suffix.lower()
@@ -143,10 +141,10 @@ def save(city_model, out_file, output_format=""):
         return None
     if output_format == ".pb" or output_format == ".pb2":
         with open(out_file, "wb") as dst:
-            dst.write(city_model.to_proto().SerializeToString())
+            dst.write(city.to_proto().SerializeToString())
         return True
     if output_format == ".json":
-        protobuf_to_json(city_model.to_proto(), out_file)
+        protobuf_to_json(city.to_proto(), out_file)
         return True
     driver = {
         ".shp": "ESRI Shapefile",
@@ -154,7 +152,7 @@ def save(city_model, out_file, output_format=""):
         ".json": "GeoJSON",
         ".gpkg": "GPKG",
     }
-    crs = city_model.crs
+    crs = city.crs
     if not crs:
         crs = "EPSG:3006"  # current dtcc default
     if driver[output_format] == "GeoJSON" and crs:
@@ -173,7 +171,7 @@ def save(city_model, out_file, output_format=""):
         },
     }
     with fiona.open(out_file, "w", driver[output_format], schema, crs=crs) as dst:
-        for building in city_model.buildings:
+        for building in city.buildings:
             shapely_footprint = building.footprint
             shapely_footprint = shapely.affinity.translate(
                 shapely_footprint, xoff=offset[0], yoff=offset[1]

@@ -2,7 +2,7 @@
 # Licensed under the MIT License
 
 import pathlib
-from .dtcc_logging import info, error
+from .logging import info, warning, error
 
 
 def save(object, path, name, formats):

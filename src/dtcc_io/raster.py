@@ -6,7 +6,7 @@ from pathlib import Path
 from PIL import Image
 
 from dtcc_model.raster import Raster
-from .dtcc_logging import info, error, warning
+from .logging import info, error, warning
 
 
 def load(path):

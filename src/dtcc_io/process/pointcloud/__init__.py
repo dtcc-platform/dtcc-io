@@ -3,5 +3,5 @@ from dtcc_model import PointCloud
 from . import filters
 from . import convert
 
-PointCloud.add_processors(filters)
-PointCloud.add_processors(convert)
+PointCloud.add_methods(filters)
+PointCloud.add_methods(convert)

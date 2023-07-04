@@ -3,15 +3,12 @@
 from dtcc_model import *
 from dtcc_io import *
 
-logging.set_log_level("DEBUG")
-
 mesh = load_mesh("../tests/data/cube.stl")
 volume_mesh = VolumeMesh()
 
 print_mesh_io()
 
 save_mesh(mesh, "mesh.stl")
-
 
 f0 = MeshField()
 f1 = MeshVectorField()

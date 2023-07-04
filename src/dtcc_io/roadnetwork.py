@@ -6,14 +6,13 @@ import shapely.geometry
 import shapely.ops
 import shapely.affinity
 import fiona
-import logging
 from typing import Tuple, Callable
 import numpy as np
 import pyproj
 
 from dtcc_model.roadnetwork import RoadNetwork, RoadType, Road
 from dtcc_model.geometry import Georef
-from .dtcc_logging import info, error
+from .logging import info, warning, error
 
 
 def lm_road_type_mapping(category) -> Tuple[RoadType, bool, bool]:
@@ -99,7 +98,7 @@ def load(
                 continue
             road_type, tunnel, bridge = type_map(s["properties"][type_field])
             if road_type is None:
-                logging.warning(
+                warning(
                     f'Unknown road type: {s["properties"][type_field]}, using default'
                 )
                 road_type = RoadType.PRIMARY
