@@ -52,17 +52,52 @@ def load(
     delimiter=",",
     bounds=(),
 ):
+    path = Path(path)
+    if not path.exists():
+        raise ValueError(f"Path {path} does not exist")
     info(f"Loading pointcloud from {path}")
-    return generic.load(
-        path,
-        "pointcloud",
-        PointCloud,
-        _load_formats,
-        points_only=points_only,
-        points_classification_only=points_classification_only,
-        delimiter=delimiter,
-        bounds=bounds,
-    )
+    if path.is_dir():
+        return load_dir(
+            path,
+            points_only=points_only,
+            points_classification_only=points_classification_only,
+            delimiter=delimiter,
+            glob="*.la[sz]",
+            bounds=bounds,
+        )
+    else:
+        return generic.load(
+            path,
+            "pointcloud",
+            PointCloud,
+            _load_formats,
+            points_only=points_only,
+            points_classification_only=points_classification_only,
+            delimiter=delimiter,
+            bounds=bounds,
+        )
+
+
+def load_dir(
+    path,
+    points_only=False,
+    points_classification_only=False,
+    delimiter=",",
+    glob="*.la[sz]",
+    bounds=(),
+):
+    pc = PointCloud()
+    for f in path.glob(glob):
+        t_pc = load(
+            f,
+            points_only=points_only,
+            points_classification_only=points_classification_only,
+            delimiter=delimiter,
+            bounds=bounds,
+        )
+        if t_pc is not None:
+            pc.merge(t_pc)
+    return pc
 
 
 def _load_csv(path, point_only=False, delimiter=",", bounds=(), **kwargs):
