@@ -1,13 +1,10 @@
 from pathlib import Path
 import numpy as np
 import laspy
-from time import time
 
 from dtcc_model import dtcc_pb2 as proto
 from dtcc_model import PointCloud, Bounds
 from .logging import info, warning, error
-
-# from dtcc_io.bindings import PBPointCloud
 
 from . import generic
 
@@ -214,11 +211,11 @@ def _save_json_pointcloud(pointcloud, outfile):
 
 
 def list_io():
-    return generic.list_io("mesh", _load_formats, _save_formats)
+    return generic.list_io("pointcloud", _load_formats, _save_formats)
 
 
 def print_io():
-    generic.print_io("mesh", _load_formats, _save_formats)
+    generic.print_io("pointcloud", _load_formats, _save_formats)
 
 
 _load_formats = {
