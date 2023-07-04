@@ -8,9 +8,10 @@ from . import generic
 from enum import Enum, auto
 
 
-class datasource(Enum):
+class LanduseDatasource(Enum):
     LM = auto()
     OSM = auto()
+    NONE = auto()
 
 
 LM_landuse_map = {
@@ -31,8 +32,9 @@ LM_landuse_map = {
 LM_landuse_fn = lambda x: LM_landuse_map.get(x, LanduseClasses.URBAN)
 
 landuse_mappings = {
-    datasource.LM: LM_landuse_fn,
-    datasource.OSM: None,
+    LanduseDatasource.LM: LM_landuse_fn,
+    LanduseDatasource.OSM: None,
+    LanduseDatasource.NONE: lambda x: LanduseClasses.URBAN,
 }
 
 
@@ -45,14 +47,15 @@ def _load_proto_landuse(filename):
 def _load_fiona(
     filename,
     landuse_field="DETALJTYP",
-    landuse_datasource=datasource.LM,
+    landuse_datasource=LanduseDatasource.LM,
     landuse_mapping_fn=None,
     **kwargs,
 ):
     if landuse_mapping_fn is None:
         landuse_mapping_fn = landuse_mappings.get(landuse_datasource)
     if landuse_mapping_fn is None:
-        error(f"Landuse mapping function not found")
+        warning(f"Landuse mapping function not found, using default")
+        landuse_mapping_fn = landuse_mappings[LanduseDatasource.NONE]
     info(f"Loading landuse from {filename}")
     if not filename.is_file():
         raise FileNotFoundError(f"File {filename} not found")
@@ -82,7 +85,7 @@ def _load_fiona(
 def load(
     filename,
     landuse_field="DETALJTYP",
-    landuse_datasource=datasource.LM,
+    landuse_datasource=LanduseDatasource.LM,
     landuse_mapping_fn=None,
 ):
     filename = Path(filename)
@@ -92,7 +95,7 @@ def load(
         Landuse,
         _load_formats,
         landuse_field="DETALJTYP",
-        landuse_datasource=datasource.LM,
+        landuse_datasource=LanduseDatasource.LM,
         landuse_mapping_fn=None,
     )
 
