@@ -47,7 +47,7 @@ def load(
     points_only=False,
     points_classification_only=False,
     delimiter=",",
-    bounds=(),
+    bounds=None,
 ):
     path = Path(path)
     if not path.exists():
@@ -81,7 +81,7 @@ def load_dir(
     points_classification_only=False,
     delimiter=",",
     glob="*.la[sz]",
-    bounds=(),
+    bounds=None,
 ):
     pc = PointCloud()
     for f in path.glob(glob):
@@ -97,7 +97,7 @@ def load_dir(
     return pc
 
 
-def _load_csv(path, point_only=False, delimiter=",", bounds=(), **kwargs):
+def _load_csv(path, point_only=False, delimiter=",", bounds=None, **kwargs):
     pts = np.loadtxt(path, delimiter=delimiter)
     valid_pts = bounds_filter_poinst(pts, bounds)
     if len(valid_pts) == 0:
@@ -118,7 +118,7 @@ def _load_csv(path, point_only=False, delimiter=",", bounds=(), **kwargs):
 #     las_dir,
 #     points_only=False,
 #     points_classification_only=False,
-#     bounds=(),
+#     bounds=None,
 # ):
 #     las_files = list(las_dir.glob("*.la[sz]"))
 #     return load_las(las_files, points_only, points_classification_only, bounds)
@@ -128,7 +128,7 @@ def _load_las(
     lasfile: Path,
     points_only=False,
     points_classification_only=False,
-    bounds=(),
+    bounds=None,
     **kwargs,
 ):
     use_bounds_filter = bounds is not None
