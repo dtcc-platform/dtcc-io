@@ -34,9 +34,9 @@ def calc_las_bounds(las_path):
 
 
 def bounds_filter_poinst(pts, bounds):
-    if bounds is not None and len(bounds) == 4:
-        valid_pts = (pts[:, 0] >= bounds[0]) * (pts[:, 0] <= bounds[2])  # valid X
-        valid_pts *= (pts[:, 1] >= bounds[1]) * (pts[:, 1] <= bounds[3])  # valid Y
+    if bounds is not None:
+        valid_pts = (pts[:, 0] >= bounds.xmin) * (pts[:, 0] <= bounds.xmax)  # valid X
+        valid_pts *= (pts[:, 1] >= bounds.ymin) * (pts[:, 1] <= bounds.ymax)  # valid Y
     else:
         valid_pts = np.ones(pts.shape[0]).astype(bool)
     return valid_pts
@@ -131,7 +131,7 @@ def _load_las(
     bounds=(),
     **kwargs,
 ):
-    use_bounds_filter = bounds is not None and len(bounds) == 4
+    use_bounds_filter = bounds is not None
     las = laspy.read(lasfile)
     classification = np.array([]).astype(np.uint8)
     intensity = np.array([]).astype(np.uint16)
