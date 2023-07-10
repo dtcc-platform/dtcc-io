@@ -4,6 +4,7 @@ import os
 import numpy as np
 from pathlib import Path
 
+
 from dtcc_model import GridField
 
 
@@ -18,7 +19,7 @@ def load(path):
 
 
 def load_rasterio(path):
-    gridfield = GridField2D()
+    gridfield = GridField()
     with rasterio.open(path) as src:
         data = src.read()
         gridfield.grid = data[0, :, :]
