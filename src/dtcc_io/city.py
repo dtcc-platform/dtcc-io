@@ -120,7 +120,11 @@ def _load_fiona(
             )
     else:
         # calculate bounds
+        first = True
         for b in city.buildings:
+            if first:
+                city.bounds = model.Bounds(*b.footprint.bounds)
+                first = False
             bbounds = model.Bounds(*b.footprint.bounds)
             city.bounds.union(bbounds)
         city.bounds.buffer(min_edge_distance)
