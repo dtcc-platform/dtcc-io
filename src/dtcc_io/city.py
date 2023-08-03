@@ -175,7 +175,7 @@ def _save_fiona(city, out_file, output_format=""):
         ".json": "GeoJSON",
         ".gpkg": "GPKG",
     }
-    crs = city.crs
+    crs = city.georef.crs
     if not crs:
         crs = "EPSG:3006"  # current dtcc default
     if driver[output_format] == "GeoJSON" and crs:
