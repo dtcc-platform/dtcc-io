@@ -3,6 +3,7 @@ import unittest
 from pathlib import Path
 import json
 import dtcc_io as io
+from dtcc_model import Bounds, PointCloud
 import tempfile
 
 
@@ -23,7 +24,7 @@ class TestPointcloud(unittest.TestCase):
         self.assertEqual(len(pc.points), 8148)
 
     def test_load_pointcloud_bounded(self):
-        pc = io.load_pointcloud(self.building_las_file, bounds=(-2, -2, 0, 0))
+        pc = io.load_pointcloud(self.building_las_file, bounds=Bounds(-2, -2, 0, 0))
         self.assertEqual(len(pc.points), 64)
         self.assertEqual(len(pc.classification), 64)
 

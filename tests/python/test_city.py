@@ -28,7 +28,7 @@ class TestCity(unittest.TestCase):
 
     def test_read_crs(self):
         cm = io.load_footprints(self.building_shp_file)
-        self.assertEqual(cm.crs.lower(), "epsg:3857")
+        self.assertEqual(cm.georef.crs.lower(), "epsg:3857")
 
     def test_buildings_bounds(self):
         bounds = io.city.building_bounds(self.building_shp_file)
