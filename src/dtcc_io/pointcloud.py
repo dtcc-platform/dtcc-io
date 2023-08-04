@@ -34,9 +34,9 @@ def calc_las_bounds(las_path):
 
 
 def bounds_filter_poinst(pts, bounds):
-    if bounds is not None and len(bounds) == 4:
-        valid_pts = (pts[:, 0] >= bounds[0]) * (pts[:, 0] <= bounds[2])  # valid X
-        valid_pts *= (pts[:, 1] >= bounds[1]) * (pts[:, 1] <= bounds[3])  # valid Y
+    if bounds is not None:
+        valid_pts = (pts[:, 0] >= bounds.xmin) * (pts[:, 0] <= bounds.xmax)  # valid X
+        valid_pts *= (pts[:, 1] >= bounds.ymin) * (pts[:, 1] <= bounds.ymax)  # valid Y
     else:
         valid_pts = np.ones(pts.shape[0]).astype(bool)
     return valid_pts
@@ -47,7 +47,7 @@ def load(
     points_only=False,
     points_classification_only=False,
     delimiter=",",
-    bounds=(),
+    bounds=None,
 ):
     path = Path(path)
     if not path.exists():
@@ -81,7 +81,7 @@ def load_dir(
     points_classification_only=False,
     delimiter=",",
     glob="*.la[sz]",
-    bounds=(),
+    bounds=None,
 ):
     pc = PointCloud()
     for f in path.glob(glob):
@@ -97,7 +97,7 @@ def load_dir(
     return pc
 
 
-def _load_csv(path, point_only=False, delimiter=",", bounds=(), **kwargs):
+def _load_csv(path, point_only=False, delimiter=",", bounds=None, **kwargs):
     pts = np.loadtxt(path, delimiter=delimiter)
     valid_pts = bounds_filter_poinst(pts, bounds)
     if len(valid_pts) == 0:
@@ -118,7 +118,7 @@ def _load_csv(path, point_only=False, delimiter=",", bounds=(), **kwargs):
 #     las_dir,
 #     points_only=False,
 #     points_classification_only=False,
-#     bounds=(),
+#     bounds=None,
 # ):
 #     las_files = list(las_dir.glob("*.la[sz]"))
 #     return load_las(las_files, points_only, points_classification_only, bounds)
@@ -128,10 +128,10 @@ def _load_las(
     lasfile: Path,
     points_only=False,
     points_classification_only=False,
-    bounds=(),
+    bounds=None,
     **kwargs,
 ):
-    use_bounds_filter = bounds is not None and len(bounds) == 4
+    use_bounds_filter = bounds is not None
     las = laspy.read(lasfile)
     classification = np.array([]).astype(np.uint8)
     intensity = np.array([]).astype(np.uint16)

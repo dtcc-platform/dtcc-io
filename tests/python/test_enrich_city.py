@@ -18,7 +18,7 @@ class TestSetTerrain(unittest.TestCase):
         print(pc)
         self.assertEqual(city.terrain.shape, ())
         city = city.terrain_from_pointcloud(pc, cell_size=1, ground_only=False)
-        self.assertEqual(city.terrain.shape, (23, 20))
+        self.assertEqual(city.terrain.shape, (23, 19))
         self.assertAlmostEqual(city.terrain.data[0, 0], 1.0)
 
 

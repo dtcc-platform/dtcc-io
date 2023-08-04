@@ -2,11 +2,11 @@
 #
 # Note: This script should be called by sourcing it, not executing it:
 #
-#   source bin/set-python-path
+#   source utils/set-python-path
 #
 # Alternatively, you can use the following command to source it:
 #
-#   . bin/set-python-path
+#   . utils/set-python-path
 
 _PYTHONPATH=`pwd`/src
 

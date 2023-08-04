@@ -110,7 +110,7 @@ def _load_fiona(
                     buildings.append(building)
 
     city.buildings = buildings
-    city.crs = crs
+    city.georef.crs = crs
     if bounds is not None:
         if isinstance(bounds, model.Bounds):
             city.bounds = bounds
@@ -120,7 +120,11 @@ def _load_fiona(
             )
     else:
         # calculate bounds
+        first = True
         for b in city.buildings:
+            if first:
+                city.bounds = model.Bounds(*b.footprint.bounds)
+                first = False
             bbounds = model.Bounds(*b.footprint.bounds)
             city.bounds.union(bbounds)
         city.bounds.buffer(min_edge_distance)
@@ -171,7 +175,7 @@ def _save_fiona(city, out_file, output_format=""):
         ".json": "GeoJSON",
         ".gpkg": "GPKG",
     }
-    crs = city.crs
+    crs = city.georef.crs
     if not crs:
         crs = "EPSG:3006"  # current dtcc default
     if driver[output_format] == "GeoJSON" and crs:
