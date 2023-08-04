@@ -110,7 +110,7 @@ def _load_fiona(
                     buildings.append(building)
 
     city.buildings = buildings
-    city.crs = crs
+    city.georef.crs = crs
     if bounds is not None:
         if isinstance(bounds, model.Bounds):
             city.bounds = bounds
