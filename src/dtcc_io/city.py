@@ -97,6 +97,10 @@ def _load_fiona(
             geom_type = s["geometry"]["type"]
             if geom_type == "Polygon":
                 building = _building_from_fiona(s, uuid_field, height_field)
+                building.footprint = shapely.geometry.polygon.orient(
+                    building.footprint, 1
+                )
+
                 buildings.append(building)
             if geom_type == "MultiPolygon":
                 for idx, polygon in enumerate(
@@ -107,6 +111,10 @@ def _load_fiona(
                     if len(building.uuid) > 0:
                         building.uuid = f"{building.uuid}_{idx}"
                     building.footprint = polygon
+                    building.footprint = shapely.geometry.polygon.orient(
+                        building.footprint, 1
+                    )
+
                     buildings.append(building)
 
     city.buildings = buildings
