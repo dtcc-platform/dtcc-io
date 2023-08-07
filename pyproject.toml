@@ -23,7 +23,7 @@ dependencies = [
 ]
 
 name = "dtcc-io"
-version = "0.6.3"
+version = "0.7.1"
 description = "DTCC IO"
 readme = "README.md"
 authors = [
