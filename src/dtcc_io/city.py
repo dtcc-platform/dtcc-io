@@ -22,7 +22,17 @@ from .logging import info, warning, error
 
 
 def building_bounds(shp_footprint_file, buffer=0):
-    """calculate the bounding box of a shp file without loading it"""
+    """
+    Calculate the bounding box of a shapefile without loading it.
+
+    Args:
+        shp_footprint_file (str): The path to the shapefile.
+        buffer (float): The buffer distance to add to the bounding box (default 0).
+
+    Returns:
+        Bounds: A `Bounds` object representing the bounding box of the shapefile.
+    """
+
     with fiona.open(shp_footprint_file) as c:
         bbox = Bounds(*c.bounds)
     bbox.buffer(buffer)
@@ -30,14 +40,6 @@ def building_bounds(shp_footprint_file, buffer=0):
 
 
 # %%
-
-
-def cleanLinearRing(coords, tol=0.1):
-    # s = shapely.geometry.Polygon(coords)
-    # s = shapely.geometry.Polygon.orient(s, 1)  # make ccw
-    # s = s.simplify(tol)
-    # return list(s.exterior.coords)[:-1]
-    return coords
 
 
 def _building_from_fiona(s, uuid_field="id", height_field=""):
@@ -146,7 +148,21 @@ def load(
     area_filter=None,
     bounds=None,
     min_edge_distance=2.0,
-):
+) -> City:
+    """
+    Load the buildings from a supported file and return a `City` object.
+
+    Args:
+        filename (str): The path to the shapefile.
+        uuid_field (str): The name of the field containing the UUIDs (default "id").
+        height_field (str): The optional name of the field containing the building heights (default "").
+        area_filter (float): The minimum area of a building to include (default None).
+        bounds (Bounds): The bounding box to filter the buildings (default None).
+        min_edge_distance (float): The minimum distance between a building and the bounding box (default 2.0).
+
+    Returns:
+        City: A `City` object representing the city loaded from the shapefile.
+    """
     filename = Path(filename)
     if not filename.is_file():
         raise FileNotFoundError(f"File {filename} not found")
@@ -225,6 +241,13 @@ def _save_fiona(city, out_file, output_format=""):
 
 
 def save(city, filename):
+    """
+    Save the buildings in a `City` object to a supported file.
+
+    Args:
+        city (City):  A `City` object.
+        filename (str,path): The path to the output file.
+    """
     generic.save(city, filename, "city", _save_formats)
 
 

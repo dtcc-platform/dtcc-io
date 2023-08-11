@@ -85,9 +85,21 @@ def _load_fiona(
 def load(
     filename,
     landuse_field="DETALJTYP",
-    landuse_datasource=LanduseDatasource.LM,
+    landuse_datasource: LanduseDatasource = LanduseDatasource.LM,
     landuse_mapping_fn=None,
-):
+) -> Landuse:
+    """
+    Load the land use data from a shapefile and return a `Landuse` object.
+
+    Args:
+        filename (str): The path to the shapefile.
+        landuse_field (str): The name of the field containing the land use type (default "DETALJTYP").
+        landuse_datasource (LanduseDatasource): The data source of the land use data (default LanduseDatasource.LM).
+        landuse_mapping_fn (callable): A function to map from a land use attibute string to land use types (default None).
+
+    Returns:
+        Landuse: A `Landuse` object representing the land use data loaded from the shapefile.
+    """
     filename = Path(filename)
     return generic.load(
         filename,

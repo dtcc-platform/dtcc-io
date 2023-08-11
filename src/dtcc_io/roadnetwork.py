@@ -24,7 +24,7 @@ class RoadDatasource(Enum):
     NONE = auto()
 
 
-def lm_road_type_mapping(category) -> Tuple[RoadType, bool, bool]:
+def _lm_road_type_mapping(category) -> Tuple[RoadType, bool, bool]:
     category = category.strip()
     split_category = category.split(",")
     base_type = split_category[0]
@@ -81,7 +81,7 @@ TV_ROAD_TYPE = {}
 
 
 road_attribute_mappings = {
-    RoadDatasource.LM: lm_road_type_mapping,
+    RoadDatasource.LM: _lm_road_type_mapping,
     RoadDatasource.OSM: None,
     RoadDatasource.NONE: lambda x: (RoadType.PRIMARY, False, False),
 }
@@ -158,6 +158,20 @@ def load(
     road_attribute_mapping_fn: Callable[[str], Tuple[RoadType, bool, bool]] = None,
     simplify: float = 0,
 ) -> RoadNetwork:
+    """
+    Load a road network from a shapefile and return a `RoadNetwork` object.
+
+    Args:
+        road_network_file (str): The path to the shapefile.
+        type_field (str): The name of the field containing the road type (default "KATEGORI").
+        name_field (str): The name of the field containing the road name (default "NAMN").
+        road_datasource (RoadDatasource): The data source of the road network (default RoadDatasource.LM).
+        road_attribute_mapping_fn (callable): A function to map the road type string to a `RoadType` (default None).
+        simplify (float): The tolerance for simplifying the road network (default 0).
+
+    Returns:
+        RoadNetwork: A `RoadNetwork` object representing the road network loaded from the shapefile.
+    """
     road_network_file = Path(road_network_file)
     return generic.load(
         road_network_file,

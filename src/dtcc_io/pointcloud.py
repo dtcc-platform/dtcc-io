@@ -10,6 +10,15 @@ from . import generic
 
 
 def las_file_bounds(las_file):
+    """
+    Calculate the bounding box of a LAS file without loading it.
+
+    Args:
+        las_file (str): The path to the LAS file.
+
+    Returns:
+        Bounds: A `Bounds` object representing the bounding box of the LAS file.
+    """
     src = laspy.read(las_file)
     bounds = Bounds(
         src.header.x_min, src.header.y_min, src.header.x_max, src.header.y_max
@@ -18,6 +27,15 @@ def las_file_bounds(las_file):
 
 
 def calc_las_bounds(las_path):
+    """
+    Calculate the bounding box of one or more LAS files.
+
+    Args:
+        las_path (str): The path to a LAS file or a directory containing LAS files.
+
+    Returns:
+        Bounds: A `Bounds` object representing the bounding box of the LAS file(s).
+    """
     las_path = Path(las_path)
     if not las_path.exists():
         raise ValueError(f"Path {las_path} does not exist")
@@ -47,12 +65,24 @@ def load(
     points_only=False,
     points_classification_only=False,
     delimiter=",",
-    bounds=None,
-):
+    bounds: Bounds = None,
+) -> PointCloud:
+    """
+    Load a LAS/LAZ/CSV file or a directory containing LAS/LAZ/CSV files as a `PointCloud` object.
+
+    Args:
+        path (str): The path to the LAS/LAZ/CSV file or directory.
+        points_only (bool): Whether to load only the point data (default False).
+        points_classification_only (bool): Whether to load only the point classification data (default False).
+        delimiter (str): The delimiter used in the CSV file (default ",").
+        bounds (Bounds): The bounding box to filter the points (default None).
+
+    Returns:
+        PointCloud: A `PointCloud` object representing the file(s) loaded.
+    """
     path = Path(path)
     if not path.exists():
         raise ValueError(f"Path {path} does not exist")
-    info(f"Loading pointcloud from {path}")
     if path.is_dir():
         return load_dir(
             path,

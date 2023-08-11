@@ -41,7 +41,17 @@ def _load_csv(path, delimiter=",", **kwargs):
     return raster
 
 
-def load(path, delimiter=","):
+def load(path, delimiter=",") -> Raster:
+    """
+    Load a raster file as a `Raster` object.
+
+    Args:
+        path (str): The path to the raster file.
+        delimiter (str): The delimiter used in case of a CSV file (default ",").
+
+    Returns:
+        Raster: A `Raster` object representing the raster file loaded.
+    """
     path = Path(path)
     return generic.load(path, "raster", Raster, _load_formats, delimiter=delimiter)
 
@@ -94,7 +104,16 @@ def _save_csv(raster, path):
     return True
 
 
-def save(raster, path):
+def save(raster: Raster, path):
+    """
+    Save a `Raster` object to a file.
+
+    Args:
+        raster (Raster): The `Raster` object to save.
+        path (str): The path to the output file.
+
+    """
+
     path = Path(path)
     return generic.save(raster, path, "raster", _save_formats)
 
