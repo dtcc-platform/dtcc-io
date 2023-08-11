@@ -25,12 +25,17 @@ def building_bounds(shp_footprint_file, buffer=0):
     """
     Calculate the bounding box of a shapefile without loading it.
 
-    Args:
-        shp_footprint_file (str): The path to the shapefile.
-        buffer (float): The buffer distance to add to the bounding box (default 0).
+    Parameters
+    ----------
+    shp_footprint_file : str
+        The path to the shapefile.
+    buffer : float, optional
+        The buffer distance to add to the bounding box (default 0).
 
-    Returns:
-        Bounds: A `Bounds` object representing the bounding box of the shapefile.
+    Returns
+    -------
+    Bounds
+        A `Bounds` object representing the bounding box of the shapefile.
     """
 
     with fiona.open(shp_footprint_file) as c:
@@ -152,16 +157,25 @@ def load(
     """
     Load the buildings from a supported file and return a `City` object.
 
-    Args:
-        filename (str): The path to the shapefile.
-        uuid_field (str): The name of the field containing the UUIDs (default "id").
-        height_field (str): The optional name of the field containing the building heights (default "").
-        area_filter (float): The minimum area of a building to include (default None).
-        bounds (Bounds): The bounding box to filter the buildings (default None).
-        min_edge_distance (float): The minimum distance between a building and the bounding box (default 2.0).
+    Parameters
+    ----------
+    filename : str
+        The path to the shapefile.
+    uuid_field : str, optional
+        The name of the field containing the UUIDs (default "id").
+    height_field : str, optional
+        The optional name of the field containing the building heights (default "").
+    area_filter : float, optional
+        The minimum area of a building to include (default None).
+    bounds : Bounds, optional
+        The bounding box to filter the buildings (default None).
+    min_edge_distance : float, optional
+        The minimum distance between a building and the bounding box (default 2.0).
 
-    Returns:
-        City: A `City` object representing the city loaded from the shapefile.
+    Returns
+    -------
+    City
+        A `City` object representing the city loaded from the shapefile.
     """
     filename = Path(filename)
     if not filename.is_file():
@@ -244,9 +258,12 @@ def save(city, filename):
     """
     Save the buildings in a `City` object to a supported file.
 
-    Args:
-        city (City):  A `City` object.
-        filename (str,path): The path to the output file.
+    Parameters
+    ----------
+    city : City
+        A `City` object.
+    filename : str or path
+        The path to the output file.
     """
     generic.save(city, filename, "city", _save_formats)
 

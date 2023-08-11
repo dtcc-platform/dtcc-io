@@ -108,10 +108,12 @@ def save(raster: Raster, path):
     """
     Save a `Raster` object to a file.
 
-    Args:
-        raster (Raster): The `Raster` object to save.
-        path (str): The path to the output file.
-
+    Parameters
+    ----------
+    raster : Raster
+        The `Raster` object to save.
+    path : str
+        The path to the output file.
     """
 
     path = Path(path)
