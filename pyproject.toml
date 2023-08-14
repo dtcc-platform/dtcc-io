@@ -3,6 +3,21 @@ requires = ["setuptools>=61.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
+version = "0.7.2"
+name = "dtcc-io"
+description = "DTCC IO"
+readme = "README.md"
+authors = [
+  { name = "Anders Logg", email = "logg@chalmers.se" },
+  { name = "Vasilis Naserentin", email = "vasilis.naserentin@chalmers.se" },
+  { name = "Dag Wästberg", email = "dwastberg@gmail.com" },
+]
+requires-python = ">=3.8"
+classifiers = [
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+]
 dependencies = [
   "protobuf >= 3.20.0, < 3.21.0",
   "laspy[lazrs] >= 2.3.0, < 3.0.0",
@@ -20,22 +35,6 @@ dependencies = [
   "dtcc-model@git+https://github.com/dtcc-platform/dtcc-model.git@develop",
   "dtcc-common@git+https://github.com/dtcc-platform/dtcc-common.git@develop",
   "pypoints2grid@git+https://github.com/dwastberg/pypoints2grid.git",
-]
-
-name = "dtcc-io"
-version = "0.7.1"
-description = "DTCC IO"
-readme = "README.md"
-authors = [
-  { name = "Dag Wästberg", email = "dwastberg@gmail.com" },
-  { name = "Anders Logg", email = "logg@chalmers.se" },
-  { name = "Vasilis Naserentin", email = "vasilis.naserentin@chalmers.se" },
-]
-requires-python = ">=3.8"
-classifiers = [
-  "Intended Audience :: Science/Research",
-  "Programming Language :: Python :: 3",
-  "License :: OSI Approved :: MIT License",
 ]
 
 [project.optional-dependencies]
