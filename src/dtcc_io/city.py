@@ -10,6 +10,7 @@ import shapely.ops
 import shapely.affinity
 import fiona
 import pyproj
+from logging import info, warning, error
 
 from . import generic
 
@@ -55,7 +56,8 @@ def _building_from_fiona(s, uuid_field="id", height_field=""):
         try:
             building.height = float(s["properties"][height_field])
         except ValueError:
-            print(f"Error cannot parse height field: {s['properties'][height_field]}")
+            warning(f"Error cannot parse height field: {s['properties'][height_field]}")
+            building.height = 0.0
 
     building.footprint = shapely.geometry.shape(s["geometry"])
     building.attributes = s["properties"]

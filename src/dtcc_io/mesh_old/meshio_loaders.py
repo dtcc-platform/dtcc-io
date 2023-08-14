@@ -6,7 +6,6 @@ from dtcc_model import Mesh, VolumeMesh
 
 def load_with_meshio(path, return_serialized=False, mesh_type="surface"):
     mesh = meshio.read(path)
-    # print(mesh)
     vertices = mesh.points
     faces = mesh.cells[0].data
     return create_3d_surface(vertices, faces, return_serialized=return_serialized)
