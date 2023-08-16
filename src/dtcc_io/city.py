@@ -224,15 +224,26 @@ def _save_fiona(city, out_file, output_format=""):
         cm_crs = pyproj.CRS(crs)
         wgs84_projection = pyproj.Transformer.from_crs(cm_crs, wgs84, always_xy=True)
         crs = "EPSG:4326"
-    schema = {
-        "geometry": "Polygon",
-        "properties": {
-            "id": "str",
-            "height": "float",
-            "ground_height": "float",
-            "error": "int",
-        },
+
+    schema_properties = {
+        "id": "str",
+        "height": "float",
+        "ground_height": "float",
+        "error": "int",
     }
+
+    for key, value in city.buildings[0].attributes.items():
+        if isinstance(value, int):
+            schema_properties[key] = "int"
+        elif isinstance(value, float):
+            schema_properties[key] = "float"
+        elif isinstance(value, str):
+            schema_properties[key] = "str"
+        else:
+            schema_properties[key] = "str"
+            info(f"Cannot determine type of attribute {key}, assuming 'str'")
+
+    schema = {"geometry": "Polygon", "properties": schema_properties}
     with fiona.open(out_file, "w", driver[output_format], schema, crs=crs) as dst:
         for building in city.buildings:
             shapely_footprint = building.footprint
@@ -243,15 +254,18 @@ def _save_fiona(city, out_file, output_format=""):
                 shapely_footprint = shapely.ops.transform(
                     wgs84_projection.transform, shapely_footprint
                 )
+            properties = {
+                "id": building.uuid,
+                "height": building.height,
+                "ground_height": building.ground_level,
+                "error": building.error,
+            }
+            properties.update(building.attributes)
+
             dst.write(
                 {
                     "geometry": shapely.geometry.mapping(shapely_footprint),
-                    "properties": {
-                        "id": building.uuid,
-                        "height": building.height,
-                        "ground_height": building.ground_level,
-                        "error": building.error,
-                    },
+                    "properties": properties,
                 }
             )
 
