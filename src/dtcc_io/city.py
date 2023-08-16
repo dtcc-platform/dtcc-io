@@ -262,7 +262,11 @@ def _save_fiona(city: City, out_file, output_format=""):
                 "ground_height": building.ground_level,
                 "error": building.error,
             }
-            properties.update(building.properties)
+            for key in schema_properties.keys():
+                if key in building.properties:
+                    properties[key] = building.properties[key]
+                else:
+                    properties[key] = None
 
             dst.write(
                 {
