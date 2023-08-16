@@ -94,7 +94,6 @@ def _load_fiona(
         f.close()
     except fiona.errors.DriverError:
         raise ValueError(f"File {filename} is not a valid file format")
-    info(f"Loading city from {filename}")
     with fiona.open(filename) as src:
         crs = src.crs["init"]
         for s in src:

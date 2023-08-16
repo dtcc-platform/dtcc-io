@@ -56,7 +56,7 @@ def _load_fiona(
     if landuse_mapping_fn is None:
         warning(f"Landuse mapping function not found, using default")
         landuse_mapping_fn = landuse_mappings[LanduseDatasource.NONE]
-    info(f"Loading landuse from {filename}")
+    filename = Path(filename)
     if not filename.is_file():
         raise FileNotFoundError(f"File {filename} not found")
     Landuses = []
