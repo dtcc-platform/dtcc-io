@@ -11,6 +11,7 @@ import shapely.affinity
 import fiona
 import pyproj
 from logging import info, warning, error
+from dtcc_model import City, Building
 
 from . import generic
 
@@ -64,7 +65,7 @@ def _building_from_fiona(s, uuid_field="id", height_field=""):
     return building
 
 
-def _load_proto_city(filename):
+def _load_proto_city(filename) -> City:
     city = City()
     city.from_proto(filename.read_bytes())
     return city
@@ -77,7 +78,7 @@ def _load_fiona(
     area_filter=None,
     bounds=None,
     min_edge_distance=2.0,
-):
+) -> City:
     filename = Path(filename)
     if not filename.is_file():
         raise FileNotFoundError(f"File {filename} not found")
@@ -195,18 +196,18 @@ def load(
     )
 
 
-def _save_proto_city(city, filename):
+def _save_proto_city(city: City, filename):
     with open(filename, "wb") as dst:
         dst.write(city.to_proto().SerializeToString())
 
 
-def _save_json_city(city, filename):
+def _save_json_city(city: City, filename):
     with open(filename, "w") as dst:
         dst.write(city.to_json())
 
 
-def _save_fiona(city, out_file, output_format=""):
-    offset = city.origin
+def _save_fiona(city: City, out_file, output_format=""):
+    offset = (city.georef.x0, city.georef.y0)
     out_file = Path(out_file)
     output_format = out_file.suffix.lower()
     driver = {
@@ -215,11 +216,12 @@ def _save_fiona(city, out_file, output_format=""):
         ".json": "GeoJSON",
         ".gpkg": "GPKG",
     }
-    crs = city.georef.crs
+    crs = city.georef.crs.upper()
     if not crs:
         crs = "EPSG:3006"  # current dtcc default
     if driver[output_format] == "GeoJSON" and crs:
         # geojson needs to be in lat/lon
+        info(f"Converting from {crs} to EPSG:4326")
         wgs84 = pyproj.CRS("EPSG:4326")
         cm_crs = pyproj.CRS(crs)
         wgs84_projection = pyproj.Transformer.from_crs(cm_crs, wgs84, always_xy=True)
