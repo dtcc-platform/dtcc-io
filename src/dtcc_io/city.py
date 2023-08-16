@@ -60,7 +60,7 @@ def _building_from_fiona(s, uuid_field="id", height_field=""):
             building.height = 0.0
 
     building.footprint = shapely.geometry.shape(s["geometry"])
-    building.attributes = s["properties"]
+    building.properties = s["properties"]
     return building
 
 
@@ -232,7 +232,7 @@ def _save_fiona(city, out_file, output_format=""):
         "error": "int",
     }
 
-    for key, value in city.buildings[0].attributes.items():
+    for key, value in city.buildings[0].properties.items():
         if isinstance(value, int):
             schema_properties[key] = "int"
         elif isinstance(value, float):
@@ -260,7 +260,7 @@ def _save_fiona(city, out_file, output_format=""):
                 "ground_height": building.ground_level,
                 "error": building.error,
             }
-            properties.update(building.attributes)
+            properties.update(building.properties)
 
             dst.write(
                 {
