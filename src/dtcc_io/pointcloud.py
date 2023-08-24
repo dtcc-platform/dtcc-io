@@ -140,6 +140,8 @@ def _load_csv(path, point_only=False, delimiter=",", bounds=None, **kwargs):
     pc.points = pts[:, :3][valid_pts]
     if not point_only and pts.shape[1] >= 4:
         pc.classification = pts[:, 3][valid_pts].astype(np.uint8)
+    else:
+        pc.classification = np.ones(pc.points.shape[0]).astype(np.uint8)
     pc.calculate_bounds()
     return pc
 
