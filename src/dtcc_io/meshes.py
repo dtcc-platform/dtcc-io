@@ -20,12 +20,16 @@ except:
 
 def _load_proto_mesh(path):
     with open(path, "rb") as f:
-        return Mesh.from_proto(f.read())
+        mesh = Mesh()
+        mesh.from_proto(f.read())
+    return mesh
 
 
 def _load_proto_volume_mesh(path):
     with open(path, "rb") as f:
-        return VolumeMesh.from_proto(f.read())
+        mesh = VolumeMesh()
+        mesh.from_proto(f.read())
+    return mesh
 
 
 def _save_proto_mesh(mesh, path):

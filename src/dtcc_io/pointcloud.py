@@ -205,7 +205,9 @@ def _load_las(
 
 def _load_proto_pointcloud(path, **kwargs):
     with open(path, "rb") as f:
-        return PointCloud.from_proto(f.read())
+        pc = PointCloud()
+        pc.from_proto(f.read())
+    return pc
 
 
 def save(pointcloud, outfile):
