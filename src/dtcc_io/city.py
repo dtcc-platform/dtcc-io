@@ -240,6 +240,11 @@ def _save_fiona(city: City, out_file, output_format=""):
             schema_properties[key] = "float"
         elif isinstance(value, str):
             schema_properties[key] = "str"
+        elif isinstance(value, bool):
+            schema_properties[key] = "bool"
+        elif isinstance(value, list):
+            info(f"Converting list {key} to string")
+            schema_properties[key] = "str"
         else:
             schema_properties[key] = "str"
             info(f"Cannot determine type of attribute {key}, assuming 'str'")
@@ -263,7 +268,10 @@ def _save_fiona(city: City, out_file, output_format=""):
             }
             for key in schema_properties.keys():
                 if key in building.properties:
-                    properties[key] = building.properties[key]
+                    v = building.properties[key]
+                    if isinstance(v, list):
+                        v = ",".join([str(v) for v in v])
+                    properties[key] = v
                 else:
                     properties[key] = None
 
