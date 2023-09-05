@@ -19,23 +19,22 @@ jobs:
         os: [ubuntu-latest, macos-latest]
         python-version: ["3.10"]
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
 
       - name: Build wheels
         #uses: pypa/cibuildwheel@v2.15.0
-        #uses: actions/setup-python@v2
         run: python -m pip wheel . -w ./wheelhouse/ && pwd && ls -altR 
 
       - uses: actions/upload-artifact@v3
         with:
-          path: ./wheelhouse/dtcc-common*.whl
+          path: ./wheelhouse/dtcc-io*.whl
 
   build_sdist:
     name: Build source distribution
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Build sdist
         run: pipx run build --sdist
