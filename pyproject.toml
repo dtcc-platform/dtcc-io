@@ -32,9 +32,8 @@ dependencies = [
   "pyproj >= 3.1.0, < 4.0.0",
   "pillow >= 9.0.0, < 10.0.0",
   "rasterstats >= 0.19.0, < 1.0.0",
-  "dtcc-model >= 0.7.3",
-  "dtcc-common >= 0.7.3",
-  #comment
+  "dtcc-model@git+https://github.com/dtcc-platform/dtcc-model.git@develop",
+  "dtcc-io@git+https://github.com/dtcc-platform/dtcc-io.git@develop",
 ]
 
 [project.optional-dependencies]
