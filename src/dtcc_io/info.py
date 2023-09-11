@@ -51,7 +51,7 @@ def _csv_pointcloud_info(path: [str | Path]) -> dict:
     return info
 
 
-def pointcloud_info(path: [str | Path]) -> dict:
+def info_pointcloud(path: [str | Path]) -> dict:
     """
     Print information about a LAS file.
     Args:
@@ -79,7 +79,7 @@ def pointcloud_info(path: [str | Path]) -> dict:
     return info
 
 
-def vector_info(path: [str | Path]) -> dict:
+def info_vector(path: [str | Path]) -> dict:
     """
     Print information about a vector file.
     Args:
@@ -113,7 +113,7 @@ def vector_info(path: [str | Path]) -> dict:
     return info
 
 
-def raster_info(path: [str | Path]) -> dict:
+def info_raster(path: [str | Path]) -> dict:
     """
     Print information about a raster file.
     Args:
@@ -152,7 +152,7 @@ def raster_info(path: [str | Path]) -> dict:
     return info
 
 
-def mesh_info(path: [str | Path]) -> dict:
+def info_mesh(path: [str | Path]) -> dict:
     """
     Print information about a mesh file.
     Args:
