@@ -161,11 +161,13 @@ _load_formats = {
     VolumeMesh: {
         ".pb": _load_proto_volume_mesh,
         ".pb2": _load_proto_volume_mesh,
-        ".obj": _load_meshio_mesh,
-        ".ply": _load_meshio_mesh,
-        ".stl": _load_meshio_mesh,
-        ".vtk": _load_meshio_mesh,
-        ".vtu": _load_meshio_mesh,
+        ".obj": _load_meshio_volume_mesh,
+        ".ply": _load_meshio_volume_mesh,
+        ".stl": _load_meshio_volume_mesh,
+        ".vtk": _load_meshio_volume_mesh,
+        ".vtu": _load_meshio_volume_mesh,
+        ".bdf": _load_meshio_volume_mesh,
+        ".inp": _load_meshio_volume_mesh
     },
 }
 
@@ -190,6 +192,8 @@ _save_formats = {
         ".stl": _save_meshio_volume_mesh,
         ".vtk": _save_meshio_volume_mesh,
         ".vtu": _save_meshio_volume_mesh,
+        ".bdf": _save_meshio_volume_mesh,
+        ".inp": _save_meshio_volume_mesh,
     },
 }
 

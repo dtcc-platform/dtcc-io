@@ -15,6 +15,7 @@ from dtcc_model import City, Building
 
 from . import generic
 
+
 # from dtcc_model import Polygon, Building, LinearRing, Vector2D, City
 import dtcc_model as model
 from dtcc_model.building import Building
@@ -95,7 +96,21 @@ def _load_fiona(
     except fiona.errors.DriverError:
         raise ValueError(f"File {filename} is not a valid file format")
     with fiona.open(filename) as src:
-        crs = src.crs["init"]
+        info(f"Reading {len(src)} buildings from {filename}")
+        try:
+            # old style crs
+            crs = src.crs["init"]
+        except KeyError:
+            # new style crs
+            crs = src.crs.to_epsg()
+            if crs is None:
+                # see https://gis.stackexchange.com/questions/326690/explaining-pyproj-to-epsg-min-confidence-parameter
+                crs = src.crs.to_epsg(20)
+                if crs is None:
+                    warning("Cannot determine crs, assuming EPSG:3006")
+                    crs = "3006"
+            crs = f"EPSG:{crs}"
+
         for s in src:
             if area_filter is not None and area_filter > 0:
                 if shapely.geometry.shape(s["geometry"]).area < area_filter:
