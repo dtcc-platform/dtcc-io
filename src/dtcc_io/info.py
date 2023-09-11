@@ -105,5 +105,6 @@ def vector_info(path: [str | Path]) -> dict:
         info["count"] = len(src)
         info["x_min"], info["x_max"] = src.bounds[0], src.bounds[2]
         info["y_min"], info["y_max"] = src.bounds[1], src.bounds[3]
+        info["geometry_type"] = src.schema["geometry"]
 
     return info
