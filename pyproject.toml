@@ -39,6 +39,9 @@ dependencies = [
 [project.optional-dependencies]
 test = ["pytest"]
 
+[project.scripts]
+dtcc-info = "dtcc_io.scripts:dtcc_info.main"
+
 [tool.cibuildwheel]
 test-command = "pytest {project}/tests"
 build-verbosity = 1
