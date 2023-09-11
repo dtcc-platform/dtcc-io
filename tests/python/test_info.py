@@ -7,6 +7,7 @@ buildings = "data/MinimalCase/PropertyMap.shp"
 roads = "data/road_network/test_road.shp"
 dem_raster = "data/test_dem.tif"
 img_raster = "data/14040.png"
+mesh = "data/cube.stl"
 
 
 class TestPointcloudInfo(unittest.TestCase):
@@ -67,6 +68,25 @@ class TestRasterInfo(unittest.TestCase):
         self.assertAlmostEqual(raster_info["x_max"], 40.0, places=2)
         self.assertAlmostEqual(raster_info["y_min"], -80.0, places=2)
         self.assertAlmostEqual(raster_info["y_max"], 0.0, places=2)
+
+
+class TestMeshInfo(unittest.TestCase):
+    def test_mesh_vertices(self):
+        info_dict = info.mesh_info(mesh)
+        self.assertEqual(info_dict["vertices"], 24)
+
+    def test_mesh_faces(self):
+        info_dict = info.mesh_info(mesh)
+        self.assertEqual(info_dict["faces"], 44)
+
+    def test_mesh_bounds(self):
+        info_dict = info.mesh_info(mesh)
+        self.assertAlmostEqual(info_dict["x_min"], -1.0, places=2)
+        self.assertAlmostEqual(info_dict["x_max"], 1.0, places=2)
+        self.assertAlmostEqual(info_dict["y_min"], -1.0, places=2)
+        self.assertAlmostEqual(info_dict["y_max"], 1.0, places=2)
+        self.assertAlmostEqual(info_dict["z_min"], -1.0, places=2)
+        self.assertAlmostEqual(info_dict["z_max"], 1.0, places=2)
 
 
 if __name__ == "__main__":

@@ -150,3 +150,35 @@ def raster_info(path: [str | Path]) -> dict:
     info["channels"] = f.count
 
     return info
+
+
+def mesh_info(path: [str | Path]) -> dict:
+    """
+    Print information about a mesh file.
+    Args:
+        path: the path to the mesh file.
+
+    Returns:
+        a dictionary containing information about the mesh file.
+    """
+    path = Path(path)
+    if not path.exists():
+        raise ValueError(f"Path {path} does not exist")
+    if not path.is_file():
+        raise ValueError(f"Path {path} is not a file")
+    try:
+        mesh = meshio.read(path)
+    except ValueError:
+        raise ValueError(f"File {path} is not a supported mesh file format")
+
+    info = {}
+    info["path"] = str(path)
+    info["type"] = "mesh"
+    info["crs"] = ""
+    info["vertices"] = mesh.points.shape[0]
+    info["faces"] = mesh.cells[0].data.shape[0]
+    info["x_min"], info["x_max"] = mesh.points[:, 0].min(), mesh.points[:, 0].max()
+    info["y_min"], info["y_max"] = mesh.points[:, 1].min(), mesh.points[:, 1].max()
+    info["z_min"], info["z_max"] = mesh.points[:, 2].min(), mesh.points[:, 2].max()
+
+    return info
