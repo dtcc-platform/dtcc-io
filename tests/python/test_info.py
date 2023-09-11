@@ -5,6 +5,8 @@ from dtcc_io import info
 las_file = "data/MinimalCase/pointcloud.las"
 buildings = "data/MinimalCase/PropertyMap.shp"
 roads = "data/road_network/test_road.shp"
+dem_raster = "data/test_dem.tif"
+img_raster = "data/14040.png"
 
 
 class TestPointcloudInfo(unittest.TestCase):
@@ -41,6 +43,30 @@ class TestVectorInfo(unittest.TestCase):
     def test_geometry_type_line(self):
         feature_info = info.vector_info(roads)
         self.assertEqual(feature_info["geometry_type"], "LineString")
+
+
+class TestRasterInfo(unittest.TestCase):
+    def test_raster_dimensions(self):
+        raster_info = info.raster_info(dem_raster)
+        self.assertEqual(raster_info["width"], 20)
+        self.assertEqual(raster_info["height"], 40)
+
+    def test_raster_channels(self):
+        raster_info = info.raster_info(img_raster)
+        self.assertEqual(raster_info["channels"], 3)
+        raster_info = info.raster_info(dem_raster)
+        self.assertEqual(raster_info["channels"], 1)
+
+    def test_raster_cell_size(self):
+        raster_info = info.raster_info(dem_raster)
+        self.assertEqual(raster_info["cell_size"], 2.0)
+
+    def test_raster_bounds(self):
+        raster_info = info.raster_info(dem_raster)
+        self.assertAlmostEqual(raster_info["x_min"], 0.0, places=2)
+        self.assertAlmostEqual(raster_info["x_max"], 40.0, places=2)
+        self.assertAlmostEqual(raster_info["y_min"], -80.0, places=2)
+        self.assertAlmostEqual(raster_info["y_max"], 0.0, places=2)
 
 
 if __name__ == "__main__":

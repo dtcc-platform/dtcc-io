@@ -1,6 +1,7 @@
 import laspy
 import fiona
 import meshio
+import rasterio
 import numpy as np
 from pathlib import Path
 from types import UnionType
@@ -72,6 +73,7 @@ def pointcloud_info(path: [str | Path]) -> dict:
     else:
         raise ValueError(f"File {path} is not a supported pointcloud format")
 
+    info["type"] = "pointcloud"
     info["path"] = str(path)
 
     return info
@@ -100,11 +102,51 @@ def vector_info(path: [str | Path]) -> dict:
 
     info = {}
     info["path"] = str(path)
+    info["type"] = "vector"
     with fiona.open(path) as src:
         info["crs"] = src.crs.to_string()
         info["count"] = len(src)
         info["x_min"], info["x_max"] = src.bounds[0], src.bounds[2]
         info["y_min"], info["y_max"] = src.bounds[1], src.bounds[3]
         info["geometry_type"] = src.schema["geometry"]
+
+    return info
+
+
+def raster_info(path: [str | Path]) -> dict:
+    """
+    Print information about a raster file.
+    Args:
+        path: the path to the raster file.
+
+    Returns:
+        a dictionary containing information about the raster file.
+    """
+
+    path = Path(path)
+    if not path.exists():
+        raise ValueError(f"Path {path} does not exist")
+    if not path.is_file():
+        raise ValueError(f"Path {path} is not a file")
+    try:
+        f = rasterio.open(path)
+    except rasterio.errors.RasterioIOError:
+        raise ValueError(f"File {path} is not a supported raster file format")
+
+    info = {}
+    info["path"] = str(path)
+    info["type"] = "raster"
+    crs = f.crs
+    if crs is not None:
+        info["crs"] = crs.to_string()
+    else:
+        info["crs"] = ""
+    info["height"] = f.height
+    info["width"] = f.width
+    info["cell_size"] = f.res[0]
+    info["x_min"], info["x_max"] = f.bounds.left, f.bounds.right
+    info["y_min"], info["y_max"] = f.bounds.bottom, f.bounds.top
+    info["nodata"] = f.nodata
+    info["channels"] = f.count
 
     return info
