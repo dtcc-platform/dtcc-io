@@ -52,6 +52,15 @@ class TestCity(unittest.TestCase):
             data = json.load(f)
         self.assertEqual(len(data["features"]), 5)
 
+    def test_protobuf(self):
+        city = io.load_footprints(self.building_shp_file, "uuid")
+        outfile = tempfile.NamedTemporaryFile(suffix=".pb")
+        outfile_name = outfile.name
+        outfile.close()
+        city.save(outfile_name)
+        city2 = io.load_footprints(outfile_name)
+        self.assertEqual(len(city2.buildings), 5)
+
 
 if __name__ == "__main__":
     unittest.main()

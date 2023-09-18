@@ -66,7 +66,7 @@ def _building_from_fiona(s, uuid_field="id", height_field=""):
     return building
 
 
-def _load_proto_city(filename) -> City:
+def _load_proto_city(filename, *args, **kwargs) -> City:
     city = City()
     city.from_proto(filename.read_bytes())
     return city
