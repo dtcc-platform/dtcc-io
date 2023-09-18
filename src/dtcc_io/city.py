@@ -241,13 +241,13 @@ def _save_fiona(city: City, out_file, output_format=""):
         wgs84_projection = pyproj.Transformer.from_crs(cm_crs, wgs84, always_xy=True)
         crs = "EPSG:4326"
 
-    schema_properties = {
+    base_properties = {
         "id": "str",
         "height": "float",
         "ground_height": "float",
         "error": "int",
     }
-
+    schema_properties = base_properties.copy()
     for key, value in city.buildings[0].properties.items():
         if isinstance(value, int):
             schema_properties[key] = "int"
@@ -265,7 +265,9 @@ def _save_fiona(city: City, out_file, output_format=""):
             info(f"Cannot determine type of attribute {key}, assuming 'str'")
 
     schema = {"geometry": "Polygon", "properties": schema_properties}
-    with fiona.open(out_file, "w", driver[output_format], schema, crs=crs) as dst:
+    with fiona.open(
+        out_file, "w", driver=driver[output_format], schema=schema, crs=crs
+    ) as dst:
         for building in city.buildings:
             shapely_footprint = building.footprint
             shapely_footprint = shapely.affinity.translate(
@@ -282,6 +284,8 @@ def _save_fiona(city: City, out_file, output_format=""):
                 "error": building.error,
             }
             for key in schema_properties.keys():
+                if key in base_properties:
+                    continue
                 if key in building.properties:
                     v = building.properties[key]
                     if isinstance(v, list):
