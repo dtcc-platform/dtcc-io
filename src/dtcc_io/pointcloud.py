@@ -47,7 +47,7 @@ def calc_las_bounds(las_path):
             if bbox is None:
                 bbox = las_file_bounds(f)
             else:
-                bbox = bbox.union(las_file_bounds(f))
+                bbox.union(las_file_bounds(f))
     return bbox
 
 

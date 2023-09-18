@@ -33,11 +33,13 @@ dependencies = [
   "pillow >= 9.0.0, < 10.0.0",
   "rasterstats >= 0.19.0, < 1.0.0",
   "dtcc-model@git+https://github.com/dtcc-platform/dtcc-model.git@develop",
-  "dtcc-io@git+https://github.com/dtcc-platform/dtcc-io.git@develop",
 ]
 
 [project.optional-dependencies]
 test = ["pytest"]
+
+[project.scripts]
+dtcc-info = "dtcc_io.scripts:dtcc_info.main"
 
 [tool.cibuildwheel]
 test-command = "pytest {project}/tests"

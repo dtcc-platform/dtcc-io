@@ -262,7 +262,7 @@ def _save_fiona(city: City, out_file, output_format=""):
             schema_properties[key] = "str"
         else:
             schema_properties[key] = "str"
-            info(f"Cannot determine type of attribute {key}, assuming 'str'")
+            warning(f"Cannot determine type of attribute {key}, assuming 'str'")
 
     schema = {"geometry": "Polygon", "properties": schema_properties}
     with fiona.open(
