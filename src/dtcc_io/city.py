@@ -40,7 +40,9 @@ def building_bounds(shp_footprint_file, buffer=0):
     Bounds
         A `Bounds` object representing the bounding box of the shapefile.
     """
-
+    shp_footprint_file = Path(shp_footprint_file)
+    if not shp_footprint_file.is_file():
+        raise FileNotFoundError(f"File {shp_footprint_file} not found")
     with fiona.open(shp_footprint_file) as c:
         bbox = Bounds(*c.bounds)
     bbox.buffer(buffer)
