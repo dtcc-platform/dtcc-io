@@ -118,7 +118,7 @@ def _load_fiona(
                 if shapely.geometry.shape(s["geometry"]).area < area_filter:
                     continue
             if bounds_filter is not None:
-                if not shapely.geometry.shape(s["geometry"]).intersects(bounds_filter):
+                if not bounds_filter.contains(shapely.geometry.shape(s["geometry"])):
                     continue
             geom_type = s["geometry"]["type"]
             if geom_type == "Polygon":
