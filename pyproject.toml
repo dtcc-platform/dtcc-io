@@ -34,13 +34,8 @@ dependencies = [
   "pyproj >= 3.1.0, < 4.0.0",
   "pillow >= 9.0.0, < 10.0.0",
   "rasterstats >= 0.19.0, < 1.0.0",
-<<<<<<< HEAD
-  "dtcc-model >= 0.7.17",
-  "dtcc-io >= 0.7.17",
-=======
   "dtcc-model >= 0.7.21",
   "dtcc-common >= 0.7.21",
->>>>>>> develop
 ]
 
 [project.optional-dependencies]
