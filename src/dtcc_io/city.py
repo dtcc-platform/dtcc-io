@@ -15,6 +15,7 @@ from dtcc_model import City, Building
 
 from . import generic
 
+
 # from dtcc_model import Polygon, Building, LinearRing, Vector2D, City
 import dtcc_model as model
 from dtcc_model.building import Building
@@ -39,7 +40,9 @@ def building_bounds(shp_footprint_file, buffer=0):
     Bounds
         A `Bounds` object representing the bounding box of the shapefile.
     """
-
+    shp_footprint_file = Path(shp_footprint_file)
+    if not shp_footprint_file.is_file():
+        raise FileNotFoundError(f"File {shp_footprint_file} not found")
     with fiona.open(shp_footprint_file) as c:
         bbox = Bounds(*c.bounds)
     bbox.buffer(buffer)
@@ -65,7 +68,7 @@ def _building_from_fiona(s, uuid_field="id", height_field=""):
     return building
 
 
-def _load_proto_city(filename) -> City:
+def _load_proto_city(filename, *args, **kwargs) -> City:
     city = City()
     city.from_proto(filename.read_bytes())
     return city
@@ -95,13 +98,27 @@ def _load_fiona(
     except fiona.errors.DriverError:
         raise ValueError(f"File {filename} is not a valid file format")
     with fiona.open(filename) as src:
-        crs = src.crs["init"]
+        info(f"Reading {len(src)} buildings from {filename}")
+        try:
+            # old style crs
+            crs = src.crs["init"]
+        except KeyError:
+            # new style crs
+            crs = src.crs.to_epsg()
+            if crs is None:
+                # see https://gis.stackexchange.com/questions/326690/explaining-pyproj-to-epsg-min-confidence-parameter
+                crs = src.crs.to_epsg(20)
+                if crs is None:
+                    warning("Cannot determine crs, assuming EPSG:3006")
+                    crs = "3006"
+            crs = f"EPSG:{crs}"
+
         for s in src:
             if area_filter is not None and area_filter > 0:
                 if shapely.geometry.shape(s["geometry"]).area < area_filter:
                     continue
             if bounds_filter is not None:
-                if not shapely.geometry.shape(s["geometry"]).intersects(bounds_filter):
+                if not bounds_filter.contains(shapely.geometry.shape(s["geometry"])):
                     continue
             geom_type = s["geometry"]["type"]
             if geom_type == "Polygon":
@@ -226,13 +243,13 @@ def _save_fiona(city: City, out_file, output_format=""):
         wgs84_projection = pyproj.Transformer.from_crs(cm_crs, wgs84, always_xy=True)
         crs = "EPSG:4326"
 
-    schema_properties = {
+    base_properties = {
         "id": "str",
         "height": "float",
         "ground_height": "float",
         "error": "int",
     }
-
+    schema_properties = base_properties.copy()
     for key, value in city.buildings[0].properties.items():
         if isinstance(value, int):
             schema_properties[key] = "int"
@@ -247,10 +264,12 @@ def _save_fiona(city: City, out_file, output_format=""):
             schema_properties[key] = "str"
         else:
             schema_properties[key] = "str"
-            info(f"Cannot determine type of attribute {key}, assuming 'str'")
+            warning(f"Cannot determine type of attribute {key}, assuming 'str'")
 
     schema = {"geometry": "Polygon", "properties": schema_properties}
-    with fiona.open(out_file, "w", driver[output_format], schema, crs=crs) as dst:
+    with fiona.open(
+        out_file, "w", driver=driver[output_format], schema=schema, crs=crs
+    ) as dst:
         for building in city.buildings:
             shapely_footprint = building.footprint
             shapely_footprint = shapely.affinity.translate(
@@ -267,6 +286,8 @@ def _save_fiona(city: City, out_file, output_format=""):
                 "error": building.error,
             }
             for key in schema_properties.keys():
+                if key in base_properties:
+                    continue
                 if key in building.properties:
                     v = building.properties[key]
                     if isinstance(v, list):

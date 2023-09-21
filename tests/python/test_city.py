@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 
 import dtcc_io as io
+from dtcc_model.geometry import Bounds
 
 
 class TestCity(unittest.TestCase):
@@ -23,8 +24,28 @@ class TestCity(unittest.TestCase):
     def test_load_shp_buildings(self):
         cm = io.load_footprints(self.building_shp_file, "uuid")
         self.assertEqual(len(cm.buildings), 5)
-        cm2 = io.load_footprints(self.building_shp_file, "uuid", area_filter=36)
-        self.assertEqual(len(cm2.buildings), 4)
+
+    def test_load_with_area_filter(self):
+        cm = io.load_footprints(self.building_shp_file, "uuid", area_filter=36)
+        self.assertEqual(len(cm.buildings), 4)
+
+    def test_load_with_bounds_filter(self):
+        cm = io.load_footprints(
+            self.building_shp_file,
+            "uuid",
+            bounds=Bounds(-7, -18, 9, -5),
+            min_edge_distance=0,
+        )
+        self.assertEqual(len(cm.buildings), 1)
+
+    def test_load_with_bounds_filter(self):
+        cm = io.load_footprints(
+            self.building_shp_file,
+            "uuid",
+            bounds=Bounds(-7, -18, 15, 0),
+            min_edge_distance=0,
+        )
+        self.assertEqual(len(cm.buildings), 5)
 
     def test_read_crs(self):
         cm = io.load_footprints(self.building_shp_file)

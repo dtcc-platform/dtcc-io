@@ -7,6 +7,8 @@ from . import fields
 from . import city
 from . import landuse
 from . import roadnetwork
+from . import raster
+from . import info
 
 load_pointcloud = pointcloud.load
 save_pointcloud = pointcloud.save
