@@ -93,7 +93,7 @@ def load(
             bounds=bounds,
         )
     else:
-        return generic.load(
+        pc = generic.load(
             path,
             "pointcloud",
             PointCloud,
@@ -103,6 +103,8 @@ def load(
             delimiter=delimiter,
             bounds=bounds,
         )
+        info(f"Loaded {len(pc.points)} points from {path}")
+        return pc
 
 
 def load_dir(
