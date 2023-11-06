@@ -56,7 +56,7 @@ def _load_meshio_mesh(path):
 def _load_meshio_volume_mesh(path):
     mesh = meshio.read(path)
     vertices = mesh.points[:, :3]
-    cells = mesh.cells[0].data
+    cells = mesh.cells[0].data.astype(np.int64)
     return VolumeMesh(vertices=vertices, cells=cells)
 
 
@@ -167,7 +167,7 @@ _load_formats = {
         ".vtk": _load_meshio_volume_mesh,
         ".vtu": _load_meshio_volume_mesh,
         ".bdf": _load_meshio_volume_mesh,
-        ".inp": _load_meshio_volume_mesh
+        ".inp": _load_meshio_volume_mesh,
     },
 }
 

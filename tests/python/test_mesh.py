@@ -2,6 +2,8 @@ import unittest
 import json
 import os, tempfile, pathlib
 import dtcc_io as io
+from dtcc_model import Mesh, VolumeMesh
+import numpy as np
 
 
 class TestMesh(unittest.TestCase):
@@ -81,6 +83,44 @@ class TestMesh(unittest.TestCase):
         # mesh = io.load_mesh(path)
         # self.assertEqual(len(mesh.vertices), 24)
         # self.assertEqual(len(mesh.faces), 44)
+
+
+class TestVolumeMesh(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        verts = vertices = np.array(
+            [
+                [0, 0, 0],
+                [1, 0, 0],
+                [1, 1, 0],
+                [0, 1, 0],
+                [0, 0, 1],
+                [1, 0, 1],
+                [1, 1, 1],
+                [0, 1, 1],
+            ]
+        )
+        cells = np.array(
+            [
+                [0, 1, 2, 4],
+                [1, 2, 3, 5],
+                [2, 3, 0, 6],
+                [3, 0, 1, 7],
+                [0, 4, 5, 1],
+                [2, 6, 7, 3],
+            ]
+        )
+        cls.volume_mesh_cube = VolumeMesh(vertices=verts, cells=cells)
+
+    def test_write_read_volume_mesh(self):
+        path = tempfile.NamedTemporaryFile(suffix=".vtk", delete=False).name
+        self.volume_mesh_cube.save(path)
+        self.assertTrue(os.path.exists(path))
+        mesh = io.load_volume_mesh(path)
+        self.assertEqual(len(mesh.vertices), 8)
+        self.assertEqual(len(mesh.cells), 6)
+        self.assertTrue(mesh.cells.dtype == np.int64)
+        os.unlink(path)
 
 
 if __name__ == "__main__":
