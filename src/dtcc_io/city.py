@@ -98,7 +98,7 @@ def _load_fiona(
     except fiona.errors.DriverError:
         raise ValueError(f"File {filename} is not a valid file format")
     with fiona.open(filename) as src:
-        info(f"Reading {len(src)} buildings from {filename}")
+        info(f"Reading {len(src)} geometries from {filename}")
         try:
             # old style crs
             crs = src.crs["init"]
@@ -162,6 +162,7 @@ def _load_fiona(
             bbounds = model.Bounds(*b.footprint.bounds)
             city.bounds.union(bbounds)
         city.bounds.buffer(min_edge_distance)
+    info(f"Loaded {len(city.buildings)} building footprints")
     return city
 
 
@@ -251,6 +252,8 @@ def _save_fiona(city: City, out_file, output_format=""):
     }
     schema_properties = base_properties.copy()
     for key, value in city.buildings[0].properties.items():
+        if key in base_properties:
+            continue
         if isinstance(value, int):
             schema_properties[key] = "int"
         elif isinstance(value, float):

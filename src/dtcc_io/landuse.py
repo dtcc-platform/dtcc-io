@@ -1,5 +1,6 @@
 from dtcc_model.landuse import Landuse, LanduseClasses
 from dtcc_model import proto
+from dtcc_model.geometry.bounds import Bounds
 from pathlib import Path
 import fiona
 import shapely.geometry
@@ -87,6 +88,7 @@ def load(
     landuse_field="DETALJTYP",
     landuse_datasource: LanduseDatasource = LanduseDatasource.LM,
     landuse_mapping_fn=None,
+    bounds: Bounds = None,
 ) -> Landuse:
     """
     Load the land use data from a shapefile and return a `Landuse` object.
