@@ -19,6 +19,7 @@ save_raster = raster.save
 load_mesh = meshes.load_mesh
 load_volume_mesh = meshes.load_volume_mesh
 save_mesh = meshes.save
+save_volume_mesh = meshes.save
 list_mesh_io = meshes.list_io
 print_mesh_io = meshes.print_io
 
