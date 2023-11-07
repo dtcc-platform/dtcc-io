@@ -61,6 +61,8 @@ RoadNetwork.add_methods(save_roadnetwork, "save")
 __all__ = [
     "load_mesh",
     "save_mesh",
+    "load_volume_mesh",
+    "save_volume_mesh",
     "load_pointcloud",
     "save_pointcloud",
     "load_raster",
