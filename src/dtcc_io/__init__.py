@@ -1,9 +1,5 @@
-import dtcc_io.city as city
-import dtcc_io.raster as raster
-
 from . import pointcloud
 from . import meshes
-from . import fields
 from . import city
 from . import landuse
 from . import roadnetwork
@@ -23,20 +19,8 @@ save_volume_mesh = meshes.save
 list_mesh_io = meshes.list_io
 print_mesh_io = meshes.print_io
 
-load_mesh_field = fields.load_field
-load_mesh_vector_field = fields.load_vector_field
-save_field = fields.save
-list_field_io = fields.list_io
-print_field_io = fields.print_io
-
 load_city = city.load
 save_city = city.save
-
-# FIXME: Move to fields
-import dtcc_io.gridfield as gridfield
-
-load_gridfield = gridfield.load
-save_gridfield = gridfield.save
 
 load_city = city.load
 save_city = city.save
@@ -57,7 +41,6 @@ Mesh.add_methods(save_mesh, "save")
 VolumeMesh.add_methods(save_mesh, "save")
 RoadNetwork.add_methods(save_roadnetwork, "save")
 
-# __all__ = ['bounds', 'city', 'elevationmodel', 'mesh', 'pointcloud']
 
 __all__ = [
     "load_mesh",
