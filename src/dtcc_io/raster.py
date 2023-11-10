@@ -7,7 +7,7 @@ from PIL import Image
 
 from . import generic
 
-from dtcc_model.raster import Raster
+from dtcc_model import Raster
 from .logging import info, error, warning
 
 
