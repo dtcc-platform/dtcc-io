@@ -14,6 +14,7 @@ from logging import info, warning, error
 from dtcc_model import City, Building
 
 from . import generic
+from .utils import get_epsg
 
 
 # from dtcc_model import Polygon, Building, LinearRing, Vector2D, City
@@ -64,6 +65,7 @@ def _building_from_fiona(s, uuid_field="id", height_field=""):
             building.height = 0.0
 
     building.footprint = shapely.geometry.shape(s["geometry"])
+
     building.properties = s["properties"]
     return building
 
@@ -99,19 +101,7 @@ def _load_fiona(
         raise ValueError(f"File {filename} is not a valid file format")
     with fiona.open(filename) as src:
         info(f"Reading {len(src)} geometries from {filename}")
-        try:
-            # old style crs
-            crs = src.crs["init"]
-        except KeyError:
-            # new style crs
-            crs = src.crs.to_epsg()
-            if crs is None:
-                # see https://gis.stackexchange.com/questions/326690/explaining-pyproj-to-epsg-min-confidence-parameter
-                crs = src.crs.to_epsg(20)
-                if crs is None:
-                    warning("Cannot determine crs, assuming EPSG:3006")
-                    crs = "3006"
-            crs = f"EPSG:{crs}"
+        crs = get_epsg(src.crs)
 
         for s in src:
             if area_filter is not None and area_filter > 0:

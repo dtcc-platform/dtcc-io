@@ -6,13 +6,14 @@ import shapely.geometry
 import shapely.ops
 import shapely.affinity
 import fiona
-from typing import Tuple, Callable
+from typing import Tuple, Callable, Union
 import numpy as np
 import pyproj
 
 from dtcc_model.roadnetwork import RoadNetwork, RoadType, Road
 from dtcc_model.geometry import Georef
 from . import generic
+from .utils import get_epsg
 from .logging import info, warning, error
 
 from enum import Enum, auto
@@ -21,7 +22,36 @@ from enum import Enum, auto
 class RoadDatasource(Enum):
     LM = auto()
     OSM = auto()
+    NVDB = auto()
     NONE = auto()
+
+
+def _nvdb_road_type_mapping(category) -> Tuple[RoadType, bool, bool]:
+    category = category.strip().lower()
+    tunnel = False
+    bridge = False
+    if category == "lokalgata liten":
+        road_type = RoadType.RESIDENTIAL
+    elif category == "leveransväg":
+        road_type = RoadType.SERVICE
+    elif category == "lokalgata stor":
+        road_type = RoadType.SECONDARY
+    elif category == "gång- och cykelväg":
+        road_type = RoadType.CYCLEWAY
+    elif category == "gångväg":
+        road_type = RoadType.FOOTWAY
+    elif category == "motorväg":
+        road_type = RoadType.MOTORWAY
+    elif category == "parkeringsområdesväg":
+        road_type = RoadType.TERTIARY
+    elif "fartsväg" in category:
+        road_type = RoadType.SECONDARY
+    elif category == "småväg":
+        road_type = RoadType.TERTIARY
+    else:
+        road_type = RoadType.PRIMARY
+
+    return road_type, tunnel, bridge
 
 
 def _lm_road_type_mapping(category) -> Tuple[RoadType, bool, bool]:
@@ -83,6 +113,7 @@ TV_ROAD_TYPE = {}
 road_attribute_mappings = {
     RoadDatasource.LM: _lm_road_type_mapping,
     RoadDatasource.OSM: None,
+    RoadDatasource.NVDB: _nvdb_road_type_mapping,
     RoadDatasource.NONE: lambda x: (RoadType.PRIMARY, False, False),
 }
 
@@ -97,12 +128,15 @@ def _load_fiona(
     filename,
     type_field="KATEGORI",
     name_field="NAMN",
-    road_datasource: RoadDatasource = RoadDatasource.LM,
+    road_datasource: Union[RoadDatasource, str] = RoadDatasource.LM,
     road_attribute_mapping_fn: Callable[[str], Tuple[RoadType, bool, bool]] = None,
     simplify: float = 0,
     **kwargs,
 ):
     filename = Path(filename)
+
+    if road_datasource is not None and isinstance(road_datasource, str):
+        road_datasource = RoadDatasource[road_datasource.upper()]
 
     if road_attribute_mapping_fn is None:
         road_attribute_mapping_fn = road_attribute_mappings.get(road_datasource)
@@ -116,7 +150,7 @@ def _load_fiona(
     vertex_map = {}
 
     with fiona.open(filename, "r") as src:
-        crs = src.crs["init"]
+        crs = get_epsg(src.crs)
         for s in src:
             if s["geometry"]["type"] != "LineString":
                 continue
