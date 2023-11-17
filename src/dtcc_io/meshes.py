@@ -62,7 +62,10 @@ def _load_meshio_volume_mesh(path):
 
 def _save_meshio_mesh(mesh, path):
     _mesh = meshio.Mesh(mesh.vertices, [("triangle", mesh.faces)])
-    meshio.write(path, _mesh)
+    kwargs = {}
+    if path.suffix == ".stl":
+        kwargs["binary"] = True
+    meshio.write(path, _mesh, **kwargs)
 
 
 def _save_meshio_volume_mesh(mesh, path):
