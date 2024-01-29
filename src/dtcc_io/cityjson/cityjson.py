@@ -1,5 +1,7 @@
 from dtcc_io.cityjson.utils import get_terrain_mesh, get_buildings
 from dtcc_model.object.city import NewCity as City
+from dtcc_model.object.object import GeometryType
+from dtcc_model.object.terrain import Terrain
 from dtcc_model.geometry import Bounds
 import numpy as np
 from pathlib import Path
@@ -16,7 +18,7 @@ def setup_city(cj_obj: dict):
     if "metadata" in cj_obj:
         if "geographicalExtent" in cj_obj["metadata"]:
             extent = cj_obj["metadata"]["geographicalExtent"]
-            city.geometry['bounds'] = Bounds(
+            city.geometry[GeometryType.BOUNDS] = Bounds(
                 extent[0], extent[1], extent[3], extent[4]
             )
     verts = np.array(cj_obj["vertices"]) * scale + translate
@@ -37,7 +39,9 @@ def load(cityjson_path: str) -> City:
     cj_obj = cj["CityObjects"]
     tin = get_terrain_mesh(cj_obj, verts)
     if len(tin.vertices) > 0:
-        city.geometry['terrain_mesh'] = tin
+        terrain = Terrain()
+        terrain.geometry[GeometryType.MESH] = tin
+        city.children[Terrain].append(terrain)
     get_buildings(cj_obj, verts, city)
     pass
     return city
