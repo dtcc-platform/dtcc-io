@@ -2,12 +2,13 @@ import numpy as np
 
 from dtcc_model import Mesh, MultiSurface, Surface, NewBuilding as Building, NewCity as City
 from dtcc_model.object.building import BuildingPart
+from dtcc_model.object.object import GeometryType
 
 
 def tin_geom_to_mesh(tin_geom, verts) -> Mesh:
     mesh = Mesh()
     faces = []
-    for geom in tin_geom:
+    for geom in tin_geom["geometry"]:
         vert_dict = {}
         faces += [face[0] for face in geom["boundaries"]]
         for face in faces:
@@ -123,13 +124,15 @@ def build_dtcc_building(cj_obj,uuid, cj_building, verts, parent_city, lod=2):
     if building_root_geom is not None:
         geom, ms = building_root_geom
         lod = geom.get('lod', 1)
-        building.geometry[f'lod{lod}'] = ms
+        lod = GeometryType.from_str(f"lod{lod}")
+        building.geometry[lod] = ms
     for geom, ms in building_children:
         lod = geom.get('lod', 1)
         building_part = BuildingPart()
         building_part.parents[Building] = [building]
         building.children[BuildingPart].append(building_part)
-        building_part.geometry[f'lod{lod}'] = ms
+        lod = GeometryType.from_str(f"lod{lod}")
+        building_part.geometry[lod] = ms
 
 
 def get_root_buildings(cj_obj: dict):
