@@ -45,12 +45,9 @@ def _save_proto_volume_mesh(mesh, path):
 def _load_meshio_mesh(path):
     mesh = meshio.read(path)
     vertices = mesh.points[:, :3]
-    vertex_colors = np.empty(0)
-    if mesh.points.shape[1] > 3:
-        vertex_colors = mesh.points[:, 3:]
     faces = mesh.cells[0].data
     # FIXME: What about normals?
-    return Mesh(vertices=vertices, vertex_colors=vertex_colors, faces=faces)
+    return Mesh(vertices=vertices, faces=faces)
 
 
 def _load_meshio_volume_mesh(path):
