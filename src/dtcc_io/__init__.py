@@ -61,4 +61,5 @@ __all__ = [
     "load_landuse",
     "load_roadnetwork",
     "save_roadnetwork",
+    "load_cityjson"
 ]
