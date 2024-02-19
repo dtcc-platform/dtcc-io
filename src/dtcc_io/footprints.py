@@ -81,7 +81,7 @@ def _building_from_fiona(s, uuid_field="id", height_field="", crs=""):
     surface_verts = np.hstack((surface_verts, height))
     footprint_surface.vertices = surface_verts
     footprint_surface.transform.srs = crs
-    building.geometry[GeometryType.LOD0] = footprint_surface
+    building.add_geometry(footprint_surface, GeometryType.LOD0)
 
     building.attributes.update(s["properties"])
     return building
