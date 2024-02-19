@@ -1,4 +1,4 @@
-from dtcc_io.cityjson.utils import get_terrain_mesh, get_buildings
+from dtcc_io.cityjson.utils import get_terrain_mesh, get_root_objects, set_buildings
 from dtcc_model.object.city import NewCity as City
 from dtcc_model.object.object import GeometryType
 from dtcc_model.object.terrain import Terrain
@@ -37,12 +37,20 @@ def load(cityjson_path: str) -> City:
         raise ValueError("Not a CityJSON file")
     city, verts = setup_city(cj)
     cj_obj = cj["CityObjects"]
-    tin = get_terrain_mesh(cj_obj, verts)
-    if len(tin.vertices) > 0:
-        terrain = Terrain()
-        terrain.geometry[GeometryType.MESH] = tin
-        city.children[Terrain].append(terrain)
-    get_buildings(cj_obj, verts, city)
-    pass
+
+    root_objects = get_root_objects(cj_obj)
+    if "Building" in root_objects:
+        set_buildings(cj_obj,root_objects["Building"], verts, city)
+    if "TINRelief" in root_objects:
+        tin = get_terrain_mesh(root_objects["TINRelief"], verts)
+        if len(tin.vertices) > 0:
+            terrain = Terrain()
+            terrain.geometry[GeometryType.MESH] = tin
+            city.children[Terrain].append(terrain)
+    special_objects = ["Building", "TINRelief"]
+    for k, v in root_objects.items():
+        if k not in special_objects:
+            print(f"Warning: {k} not yet supported")
+
     return city
 
