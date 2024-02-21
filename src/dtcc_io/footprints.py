@@ -77,7 +77,9 @@ def _building_from_fiona(
 
     footprint_surface = Surface()
 
-    surface_verts = np.array(polygon_footprint.exterior.coords)[:-1]
+    surface_verts = np.array(polygon_footprint.exterior.coords)
+    if np.allclose(surface_verts[0], surface_verts[-1]):
+        surface_verts = surface_verts[:-1]
     if surface_verts.shape[1] == 2 or overwrite_height:
         height = np.zeros(surface_verts.shape[0]) + height
         height = height.reshape(-1, 1)
