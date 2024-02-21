@@ -51,7 +51,9 @@ def building_bounds(shp_footprint_file, buffer=0):
     return bbox
 
 
-def _building_from_fiona(s, uuid_field="id", height_field="", crs=""):
+def _building_from_fiona(
+    s, uuid_field="id", height_field="", crs="", overwrite_height=False
+):
     building = Building()
 
     if uuid_field in s["properties"]:
@@ -75,10 +77,11 @@ def _building_from_fiona(s, uuid_field="id", height_field="", crs=""):
 
     footprint_surface = Surface()
 
-    surface_verts = np.array(polygon_footprint.exterior.coords)
-    height = np.zeros(surface_verts.shape[0]) + height
-    height = height.reshape(-1, 1)
-    surface_verts = np.hstack((surface_verts, height))
+    surface_verts = np.array(polygon_footprint.exterior.coords)[:-1]
+    if surface_verts.shape[1] == 2 or overwrite_height:
+        height = np.zeros(surface_verts.shape[0]) + height
+        height = height.reshape(-1, 1)
+        surface_verts = np.hstack((surface_verts, height))
     footprint_surface.vertices = surface_verts
     footprint_surface.transform.srs = crs
     building.add_geometry(footprint_surface, GeometryType.LOD0)

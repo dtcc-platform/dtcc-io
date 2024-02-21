@@ -27,15 +27,18 @@ def setup_city(cj_obj: dict):
     return city, verts
 
 
-def load(cityjson_path: str) -> City:
+def load(cityjson_path: str | dict) -> City:
     """Load a CityJSON file into a City object."""
-    cityjson_path = Path(cityjson_path)
-    if not cityjson_path.exists():
-        raise FileNotFoundError(f"File {cityjson_path} not found")
-    with open(cityjson_path, "r") as f:
-        cj = json.load(f)
-    if "type" not in cj or cj["type"] != "CityJSON":
-        raise ValueError("Not a CityJSON file")
+    if isinstance(cityjson_path, dict):
+        cj = cityjson_path
+    else:
+        cityjson_path = Path(cityjson_path)
+        if not cityjson_path.exists():
+            raise FileNotFoundError(f"File {cityjson_path} not found")
+        with open(cityjson_path, "r") as f:
+            cj = json.load(f)
+        if "type" not in cj or cj["type"] != "CityJSON":
+            raise ValueError("Not a CityJSON file")
     city, verts = setup_city(cj)
     cj_obj = cj["CityObjects"]
 

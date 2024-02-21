@@ -5,6 +5,7 @@ from . import roadnetwork
 from . import raster
 from . import info
 from . import footprints
+from . import city
 from .cityjson import cityjson
 
 load_pointcloud = pointcloud.load
@@ -29,6 +30,7 @@ load_roadnetwork = roadnetwork.load
 save_roadnetwork = roadnetwork.save
 
 load_cityjson = cityjson.load
+load_city = city.load
 
 from dtcc_model import City, PointCloud, Raster, Mesh, VolumeMesh, RoadNetwork
 
@@ -50,7 +52,6 @@ __all__ = [
     "load_raster",
     "save_raster",
     "load_city",
-    "save_city",
     "load_footprints",
     "save_footprints",
     "load_landuse",
