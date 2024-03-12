@@ -3,7 +3,7 @@ import numpy as np
 import laspy
 
 from dtcc_model import dtcc_pb2 as proto
-from dtcc_model import PointCloud, Bounds
+from dtcc_model.geometry import PointCloud, Bounds
 from .logging import info, warning, error
 
 from . import generic

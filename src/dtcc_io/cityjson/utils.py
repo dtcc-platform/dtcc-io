@@ -1,7 +1,7 @@
 import numpy as np
 from collections import defaultdict
 
-from dtcc_model import Mesh, MultiSurface, Surface, NewBuilding as Building, NewCity as City
+from dtcc_model import Mesh, MultiSurface, Surface, Building, City
 from dtcc_model.object.city import CityObject
 from dtcc_model.object.building import BuildingPart
 from dtcc_model.object.object import GeometryType
@@ -28,7 +28,6 @@ def tin_geom_to_mesh(tin_geom_pair: tuple, verts) -> Mesh:
 
 
 def get_terrain_mesh(tin_obj: dict, verts: np.ndarray) -> Mesh:
-
     if len(tin_obj) == 0:
         return Mesh()
     if len(tin_obj) == 1:
@@ -62,16 +61,16 @@ def build_multisurface(geom, verts):
 
 def get_geom_to_use(geom_list, lod=2, prefer_surface=True) -> dict:
     """
-Get the geometry we want to use from a list of possible geometries
-    Parameters
-    ----------
-    geom_list: list of possible geometries
-    lod: int, prefered level of detail we want, prefer lower to higher if we cannot find exact lod
-    prefer_surface: bool, if True, prefer surface to solid
+    Get the geometry we want to use from a list of possible geometries
+        Parameters
+        ----------
+        geom_list: list of possible geometries
+        lod: int, prefered level of detail we want, prefer lower to higher if we cannot find exact lod
+        prefer_surface: bool, if True, prefer surface to solid
 
-    Returns
-    -------
-    geom: dict, the geometry we want to use
+        Returns
+        -------
+        geom: dict, the geometry we want to use
 
     """
     if len(geom_list) == 0:
@@ -100,8 +99,8 @@ Get the geometry we want to use from a list of possible geometries
 def get_building_geometry(cj_obj, building, verts, lod=2):
     building_root_geom = None
     building_children = []
-    if 'geometry' in building:
-        building_geometry = building['geometry']
+    if "geometry" in building:
+        building_geometry = building["geometry"]
         geom = get_geom_to_use(building_geometry, lod=lod)
         ms = build_multisurface(geom, verts)
         # ms.properties['semantics'] = geom.get("semantics", {})
@@ -120,15 +119,17 @@ def build_dtcc_building(cj_obj, uuid, cj_building, verts, parent_city, lod=2):
     building.parents[City] = [parent_city]
     parent_city.children[Building].append(building)
     building.id = uuid
-    building.attributes = cj_building.get('attributes', {})
-    building_root_geom, building_children = get_building_geometry(cj_obj, cj_building, verts, lod=lod)
+    building.attributes = cj_building.get("attributes", {})
+    building_root_geom, building_children = get_building_geometry(
+        cj_obj, cj_building, verts, lod=lod
+    )
     if building_root_geom is not None:
         geom, ms = building_root_geom
-        lod = geom.get('lod', 1)
+        lod = geom.get("lod", 1)
         lod = GeometryType.from_str(f"lod{lod}")
         building.geometry[lod] = ms
     for geom, ms in building_children:
-        lod = geom.get('lod', 1)
+        lod = geom.get("lod", 1)
         building_part = BuildingPart()
         building_part.parents[Building] = [building]
         building.children[BuildingPart].append(building_part)
@@ -153,12 +154,29 @@ def get_root_objects(cj_obj: dict):
     return root_objects
 
 
-def set_buildings(cj_obj: dict, root_buildings: tuple[str,dict], verts: np.ndarray, parent_city: City, lod=2) -> [Building]:
+def set_buildings(
+    cj_obj: dict,
+    root_buildings: tuple[str, dict],
+    verts: np.ndarray,
+    parent_city: City,
+    lod=2,
+) -> [Building]:
     buildings = []
     for uuid, v in root_buildings:
-        buildings.append(build_dtcc_building(cj_obj, uuid, v, verts, parent_city, lod=lod))
+        buildings.append(
+            build_dtcc_building(cj_obj, uuid, v, verts, parent_city, lod=lod)
+        )
 
-def set_cityobject(cj_obj: dict, root_object: tuple[str,dict], verts: np.ndarray, parent_city: City, lod=2) -> [CityObject]:
+
+def set_cityobject(
+    cj_obj: dict,
+    root_object: tuple[str, dict],
+    verts: np.ndarray,
+    parent_city: City,
+    lod=2,
+) -> [CityObject]:
     city_object = []
     for uuid, v in root_object:
-        city_object.append(build_dtcc_building(cj_obj, uuid, v, verts, parent_city, lod=lod))
+        city_object.append(
+            build_dtcc_building(cj_obj, uuid, v, verts, parent_city, lod=lod)
+        )

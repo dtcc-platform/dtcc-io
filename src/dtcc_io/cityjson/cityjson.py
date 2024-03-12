@@ -1,11 +1,12 @@
 from dtcc_io.cityjson.utils import get_terrain_mesh, get_root_objects, set_buildings
-from dtcc_model.object.city import NewCity as City
+from dtcc_model.object.city import City
 from dtcc_model.object.object import GeometryType
 from dtcc_model.object.terrain import Terrain
 from dtcc_model.geometry import Bounds
 import numpy as np
 from pathlib import Path
 import json
+
 
 def setup_city(cj_obj: dict):
     city = City()
@@ -26,21 +27,24 @@ def setup_city(cj_obj: dict):
     return city, verts
 
 
-def load(cityjson_path: str) -> City:
+def load(cityjson_path: str | dict) -> City:
     """Load a CityJSON file into a City object."""
-    cityjson_path = Path(cityjson_path)
-    if not cityjson_path.exists():
-        raise FileNotFoundError(f"File {cityjson_path} not found")
-    with open(cityjson_path, "r") as f:
-        cj = json.load(f)
-    if "type" not in cj or cj["type"] != "CityJSON":
-        raise ValueError("Not a CityJSON file")
+    if isinstance(cityjson_path, dict):
+        cj = cityjson_path
+    else:
+        cityjson_path = Path(cityjson_path)
+        if not cityjson_path.exists():
+            raise FileNotFoundError(f"File {cityjson_path} not found")
+        with open(cityjson_path, "r") as f:
+            cj = json.load(f)
+        if "type" not in cj or cj["type"] != "CityJSON":
+            raise ValueError("Not a CityJSON file")
     city, verts = setup_city(cj)
     cj_obj = cj["CityObjects"]
 
     root_objects = get_root_objects(cj_obj)
     if "Building" in root_objects:
-        set_buildings(cj_obj,root_objects["Building"], verts, city)
+        set_buildings(cj_obj, root_objects["Building"], verts, city)
     if "TINRelief" in root_objects:
         tin = get_terrain_mesh(root_objects["TINRelief"], verts)
         if len(tin.vertices) > 0:
@@ -53,4 +57,3 @@ def load(cityjson_path: str) -> City:
             print(f"Warning: {k} not yet supported")
 
     return city
-
