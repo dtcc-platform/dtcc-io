@@ -75,6 +75,7 @@ def _save_geotif(raster, path):
         count=raster.channels,
         dtype=data.dtype,
         transform=raster.georef,
+        compress="DEFLATE",
     ) as dst:
         if raster.channels == 1:
             dst.write(data, 1)
