@@ -1,6 +1,7 @@
 from . import pointcloud
 from . import meshes
-from . import landuse
+
+# from . import landuse
 from . import roadnetwork
 from . import raster
 from . import info
@@ -24,7 +25,7 @@ print_mesh_io = meshes.print_io
 load_footprints = footprints.load
 save_footprints = footprints.save
 
-load_landuse = landuse.load
+# load_landuse = landuse.load
 
 load_roadnetwork = roadnetwork.load
 save_roadnetwork = roadnetwork.save
@@ -54,7 +55,6 @@ __all__ = [
     "load_city",
     "load_footprints",
     "save_footprints",
-    "load_landuse",
     "load_roadnetwork",
     "save_roadnetwork",
     "load_cityjson",
