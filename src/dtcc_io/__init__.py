@@ -2,7 +2,7 @@ from . import pointcloud
 from . import meshes
 
 # from . import landuse
-from . import roadnetwork
+# from . import roadnetwork
 from . import raster
 from . import info
 from . import footprints
@@ -27,20 +27,19 @@ save_footprints = footprints.save
 
 # load_landuse = landuse.load
 
-load_roadnetwork = roadnetwork.load
-save_roadnetwork = roadnetwork.save
+# load_roadnetwork = roadnetwork.load
+# save_roadnetwork = roadnetwork.save
 
 load_cityjson = cityjson.load
 load_city = city.load
 
-from dtcc_model import City, PointCloud, Raster, Mesh, VolumeMesh, RoadNetwork
+from dtcc_model import City, PointCloud, Raster, Mesh, VolumeMesh
 
 # City.add_methods(save_city, "save")
 PointCloud.add_methods(save_pointcloud, "save")
 Raster.add_methods(save_raster, "save")
 Mesh.add_methods(save_mesh, "save")
 VolumeMesh.add_methods(save_mesh, "save")
-RoadNetwork.add_methods(save_roadnetwork, "save")
 
 
 __all__ = [
@@ -55,7 +54,5 @@ __all__ = [
     "load_city",
     "load_footprints",
     "save_footprints",
-    "load_roadnetwork",
-    "save_roadnetwork",
     "load_cityjson",
 ]
